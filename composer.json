@@ -44,8 +44,8 @@
     },
     "extra": {
         "name": "Company Management",
-        "handle": "companymanagement",
+        "handle": "company-management",
         "changelogUrl": "https://raw.githubusercontent.com/percipioglobal/craft-company-management/v3/CHANGELOG.md",
-        "class": "percipiolondon\\companymanagement\\Companymanagement"
+        "class": "percipiolondon\\companymanagement\\CompanyManagement"
     }
 }

@@ -1,0 +1,24 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * company-management plugin for Craft CMS
+ *
+ * CompanymanagementUtility Utility Content
+ *
+ * @author    Percipio.London
+ * @copyright Copyright (c) 2021 Percipio.London
+ * @link      https://percipio.london
+ * @package   Companymanagement
+ * @since     1.0.0
+ */
+#}
+
+<h1>CompanymanagementUtility</h1>
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@percipiolondon/companymanagement/assetbundles/companymanagementutilityutility/dist', true) ~ '/img/CompanymanagementUtility-icon.svg' %}
+
+<img src="{{ iconUrl }}" height="64" width="64" />
+
+<p>Your Utility content goes here</p>
+
+<p>{{ someVar }}</p>

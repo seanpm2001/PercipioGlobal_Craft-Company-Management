@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * company-management plugin for Craft CMS
+ *
+ * Timeloop Field Settings
+ *
+ * @author    Percipio.London
+ * @copyright Copyright (c) 2021 Percipio.London
+ * @link      https://percipio.london
+ * @package   Companymanagement
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanymanagementAsset") %}
+
+{{ forms.textField({
+    label: 'Some Attribute',
+    instructions: 'Enter some attribute here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: field['someAttribute']})
+}}
