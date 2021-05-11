@@ -1,0 +1,32 @@
+{% extends "company-management/_layouts" %}
+
+{%- set title = "Company Management" -%}
+{%- set pluginCpUrl = url('company-management') -%}
+{%- set companies = craft.entries.section('companyManagement').all() -%}
+{%- set selectedSubnavItem = 'companies' -%}
+
+{% ectends "" %}
+
+{% block content %}
+    <div class="main">
+        <div class="elements">
+            <div class="tableview">
+                <table class="data fullwidth">
+                    <thead>
+                    <tr>
+                        <th scope="col">{{'Title'|t('campaign-mailer')}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%- for company in companies -%}
+                        <tr>
+                            <td>{{- company.title -}}</td>
+                        </tr>
+                    {%- endfor -%}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

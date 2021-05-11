@@ -1,0 +1,5 @@
+{% extends '_layouts/cp' %}
+
+{% if title is not defined %}
+    {% set title = craft.app.plugins.getPlugin('company-management').settings.pluginName %}
+{% endif %}
