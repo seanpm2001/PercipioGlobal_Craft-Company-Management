@@ -1,51 +1,49 @@
 {
-    "name": "percipioglobal/craft-company-management",
-    "description": "Craft Company Management Plugin",
+    "name": "percipiolondon/company-management",
+    "description": "A plugin to setup companies and add users to it",
     "type": "craft-plugin",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "keywords": [
         "craft",
         "cms",
         "craftcms",
         "craft-plugin",
+        "company management"
     ],
     "support": {
-        "docs": "https://percipio.london/plugins/company-management/documentation",
-        "issues": "https://github.com/percipioglobal/craft-company-management/issues"
+        "docs": "https://github.com/percipioglobal/company-management/blob/master/README.md",
+        "issues": "https://github.com/percipioglobal/company-management/issues"
     },
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Percipio.London",
-            "homepage": "https://percipio.london"
+            "name": "Percipio",
+            "homepage": "http://percipio.london"
         }
     ],
-    "require-dev": {
-        "codeception/codeception": "^3.0",
-        "vlucas/phpdotenv": "^3.0"
-    },
     "require": {
-        "craftcms/cms": "^3.2",
-        "nystudio107/craft-plugin-manifest": "^1.0.0"
+        "craftcms/cms": "^3.0.0"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
-    "scripts": {
-        "test": "codecept run unit --coverage-xml"
+    "require-dev": {
+      "craftcms/cms": "^3.2.0",
+      "codeception/codeception": "^3.0",
+      "vlucas/phpdotenv": "^3.0"
     },
     "autoload": {
         "psr-4": {
-            "percipiolondon\\companymanagement\\": "src/"
+          "percipiolondon\\companymanagement\\": "src/"
         }
     },
     "extra": {
         "name": "Company Management",
-        "handle": "companymanagement",
-        "changelogUrl": "https://raw.githubusercontent.com/percipioglobal/craft-company-management/v3/CHANGELOG.md",
-        "class": "percipiolondon\\companymanagement\\Companymanagement"
+        "handle": "company-management",
+        "developer": "Percipio",
+        "developerUrl": "http://percipio.london",
+        "documentationUrl": "https://github.com/percipioglobal/company-management/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/percipioglobal/company-management/master/CHANGELOG.md",
+        "components": {
+            "companymanagement": "percipiolondon\\companymanagement\\services\\Companymanagement"
+        },
+        "class": "percipiolondon\\companymanagement\\CompanyManagement"
     }
 }
