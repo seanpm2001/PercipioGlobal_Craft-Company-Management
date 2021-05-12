@@ -4,8 +4,16 @@
 {%- set pluginCpUrl = url('company-management') -%}
 {%- set companies = craft.entries.section('companyManagement').all() -%}
 {%- set selectedSubnavItem = 'companies' -%}
+{%- set actionButton = "test" -%}
 
-{% ectends "" %}
+{% block header %}
+    <div id="page-title" class="flex flex-nowrap">
+        <h1 title="{{ title }}">{{ title }}</h1>
+    </div>
+    <div id="action-button" class="flex">
+        <a href="#" class="btn submit add icon">{{ 'Add a Company'|t('company-management') }}</a>
+    </div>
+{% endblock %}
 
 {% block content %}
     <div class="main">
@@ -14,13 +22,17 @@
                 <table class="data fullwidth">
                     <thead>
                     <tr>
-                        <th scope="col">{{'Title'|t('campaign-mailer')}}</th>
+                        <th scope="col">{{'Title'|t('company-management')}}</th>
+                        <th scope="col">{{'Post Date'|t('company-management')}}</th>
+                        <th scope="col">{{'Company Manager'|t('company-management')}}</th>
                     </tr>
                     </thead>
                     <tbody>
                     {%- for company in companies -%}
                         <tr>
-                            <td>{{- company.title -}}</td>
+                            <td><a href="{{- company.getCpEditUrl()-}}" title="Edit {{ company.title -}}">{{- company.title -}}</a></td>
+                            <td>{{- company.postDate|date('d-m-Y') -}}</td>
+                            <td>-</td>
                         </tr>
                     {%- endfor -%}
                     </tbody>

@@ -10,7 +10,9 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\base\Element;
 use craft\events\RegisterUserPermissionsEvent;
+use craft\helpers\UrlHelper;
 use craft\services\UserPermissions;
 use percipiolondon\companymanagement\services\CompanyManagement as CompanyManagementService;
 use percipiolondon\companymanagement\models\Settings;
@@ -24,9 +26,7 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\models\Section;
 use craft\models\Section_SiteSettings;
 
-use yii\base\BaseObject;
 use yii\base\Event;
-use yii\base\Exception;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -103,7 +103,7 @@ class CompanyManagement extends Plugin
         self::$plugin = $this;
 
         $this->_registerRoutes();
-        $this->_registerSections();
+        $this->_registerSaves();
         $this->_registerPermissions();
 
         Craft::info(
@@ -122,7 +122,6 @@ class CompanyManagement extends Plugin
         $nav['subnav'] = [
             'dashboard' => ['label' => 'Dashboard', 'url' => 'company-management'],
             'companies' => ['label' => 'Companies', 'url' => 'company-management/companies'],
-            'settings' => ['label' => 'Settings', 'url' => 'company-management/settings'],
         ];
 
         return $nav;
@@ -166,13 +165,13 @@ class CompanyManagement extends Plugin
                 $event->rules['company-management'] = ['template' => 'company-management/views'];
                 $event->rules['company-management/companies'] = ['template' => 'company-management/views/companies'];
                 $event->rules['company-management/company/<companyId:\d+>'] = ['template' => 'company-management/views/company'];
-                $event->rules['company-management/settings'] = ['template' => 'company-management/settings', 'settings' => $this->getSettings()];
             }
         );
     }
 
-    protected function _registerSections()
+    protected function _registerSaves()
     {
+        /* Add section after install */
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
@@ -192,11 +191,20 @@ class CompanyManagement extends Plugin
                         ]
                     ]);
 
-                    $success = Craft::$app->sections->saveSection($section);
+                    Craft::$app->sections->saveSection($section);
+                }
+            }
+        );
 
-                    if(!$success) {
-                        throw new Exception("We can't create the Company Management");
-                    }
+        /* Redirect to companies overview after save */
+        Event::on(
+            Element::class,
+            Element::EVENT_AFTER_SAVE,
+            function(Event $event){
+                $section = Craft::$app->sections->getSectionByHandle('companyManagement');
+
+                if($event->sender->sectionId === $section->id && false === $event->isNew) {
+                    Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('company-management/companies'))->send();
                 }
             }
         );
