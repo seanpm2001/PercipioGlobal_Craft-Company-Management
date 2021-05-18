@@ -65,13 +65,16 @@ class CompanyController extends Controller
         return $result;
     }
 
-    public function actionSave()
+    public function actionEditCompany()
+    {
+        $variables = [];
+        return $this->renderTemplate('company-management/companies/_edit', $variables);
+    }
+
+    public function actionSaveCompany()
     {
         $this->requirePostRequest();
-        Craft::dd("actionEdit");
-        $variables = [];
-
-        return null;
+        return "company-management/companies";
     }
 
     /**

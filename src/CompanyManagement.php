@@ -181,7 +181,7 @@ class CompanyManagement extends Plugin
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['company-management'] = ['template' => 'company-management'];
                 $event->rules['company-management/companies'] = ['template' => 'companies-management/companies'];
-                $event->rules['company-management/companies/new'] = ['template' => 'companies-management/companies/_edit'];
+                $event->rules['company-management/companies/new'] = 'company-management/companies/edit-company';
                 $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'companies-management/companies/_edit'];
             }
         );
