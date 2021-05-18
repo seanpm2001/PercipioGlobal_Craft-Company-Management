@@ -21,13 +21,13 @@
 {% endblock %}
 
 {% block actionButton %}
-{#    <div class="buttons">#}
-{#        <input type="submit" data-action="company-management/companies/save" class="btn submit" value="{{ 'Save'|t('companies-management') }}">#}
-{#    </div>#}
+    <div class="buttons">
+        <input type="submit" data-action="company-management/companies/save" class="btn submit" value="{{ 'Save'|t('companies-management') }}">
+    </div>
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action" value="company-management/companies/save">
+    <input type="hidden" name="action" value="companies-management/company/save">
     {{ redirectInput('company-management/companies') }}
 
 

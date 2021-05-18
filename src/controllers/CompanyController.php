@@ -46,32 +46,38 @@ class CompanyController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = true;
+    protected $allowAnonymous = ['edit','do-something'];
 
     // Public Methods
     // =========================================================================
 
     /**
      * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/company-management/companies
+     * e.g.: actions/company-management/company
      *
      * @return mixed
      */
     public function actionIndex()
     {
-        Craft::dd("index");
         $result = 'Welcome to the CompanyController actionIndex() method';
 
         return $result;
     }
 
-    public function actionEditCompany()
+    /**
+     * @return mixed
+     */
+    public function actionEdit()
     {
         $variables = [];
-        return $this->renderTemplate('company-management/companies/_edit', $variables);
+        return $this->renderTemplate('companies-management/companies/_edit', $variables);
     }
 
-    public function actionSaveCompany()
+    /**
+     * @return mixed
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function actionSave()
     {
         $this->requirePostRequest();
         return "company-management/companies";
@@ -79,7 +85,7 @@ class CompanyController extends Controller
 
     /**
      * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/company-management/companies/do-something
+     * e.g.: actions/company-management/company/do-something
      *
      * @return mixed
      */
