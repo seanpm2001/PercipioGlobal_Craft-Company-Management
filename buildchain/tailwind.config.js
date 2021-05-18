@@ -5,7 +5,7 @@ module.exports = {
     purge: {
         content: [
             '../src/templates/**/*.{twig,html}',
-            '../src/assetbundles/company-management/src/vue/**/*.{vue,html}',
+            '../src/assetbundles/companies-management/src/vue/**/*.{vue,html}',
         ],
         layers: [
             'base',
@@ -15,7 +15,7 @@ module.exports = {
         mode: 'layers',
         options: {
             whitelist: [
-                '../src/assetbundles/company-management/src/css/components/*.css',
+                '../src/assetbundles/companies-management/src/css/components/*.css',
             ],
         }
     },

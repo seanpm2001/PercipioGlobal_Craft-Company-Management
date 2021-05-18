@@ -1,8 +1,8 @@
 {
-    "name": "percipiolondon/company-management",
-    "description": "A plugin to setup companies and add users to it",
+    "name": "percipiolondon/craft-company-management",
+    "description": "A plugin to setup companies",
     "type": "craft-plugin",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "keywords": [
         "craft",
         "cms",
@@ -18,7 +18,7 @@
     "authors": [
         {
             "name": "Percipio",
-            "homepage": "http://percipio.london"
+            "homepage": "http://percipio.london/"
         }
     ],
     "require": {
@@ -38,11 +38,13 @@
         "name": "Company Management",
         "handle": "company-management",
         "developer": "Percipio",
-        "developerUrl": "http://percipio.london",
+        "developerUrl": "http://percipio.london/",
         "documentationUrl": "https://github.com/percipioglobal/company-management/blob/master/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/percipioglobal/company-management/master/CHANGELOG.md",
         "components": {
-            "companymanagement": "percipiolondon\\companymanagement\\services\\Companymanagement"
+            "benefits": "percipiolondon\\companymanagement\\services\\Benefits",
+            "wages": "percipiolondon\\companymanagement\\services\\Wages",
+            "company": "percipiolondon\\companymanagement\\services\\Company"
         },
         "class": "percipiolondon\\companymanagement\\CompanyManagement"
     }

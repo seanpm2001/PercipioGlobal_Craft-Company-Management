@@ -2,9 +2,9 @@
 /**
  * Company Management plugin for Craft CMS 3.x
  *
- * A plugin to setup companies and add users to it
+ * A plugin to setup companies
  *
- * @link      http://percipio.london
+ * @link      http://percipio.london/
  * @copyright Copyright (c) 2021 Percipio
  */
 
@@ -27,7 +27,7 @@ use craft\base\Model;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     1.0.0
+ * @since     0.1.0
  */
 class Settings extends Model
 {

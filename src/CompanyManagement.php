@@ -2,22 +2,29 @@
 /**
  * Company Management plugin for Craft CMS 3.x
  *
- * A plugin to setup companies and add users to it
+ * A plugin to setup companies
  *
- * @link      http://percipio.london
+ * @link      http://percipio.london/
  * @copyright Copyright (c) 2021 Percipio
  */
 
 namespace percipiolondon\companymanagement;
 
-use percipiolondon\companymanagement\services\CompanyManagement as CompanyManagementService;
+use craft\web\twig\variables\CraftVariable;
+use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
+use percipiolondon\companymanagement\services\Benefits as BenefitsService;
+use percipiolondon\companymanagement\services\Wages as WagesService;
+use percipiolondon\companymanagement\services\Company as CompanyService;
 use percipiolondon\companymanagement\models\Settings;
+use percipiolondon\companymanagement\elements\Company as CompanyElement;
 
 use Craft;
 use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
 use craft\web\UrlManager;
+use craft\services\Elements;
+use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 
 use yii\base\Event;
@@ -34,9 +41,11 @@ use yii\base\Event;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     1.0.0
+ * @since     0.1.0
  *
- * @property  CompanyManagementService $companyManagement
+ * @property  BenefitsService $benefits
+ * @property  WagesService $wages
+ * @property  CompanyService $companies
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -61,7 +70,7 @@ class CompanyManagement extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.0';
+    public $schemaVersion = '0.1.0';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
@@ -96,61 +105,43 @@ class CompanyManagement extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'company-management/company-management';
-            }
-        );
+        $this->_registerCpRoutes();
+        $this->_registerElementTypes();
+        $this->_registerAfterInstall();
+        $this->_registerVariables();
 
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'company-management/company-management/do-something';
-            }
-        );
-
-        // Do something after we're installed
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
-            }
-        );
-
-/**
- * Logging in Craft involves using one of the following methods:
- *
- * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
- * Craft::info(): record a message that conveys some useful information.
- * Craft::warning(): record a warning message that indicates something unexpected has happened.
- * Craft::error(): record a fatal error that should be investigated as soon as possible.
- *
- * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
- *
- * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
- * the category to the method (prefixed with the fully qualified class name) where the constant appears.
- *
- * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
- * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
- *
- * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
- */
         Craft::info(
             Craft::t(
-                'company-management',
+                'companies-management',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
             __METHOD__
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCpNavItem(): array
+    {
+        $nav = parent::getCpNavItem();
+
+        $nav['label'] = Craft::t('companies-management', 'Company Management');
+
+        $nav['subnav']['dashboard'] = [
+            'label' => Craft::t('companies-management', 'Dashboard'),
+            'url' => 'company-management'
+        ];
+
+        if (Craft::$app->getUser()->checkPermission('companies-mangeCompanies')) {
+            $nav['subnav']['companies'] = [
+                'label' => Craft::t('companies-management', 'Companies'),
+                'url' => 'company-management/companies'
+            ];
+        }
+
+        return $nav;
     }
 
     // Protected Methods
@@ -179,6 +170,56 @@ class CompanyManagement extends Plugin
             [
                 'settings' => $this->getSettings()
             ]
+        );
+    }
+
+    private function _registerCpRoutes()
+    {
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['company-management'] = ['template' => 'company-management'];
+                $event->rules['company-management/companies'] = ['template' => 'companies-management/companies'];
+                $event->rules['company-management/companies/new'] = ['template' => 'companies-management/companies/_edit'];
+                $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'companies-management/companies/_edit'];
+            }
+        );
+    }
+
+    private function _registerElementTypes()
+    {
+        Event::on(
+            Elements::class,
+            Elements::EVENT_REGISTER_ELEMENT_TYPES,
+            function (RegisterComponentTypesEvent $event) {
+                $event->types[] = CompanyElement::class;
+            }
+        );
+    }
+
+    private function _registerAfterInstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    // We were just installed
+                }
+            }
+        );
+    }
+
+    private function _registerVariables()
+    {
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                $variable = $event->sender;
+                $variable->attachBehavior('companies', CraftVariableBehavior::class);
+            }
         );
     }
 }

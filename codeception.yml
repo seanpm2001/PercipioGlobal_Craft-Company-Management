@@ -33,7 +33,7 @@ modules:
       plugins:
         company-management:
           class: '\percipiolondon\companymanagement\CompanyManagement'
-          handle: company-management
+          handle: companies-management
       cleanup: true
       transaction: true
       dbSetup: {clean: true, setupCraft: true}

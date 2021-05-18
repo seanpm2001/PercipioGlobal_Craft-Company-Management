@@ -2,20 +2,20 @@
 /**
  * Company Management plugin for Craft CMS 3.x
  *
- * A plugin to setup companies and add users to it
+ * A plugin to setup companies
  *
- * @link      http://percipio.london
+ * @link      http://percipio.london/
  * @copyright Copyright (c) 2021 Percipio
  */
 
-namespace percipiolondon\companymanagement\assetbundles\companymanagementcpsection;
+namespace percipiolondon\companymanagement\assetbundles\indexcpsection;
 
 use Craft;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * CompanyManagementCPSectionAsset AssetBundle
+ * IndexCPSectionAsset AssetBundle
  *
  * AssetBundle represents a collection of asset files, such as CSS, JS, images.
  *
@@ -30,9 +30,9 @@ use craft\web\assets\cp\CpAsset;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     1.0.0
+ * @since     0.1.0
  */
-class CompanyManagementCPSectionAsset extends AssetBundle
+class IndexCPSectionAsset extends AssetBundle
 {
     // Public Methods
     // =========================================================================
@@ -43,7 +43,7 @@ class CompanyManagementCPSectionAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@percipiolondon/companymanagement/assetbundles/companymanagementcpsection/dist";
+        $this->sourcePath = "@percipiolondon/companymanagement/assetbundles/indexcpsection/dist";
 
         // define the dependencies
         $this->depends = [
@@ -53,11 +53,11 @@ class CompanyManagementCPSectionAsset extends AssetBundle
         // define the relative path to CSS/JS files that should be registered with the page
         // when this asset bundle is registered
         $this->js = [
-            'js/CompanyManagement.js',
+            'js/Index.js',
         ];
 
         $this->css = [
-            'css/CompanyManagement.css',
+            'css/Index.css',
         ];
 
         parent::init();

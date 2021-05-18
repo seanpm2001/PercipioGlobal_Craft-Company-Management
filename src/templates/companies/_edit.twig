@@ -1,0 +1,48 @@
+{% extends "_layouts/cp" %}
+
+{% import "_includes/forms" as forms %}
+
+{% set selectedSubnavItem = "companies" %}
+{% set company = company ?? null %}
+{% set title = company ? company.name : 'Create a new company'|t('companies-management') %}
+{% set fullPageForm = true %}
+
+{% set crumbs = [
+    { label: "Companies"|t('companies-managament'), url: url('company-management/companies') },
+] %}
+
+{% block header %}
+    <div class="flex flex-nowrap">
+        {{ block('pageTitle') }}
+    </div>
+    <div class="flex">
+        {{ block('actionButton') }}
+    </div>
+{% endblock %}
+
+{% block actionButton %}
+    <div class="buttons">
+        <input type="submit" data-action="company-management/companies/save-company" class="btn submit" value="{{ 'Save'|t('companies-management') }}">
+    </div>
+{% endblock %}
+
+{% block content %}
+    <input type="hidden" name="action" value="company-management/companies">
+    {{ redirectInput('company-management/companies') }}
+
+
+    {% if company %}<input type="hidden" name="companyId" value="{{ company.id }}">{% endif %}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name"|t('companies-management'),
+        instructions: "What's the name of the company"|t('companies-management'),
+        id: 'name',
+        name: 'name',
+        value: company ? company.name : '',
+        errors: company ? company.getErrors('name') : null,
+        autofocus: true,
+        required: true,
+    }) }}
+
+{% endblock %}

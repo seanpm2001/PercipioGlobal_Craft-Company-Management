@@ -2,9 +2,9 @@
 /**
  * Company Management plugin for Craft CMS 3.x
  *
- * A plugin to setup companies and add users to it
+ * A plugin to setup companies
  *
- * @link      http://percipio.london
+ * @link      http://percipio.london/
  * @copyright Copyright (c) 2021 Percipio
  */
 
@@ -16,7 +16,7 @@ use Craft;
 use craft\web\Controller;
 
 /**
- * CompanyManagement Controller
+ * Benefits Controller
  *
  * Generally speaking, controllers are the middlemen between the front end of
  * the CP/website and your plugin’s services. They contain action methods which
@@ -33,9 +33,9 @@ use craft\web\Controller;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     1.0.0
+ * @since     0.1.0
  */
-class CompanyManagementController extends Controller
+class BenefitsController extends Controller
 {
 
     // Protected Properties
@@ -53,26 +53,26 @@ class CompanyManagementController extends Controller
 
     /**
      * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/company-management/company-management
+     * e.g.: actions/companies-management/benefits
      *
      * @return mixed
      */
     public function actionIndex()
     {
-        $result = 'Welcome to the CompanyManagementController actionIndex() method';
+        $result = 'Welcome to the BenefitsController actionIndex() method';
 
         return $result;
     }
 
     /**
      * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/company-management/company-management/do-something
+     * e.g.: actions/companies-management/benefits/do-something
      *
      * @return mixed
      */
     public function actionDoSomething()
     {
-        $result = 'Welcome to the CompanyManagementController actionDoSomething() method';
+        $result = 'Welcome to the BenefitsController actionDoSomething() method';
 
         return $result;
     }

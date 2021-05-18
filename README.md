@@ -1,6 +1,6 @@
 # Company Management plugin for Craft CMS 3.x
 
-A plugin to setup companies and add users to it
+A plugin to setup companies
 
 ![Screenshot](resources/img/plugin-logo.png)
 
@@ -40,4 +40,4 @@ Some things to do, and ideas for potential features:
 
 * Release it
 
-Brought to you by [Percipio](http://percipio.london)
+Brought to you by [Percipio](http://percipio.london/)
