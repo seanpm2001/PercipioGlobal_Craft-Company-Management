@@ -112,7 +112,7 @@ class CompanyManagement extends Plugin
 
         Craft::info(
             Craft::t(
-                'companies-management',
+                'company-management',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
@@ -127,16 +127,16 @@ class CompanyManagement extends Plugin
     {
         $nav = parent::getCpNavItem();
 
-        $nav['label'] = Craft::t('companies-management', 'Company Management');
+        $nav['label'] = Craft::t('company-management', 'Company Management');
 
         $nav['subnav']['dashboard'] = [
-            'label' => Craft::t('companies-management', 'Dashboard'),
+            'label' => Craft::t('company-management', 'Dashboard'),
             'url' => 'company-management'
         ];
 
         if (Craft::$app->getUser()->checkPermission('companies-mangeCompanies')) {
             $nav['subnav']['companies'] = [
-                'label' => Craft::t('companies-management', 'Companies'),
+                'label' => Craft::t('company-management', 'Companies'),
                 'url' => 'company-management/companies'
             ];
         }
@@ -180,9 +180,9 @@ class CompanyManagement extends Plugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['company-management'] = ['template' => 'company-management'];
-                $event->rules['company-management/companies'] = ['template' => 'companies-management/companies'];
-                $event->rules['company-management/companies/new'] = 'companies-management/company/edit';
-                $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'companies-management/companies/_edit'];
+                $event->rules['company-management/companies'] = ['template' => 'company-management/companies'];
+                $event->rules['company-management/companies/new'] = 'company-management/company/edit';
+                $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'company-management/companies/_edit'];
             }
         );
     }

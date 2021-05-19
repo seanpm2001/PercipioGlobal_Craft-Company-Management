@@ -64,6 +64,8 @@ class Company extends Element
 {
     // Public Properties
     // =========================================================================
+    public $companyId;
+
     // Company Info
     public $title;
     public $info;
@@ -95,7 +97,7 @@ class Company extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('companies-management', 'Company');
+        return Craft::t('company-management', 'Company');
     }
 
     /**
@@ -103,7 +105,7 @@ class Company extends Element
      */
     public static function pluralDisplayName(): string
     {
-        return Craft::t('companies-management', 'Companies');
+        return Craft::t('company-management', 'Companies');
     }
 
     /**
@@ -114,7 +116,7 @@ class Company extends Element
      */
     public static function hasContent(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -191,7 +193,7 @@ class Company extends Element
      */
     public static function find(): ElementQueryInterface
     {
-        return new CompanyQuery(static::class);
+        return new CompanyQuery(get_called_class());
     }
 
     /**
@@ -215,7 +217,7 @@ class Company extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'title' => ['label' => Craft::t('companies-management', 'Title')],
+            'title' => ['label' => Craft::t('company-management', 'Title')],
         ];
     }
 
@@ -234,10 +236,11 @@ class Company extends Element
      */
     public function rules()
     {
-        return [
-            ['someAttribute', 'string'],
-            ['someAttribute', 'default', 'value' => 'Some Default'],
-        ];
+//        return [
+//            ['someAttribute', 'string'],
+//            ['someAttribute', 'default', 'value' => 'Some Default'],
+//        ];
+        return [];
     }
 
     /**
@@ -257,13 +260,14 @@ class Company extends Element
      */
     public function getFieldLayout()
     {
-        $tagGroup = $this->getGroup();
-
-        if ($tagGroup) {
-            return $tagGroup->getFieldLayout();
-        }
-
-        return null;
+        return parent::getFieldLayout();
+//        $tagGroup = $this->getGroup();
+//
+//        if ($tagGroup) {
+//            return $tagGroup->getFieldLayout();
+//        }
+//
+//        return null;
     }
 
     public function getGroup()
@@ -325,6 +329,7 @@ class Company extends Element
      */
     public function afterSave(bool $isNew)
     {
+        return true;
     }
 
     /**

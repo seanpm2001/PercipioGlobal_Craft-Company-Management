@@ -1,0 +1,107 @@
+{% macro general(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name"|t('company-management'),
+        instructions: "What's the name of the company"|t('company-management'),
+        id: 'title',
+        name: 'title',
+        value: company ? company.title : '',
+        errors: company ? company.getErrors('title') : null,
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Short Name"|t('company-management'),
+        instructions: "What's the name of the company"|t('company-management'),
+        id: 'shortName',
+        name: 'shortName',
+        value: company ? company.shortName : '',
+        errors: company ? company.getErrors('shortName') : null,
+    }) }}
+
+    {{- forms.textareaField({
+        label: "Info"|t('company-management'),
+        instructions: "Give a little info about the company"|t('company-management'),
+        id: 'info',
+        name: 'info',
+        value: company ? company.info : '',
+        errors: company ? company.getErrors('info')|merge(company.getErrors('uri')) : null
+    }) -}}
+
+    {{ forms.textField({
+        first: true,
+        label: "Address"|t('company-management'),
+        id: 'address',
+        name: 'address',
+        value: company ? company.address : '',
+        errors: company ? company.getErrors('address') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Town"|t('company-management'),
+        id: 'town',
+        name: 'town',
+        value: company ? company.town : '',
+        errors: company ? company.getErrors('town') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Postcode"|t('company-management'),
+        id: 'postcode',
+        name: 'postcode',
+        value: company ? company.postcode : '',
+        errors: company ? company.getErrors('postcode') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Register Number"|t('company-management'),
+        required: true,
+        id: 'registerNumber',
+        name: 'registerNumber',
+        value: company ? company.registerNumber : '',
+        errors: company ? company.getErrors('registerNumber') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "PAYE Reference"|t('company-management'),
+        id: 'payeReference',
+        name: 'payeReference',
+        value: company ? company.payeReference : '',
+        errors: company ? company.getErrors('payeReference') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Accounts Office Reference"|t('company-management'),
+        id: 'accountsOfficeReference',
+        name: 'accountsOfficeReference',
+        value: company ? company.accountsOfficeReference : '',
+        errors: company ? company.getErrors('accountsOfficeReference') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Tax Reference"|t('company-management'),
+        id: 'taxReference',
+        name: 'taxReference',
+        value: company ? company.taxReference : '',
+        errors: company ? company.getErrors('taxReference') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Website"|t('company-management'),
+        id: 'website',
+        name: 'website',
+        value: company ? company.website : '',
+        errors: company ? company.getErrors('website') : null,
+    }) }}
+{% endmacro %}

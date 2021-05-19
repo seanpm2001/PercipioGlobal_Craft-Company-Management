@@ -110,7 +110,22 @@ class Install extends Migration
                     'uid' => $this->uid(),
                 // Custom columns in the table
                     'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
+                    'info' => $this->string()->notNull()->defaultValue(''),
+                    'shortName' => $this->string()->notNull()->defaultValue(''),
+                    'address' => $this->string()->notNull()->defaultValue(''),
+                    'town' => $this->string()->notNull()->defaultValue(''),
+                    'postcode' => $this->string()->notNull()->defaultValue(''),
+                    'registerNumber' => $this->string()->notNull()->defaultValue(''),
+                    'payeReference' => $this->string()->notNull()->defaultValue(''),
+                    'accountsOfficeReference' => $this->string()->notNull()->defaultValue(''),
+                    'taxReference' => $this->string()->notNull()->defaultValue(''),
+                    'website' => $this->string()->notNull()->defaultValue(''),
+//                    'logo' => $this->string()->notNull()->defaultValue(''),
+                    'contactName' => $this->string()->notNull()->defaultValue(''),
+                    'contactEmail' => $this->string()->notNull()->defaultValue(''),
+                    'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
+                    'contactPhone' => $this->string()->notNull()->defaultValue(''),
+                    'contactBirthday' => $this->dateTime()->notNull(),
                 ]
             );
         }
@@ -129,11 +144,11 @@ class Install extends Migration
         $this->createIndex(
             $this->db->getIndexName(
                 '{{%companymanagement_company}}',
-                'some_field',
+                'registerNumber',
                 true
             ),
             '{{%companymanagement_company}}',
-            'some_field',
+            'registerNumber',
             true
         );
         // Additional commands depending on the db driver

@@ -10,10 +10,13 @@
 
 namespace percipiolondon\companymanagement\controllers;
 
+use craft\base\Element;
 use percipiolondon\companymanagement\CompanyManagement;
+use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 
 use Craft;
 use craft\web\Controller;
+use percipiolondon\companymanagement\elements\Company;
 
 /**
  * Company Controller
@@ -67,10 +70,19 @@ class CompanyController extends Controller
     /**
      * @return mixed
      */
-    public function actionEdit()
+    public function actionEdit(Company $company = null)
     {
-        $variables = [];
-        return $this->renderTemplate('companies-management/companies/_edit', $variables);
+        $variables = compact('company');
+
+        $company = $variables['company'];
+
+        if ($company === null) {
+            $variables['title'] = Craft::t('company-management', 'Create a new company');
+        } else {
+            $variables['title'] = $company->title;
+        }
+
+        return $this->renderTemplate('company-management/companies/_edit', $variables);
     }
 
     /**
@@ -80,7 +92,18 @@ class CompanyController extends Controller
     public function actionSave()
     {
         $this->requirePostRequest();
-        return "company-management/companies";
+
+        $request = Craft::$app->getRequest();
+        $elementsService = Craft::$app->getElements();
+        $company = CompanyHelper::companyFromPost($request);
+
+        CompanyHelper::populateCompanyFromPost($company, $request);
+//        $company->setScenario(Element::SCENARIO_LIVE);
+
+        $success = $elementsService->saveElement($company);
+
+        $this->setSuccessFlash(Craft::t('company-management', 'Company saved.'));
+        return $this->renderTemplate('company-management/companies');
     }
 
     /**

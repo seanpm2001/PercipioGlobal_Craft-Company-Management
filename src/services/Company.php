@@ -33,23 +33,9 @@ class Company extends Component
     // Public Methods
     // =========================================================================
 
-    /**
-     * This function can literally be anything you want, and you can have as many service
-     * functions as you want
-     *
-     * From any other plugin file, call it like this:
-     *
-     *     CompanyManagement::$plugin->companies->exampleService()
-     *
-     * @return mixed
-     */
-    public function exampleService()
+    public function getCompanyById(int $id)
     {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (CompanyManagement::$plugin->getSettings()->someAttribute) {
-        }
-
-        return $result;
+        return Craft::$app->getElements()->getElementById($id, \percipiolondon\companymanagement\elements\Company::class);
     }
+
 }
