@@ -133,6 +133,8 @@ class Install extends Migration
             );
         }
 
+        $this->execute('alter table {{%companymanagement_company}} modify column id int AUTO_INCREMENT');
+
         return $tablesCreated;
     }
 
@@ -144,16 +146,9 @@ class Install extends Migration
     protected function createIndexes()
     {
     // companymanagement_company table
-        $this->createIndex(
-            $this->db->getIndexName(
-                '{{%companymanagement_company}}',
-                'registerNumber',
-                true
-            ),
-            '{{%companymanagement_company}}',
-            'registerNumber',
-            true
-        );
+        $this->createIndex(null,'{{%companymanagement_company}}',['id'], true);
+//        $this->createIndex(null,'{{%companymanagement_company}}',['registerNumber'], true);
+
         // Additional commands depending on the db driver
         switch ($this->driver) {
             case DbConfig::DRIVER_MYSQL:
