@@ -1,6 +1,10 @@
 <?php
+
 namespace percipiolondon\companymanagement\elements\db;
 
+use Craft;
+use craft\db\Query;
+use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 use percipiolondon\companymanagement\elements\Company;
@@ -33,56 +37,67 @@ class CompanyQuery extends ElementQuery
         $this->name = $value;
         return $this;
     }
+
     public function info($value)
     {
         $this->info = $value;
         return $this;
     }
+
     public function shortName($value)
     {
         $this->shortName = $value;
         return $this;
     }
+
     public function address($value)
     {
         $this->address = $value;
         return $this;
     }
+
     public function town($value)
     {
         $this->town = $value;
         return $this;
     }
+
     public function postcode($value)
     {
         $this->postcode = $value;
         return $this;
     }
+
     public function registerNumber($value)
     {
         $this->registerNumber = $value;
         return $this;
     }
+
     public function payeReference($value)
     {
         $this->payeReference = $value;
         return $this;
     }
+
     public function accountsOfficeReference($value)
     {
         $this->accountsOfficeReference = $value;
         return $this;
     }
+
     public function taxReference($value)
     {
         $this->taxReference = $value;
         return $this;
     }
+
     public function website($value)
     {
         $this->website = $value;
         return $this;
     }
+
     public function logo($value)
     {
         $this->logo = $value;
@@ -97,9 +112,20 @@ class CompanyQuery extends ElementQuery
 
         // select the price column
         $this->query->select([
-            'companymanagement_company.info',
+            'companymanagement_company.id',
+            'companymanagement_company.name',
             'companymanagement_company.shortName',
+            'companymanagement_company.address',
+            'companymanagement_company.town',
+            'companymanagement_company.postcode',
+            'companymanagement_company.registerNumber',
+            'companymanagement_company.payeReference',
+            'companymanagement_company.accountsOfficeReference',
+            'companymanagement_company.taxReference',
+            'companymanagement_company.website',
+            'companymanagement_company.uid',
         ]);
+
 
         return parent::beforePrepare();
     }

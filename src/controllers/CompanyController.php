@@ -62,9 +62,7 @@ class CompanyController extends Controller
      */
     public function actionIndex()
     {
-        $result = 'Welcome to the CompanyController actionIndex() method';
-
-        return $result;
+        return $this->renderTemplate('company-management/companies/index', []);
     }
 
     /**
