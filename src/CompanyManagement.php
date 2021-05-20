@@ -12,6 +12,7 @@ namespace percipiolondon\companymanagement;
 
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
+use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;

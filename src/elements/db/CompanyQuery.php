@@ -112,6 +112,8 @@ class CompanyQuery extends ElementQuery
 
         // select the price column
         $this->query->select([
+            'companymanagement_company.name',
+            'companymanagement_company.info',
             'companymanagement_company.id',
             'companymanagement_company.name',
             'companymanagement_company.shortName',

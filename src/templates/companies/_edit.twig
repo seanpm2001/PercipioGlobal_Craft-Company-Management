@@ -11,6 +11,11 @@
     { label: "Companies"|t('company-managament'), url: url('company-management/companies') },
 ] -%}
 
+{%- set tabs = {
+    company: {label: 'Company'|t('company-management'), url: '#company'},
+    contact: {label: 'Contact'|t('company-management'), url: '#contact'},
+} -%}
+
 {% block header %}
     <div class="flex flex-nowrap">
         {{ block('pageTitle') }}
@@ -34,6 +39,11 @@
     {%- if company -%}<input type="hidden" name="companyId" value="{{ company.id }}">{%- endif -%}
     <input type="hidden" name="siteId" value="{{ company ? company.siteId : currentSite.id }}">
 
-    {{- companyFields.general(company) -}}
+    <div id="company">
+        {{- companyFields.company(company) -}}
+    </div>
+    <div id="contact">
+        {{- companyFields.contact(company) -}}
+    </div>
 
 {% endblock %}

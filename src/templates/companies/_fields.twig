@@ -1,4 +1,4 @@
-{% macro general(company) %}
+{% macro company(company) %}
     {%- import "_includes/forms" as forms -%}
 
     {{ forms.textField({
@@ -103,5 +103,66 @@
         name: 'website',
         value: company ? company.website : '',
         errors: company ? company.getErrors('website') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Logo"|t('company-management'),
+        id: 'logo',
+        name: 'logo',
+        value: company ? company.logo : '',
+        errors: company ? company.getErrors('logo') : null,
+    }) }}
+{% endmacro %}
+
+{% macro contact(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Name"|t('company-management'),
+        id: 'contactName',
+        name: 'contactName',
+        required: true,
+        value: company ? company.contactName : '',
+        errors: company ? company.getErrors('contactName') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Email"|t('company-management'),
+        id: 'contactEmail',
+        name: 'contactEmail',
+        required: true,
+        value: company ? company.contactEmail : '',
+        errors: company ? company.getErrors('contactEmail') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Registration Number"|t('company-management'),
+        id: 'contactRegistrationNumber',
+        name: 'contactRegistrationNumber',
+        required: true,
+        value: company ? company.contactRegistrationNumber : '',
+        errors: company ? company.getErrors('contactRegistrationNumber') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Phone"|t('company-management'),
+        id: 'contactPhone',
+        name: 'contactPhone',
+        value: company ? company.contactPhone : '',
+        errors: company ? company.getErrors('contactPhone') : null,
+    }) }}
+
+    {{ forms.dateField({
+        first: true,
+        label: "Contact Birthday"|t('company-management'),
+        id: 'contactBirthday',
+        name: 'contactBirthday',
+        value: company ? company.contactBirthday : '',
+        errors: company ? company.getErrors('contactBirthday') : null,
     }) }}
 {% endmacro %}
