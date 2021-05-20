@@ -97,10 +97,21 @@ class CompanyController extends Controller
         $elementsService = Craft::$app->getElements();
         $company = CompanyHelper::companyFromPost($request);
 
-        CompanyHelper::populateCompanyFromPost($company, $request);
+        $company = CompanyHelper::populateCompanyFromPost($company, $request);
 //        $company->setScenario(Element::SCENARIO_LIVE);
 
         $success = $elementsService->saveElement($company);
+
+        if(!$success) {
+            Craft::$app->getSession()->setError(Craft::t('company-management', 'Couldn’t save company.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'company' => $company,
+                'errors' => $company->getErrors(),
+            ]);
+
+            return null;
+        }
 
         $this->setSuccessFlash(Craft::t('company-management', 'Company saved.'));
         return $this->renderTemplate('company-management/companies');

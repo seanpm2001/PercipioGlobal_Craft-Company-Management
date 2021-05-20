@@ -18,6 +18,7 @@ use Craft;
 use DateTime;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
+use yii\validators\Validator;
 
 /**
  * Company Element
@@ -242,11 +243,25 @@ class Company extends Element
      */
     public function rules()
     {
-//        return [
-//            ['someAttribute', 'string'],
-//            ['someAttribute', 'default', 'value' => 'Some Default'],
-//        ];
-        return parent::rules();
+        $rules = parent::defineRules();
+
+        $rules[] = [['name', 'registerNumber', 'contactName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
+        $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
+
+            $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
+            $preg = "/^[A-CEGHJ-NOPR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[ABCD]?$/";
+
+            if (!preg_match($preg, $ssn)) {
+                $error = Craft::t('company-management', '"{value}" is not a valid National Insurance Number.', [
+                    'attribute' => $attribute,
+                    'value' => $ssn,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
+
+        return $rules;
     }
 
     /**
@@ -358,12 +373,12 @@ class Company extends Element
             $record->accountsOfficeReference = $this->accountsOfficeReference;
             $record->taxReference = $this->taxReference;
             $record->website = $this->website;
-//            $record->logo = $this->logo;
-//            $record->contactName = $this->contactName;
-//            $record->contactEmail = $this->contactEmail;
-//            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-//            $record->contactPhone = $this->contactPhone;
-//            $record->contactBirthday = $this->contactBirthday;
+            $record->logo = $this->logo;
+            $record->contactName = $this->contactName;
+            $record->contactEmail = $this->contactEmail;
+            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+            $record->contactPhone = $this->contactPhone;
+            $record->contactBirthday = $this->contactBirthday;
 
             $record->save(false);
 
