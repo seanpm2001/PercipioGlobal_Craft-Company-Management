@@ -27,11 +27,12 @@
 {% endblock %}
 
 {% block content %}
-    <input type="hidden" name="action" value="companies-management/company/save">
+    <input type="hidden" name="action" value="company-management/company/save">
     {{- redirectInput('company-management/companies') -}}
 
 
     {%- if company -%}<input type="hidden" name="companyId" value="{{ company.id }}">{%- endif -%}
+    <input type="hidden" name="siteId" value="{{ company ? company.siteId : currentSite.id }}">
 
     {{- companyFields.general(company) -}}
 

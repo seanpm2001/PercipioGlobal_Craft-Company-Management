@@ -99,6 +99,8 @@ class Install extends Migration
 
     // companymanagement_company table
         $tableSchema = Craft::$app->db->schema->getTableSchema('{{%companymanagement_company}}');
+
+        $currentDate = new \DateTime('NOW');
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
@@ -109,8 +111,9 @@ class Install extends Migration
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
                 // Custom columns in the table
-                    'siteId' => $this->integer()->notNull(),
+                    'siteId' => $this->integer()->notNull()->defaultValue(1),
                     'info' => $this->string()->notNull()->defaultValue(''),
+                    'name' => $this->string()->notNull()->defaultValue(''),
                     'shortName' => $this->string()->notNull()->defaultValue(''),
                     'address' => $this->string()->notNull()->defaultValue(''),
                     'town' => $this->string()->notNull()->defaultValue(''),
@@ -120,12 +123,12 @@ class Install extends Migration
                     'accountsOfficeReference' => $this->string()->notNull()->defaultValue(''),
                     'taxReference' => $this->string()->notNull()->defaultValue(''),
                     'website' => $this->string()->notNull()->defaultValue(''),
-//                    'logo' => $this->string()->notNull()->defaultValue(''),
+                    'logo' => $this->string()->notNull()->defaultValue(''),
                     'contactName' => $this->string()->notNull()->defaultValue(''),
                     'contactEmail' => $this->string()->notNull()->defaultValue(''),
                     'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
                     'contactPhone' => $this->string()->notNull()->defaultValue(''),
-                    'contactBirthday' => $this->dateTime()->notNull(),
+                    'contactBirthday' => $this->dateTime()->notNull()->defaultValue($currentDate->format(\DateTime::ATOM)),
                 ]
             );
         }

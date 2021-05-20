@@ -8,7 +8,7 @@ use percipiolondon\companymanagement\elements\Company;
 class CompanyQuery extends ElementQuery
 {
     // Company Info
-    public $title;
+    public $name;
     public $info;
     public $shortName;
     public $address;
@@ -28,9 +28,9 @@ class CompanyQuery extends ElementQuery
     public $contactPhone;
     public $contactBirthday;
 
-    public function title($value)
+    public function name($value)
     {
-        $this->title = $value;
+        $this->name = $value;
         return $this;
     }
     public function info($value)

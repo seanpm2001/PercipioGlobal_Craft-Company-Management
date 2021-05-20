@@ -11,6 +11,7 @@
 namespace percipiolondon\companymanagement\elements;
 
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
+use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
 use craft\base\Element;
@@ -64,10 +65,12 @@ class Company extends Element
 {
     // Public Properties
     // =========================================================================
-    public $companyId;
+    public $postDate;
+    public $expiryDate;
+    public $siteId;
 
     // Company Info
-    public $title;
+    public $name;
     public $info;
     public $shortName;
     public $address;
@@ -329,7 +332,47 @@ class Company extends Element
      */
     public function afterSave(bool $isNew)
     {
-        return true;
+        if (!$this->propagating) {
+            if (!$isNew) {
+                $record = CompanyRecord::findOne($this->id);
+
+                if (!$record) {
+                    throw new Exception('Invalid company ID: ' . $this->id);
+                }
+            } else {
+                $record = new CompanyRecord();
+                $record->id = $this->id;
+            }
+
+            $record->postDate = $this->postDate;
+            $record->expiryDate = $this->expiryDate;
+            $record->name = $this->name;
+            $record->info = $this->info;
+            $record->shortName = $this->shortName;
+            $record->address = $this->address;
+            $record->town = $this->town;
+            $record->postcode = $this->postcode;
+            $record->registerNumber = $this->registerNumber;
+            $record->payeReference = $this->payeReference;
+            $record->accountsOfficeReference = $this->accountsOfficeReference;
+            $record->taxReference = $this->taxReference;
+            $record->website = $this->website;
+            $record->logo = $this->logo;
+            $record->contactName = $this->contactName;
+            $record->contactEmail = $this->contactEmail;
+            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+            $record->contactPhone = $this->contactPhone;
+            $record->contactBirthday = $this->contactBirthday;
+            $record->dateUpdated = $this->dateUpdated;
+            $record->dateCreated = $this->dateCreated;
+            $record->siteId = $this->siteId;
+
+            $record->save(false);
+
+            $this->id = $record->id;
+        }
+
+        return parent::afterSave($isNew);
     }
 
     /**

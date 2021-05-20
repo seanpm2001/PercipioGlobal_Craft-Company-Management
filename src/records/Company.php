@@ -13,6 +13,7 @@ namespace percipiolondon\companymanagement\records;
 use percipiolondon\companymanagement\CompanyManagement;
 
 use Craft;
+use DateTime;
 use craft\db\ActiveRecord;
 
 /**
@@ -31,8 +32,59 @@ use craft\db\ActiveRecord;
  * @package   CompanyManagement
  * @since     0.1.0
  */
+
+/**
+ * Product record.
+ *
+ * @property DateTime postDate
+ * @property DateTime expiryDate
+ * @property string name
+ * @property string info
+ * @property string shortName
+ * @property string address
+ * @property string town
+ * @property string postcode
+ * @property string registerNumber
+ * @property string payeReference
+ * @property string accountsOfficeReference
+ * @property string taxReference
+ * @property string website
+ * @property string logo
+ * @property string contactName
+ * @property string contactEmail
+ * @property string contactRegistrationNumber
+ * @property string contactPhone
+ * @property string contactBirthday
+ * @property int id
+ * @property int siteId
+ *
+ */
 class Company extends ActiveRecord
 {
+
+    public $postDate;
+    public $expiryDate;
+    public $name;
+    public $info;
+    public $shortName;
+    public $address;
+    public $town;
+    public $postcode;
+    public $registerNumber;
+    public $payeReference;
+    public $accountsOfficeReference;
+    public $taxReference;
+    public $website;
+    public $logo;
+    public $contactName;
+    public $contactEmail;
+    public $contactRegistrationNumber;
+    public $contactPhone;
+    public $contactBirthday;
+    public $id;
+    public $siteId;
+
+
     // Public Static Methods
     // =========================================================================
 
