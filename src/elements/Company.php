@@ -17,6 +17,7 @@ use percipiolondon\companymanagement\records\Company as CompanyRecord;
 use Craft;
 use DateTime;
 use craft\base\Element;
+use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use yii\validators\Validator;
 
@@ -211,10 +212,20 @@ class Company extends Element
      * @return array The sources.
      * @see sources()
      */
-    protected static function defineSources(string $context = null): array
+   protected static function defineSources(string $context = null): array
     {
-        $sources = [];
+        $ids = self::_getCompanyIds();
+        // Craft::dd($ids);
+        $sources = [
+            [
+                'key' => '*',
+                'label' => 'All Companies',
+                'defaultSort' => ['title', 'desc'],
+                'criteria' => ['id' => $ids],
+            ]
+        ];
 
+        //   Craft::dd($sources);
         return $sources;
     }
 
@@ -224,8 +235,68 @@ class Company extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'title' => ['label' => Craft::t('company-management', 'Title')],
+            'id' => ['label' => Craft::t('company-management', 'ID')],
+            'name' => ['label' => Craft::t('company-management', 'Name')],
+            'shortName' => ['label' => Craft::t('company-management', 'Short')],
+            'address' => ['label' => Craft::t('company-management', 'Address')],
+            'town' => ['label' => Craft::t('company-management', 'Town')],
+            'postcode' => ['label' => Craft::t('company-management', 'Postcode')],
+            'registerNumber' => ['label' => Craft::t('company-management', 'Company No.')],
+            'payeReference' => ['label' => Craft::t('company-management', 'PAYE No.')],
+            'accountsOfficeReference' => ['label' => Craft::t('company-management', 'Accounts No.')],
+            'taxReference' => ['label' => Craft::t('company-management', 'VAT No.')],
+            'website' => ['label' => Craft::t('company-management', 'Url')],
         ];
+    }
+
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        $attributes = [];
+        $attributes[] = 'name';
+        $attributes[] = 'dateCreated';
+        $attributes[] = 'dateUpdated';
+
+        return $attributes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'name' => Craft::t('company-management', 'Name'),
+            'shortName' => Craft::t('company-management', 'Short'),
+            'address' => Craft::t('company-management', 'Address'),
+            'town' => Craft::t('company-management', 'Town'),
+            'postcode' => Craft::t('company-management', 'Postcode'),
+            'registerNumber' => Craft::t('company-management', 'Company No.'),
+            'payeReference' => Craft::t('company-management', 'PAYE No.'),
+            'accountsOfficeReference' => Craft::t('company-management', 'Accounts No.'),
+            'taxReference' => Craft::t('company-management', 'VAT No.'),
+            'website' => Craft::t('company-management', 'Url'),
+
+        ];
+    }
+
+    private static function _getCompanyIds()
+    {
+
+        $companyIds = [];
+
+        // Fetch all company UIDs
+        $companyInfo = (new Query())
+            ->from('{{%companymanagement_company}}')
+            ->select('*')
+            ->all();
+
+        // Craft:dd( $companyInfo);
+        foreach ($companyInfo as $company) {
+            $companyIds[] = $company['id'];
+        }
+        // Craft:dd( $companyIds);
+
+        return $companyIds;
     }
 
     // Public Methods
@@ -271,7 +342,8 @@ class Company extends Element
      */
     public function getIsEditable(): bool
     {
-        return \Craft::$app->user->checkPermission('edit-companies:'.$this->getType()->id);
+       // return \Craft::$app->user->checkPermission('edit-companies:'.$this->getType()->id);
+        return true;
     }
 
     /**

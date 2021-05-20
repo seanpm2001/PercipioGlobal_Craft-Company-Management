@@ -180,8 +180,7 @@ class CompanyManagement extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['company-management'] = ['template' => 'company-management'];
-                $event->rules['company-management/companies'] = ['template' => 'company-management/companies'];
+                $event->rules['company-management/companies'] = 'company-management/company/index';
                 $event->rules['company-management/companies/new'] = 'company-management/company/edit';
                 $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'company-management/companies/_edit'];
             }
