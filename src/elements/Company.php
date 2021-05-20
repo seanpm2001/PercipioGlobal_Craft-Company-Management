@@ -10,10 +10,12 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use craft\elements\db\ElementQuery;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
+use DateTime;
 use craft\base\Element;
 use craft\elements\db\ElementQueryInterface;
 
@@ -65,6 +67,7 @@ class Company extends Element
 {
     // Public Properties
     // =========================================================================
+
     public $postDate;
     public $expiryDate;
     public $siteId;
@@ -196,7 +199,7 @@ class Company extends Element
      */
     public static function find(): ElementQueryInterface
     {
-        return new CompanyQuery(get_called_class());
+        return new CompanyQuery(static::class);
     }
 
     /**
@@ -243,7 +246,7 @@ class Company extends Element
 //            ['someAttribute', 'string'],
 //            ['someAttribute', 'default', 'value' => 'Some Default'],
 //        ];
-        return [];
+        return parent::rules();
     }
 
     /**
@@ -344,8 +347,6 @@ class Company extends Element
                 $record->id = $this->id;
             }
 
-            $record->postDate = $this->postDate;
-            $record->expiryDate = $this->expiryDate;
             $record->name = $this->name;
             $record->info = $this->info;
             $record->shortName = $this->shortName;
@@ -357,15 +358,12 @@ class Company extends Element
             $record->accountsOfficeReference = $this->accountsOfficeReference;
             $record->taxReference = $this->taxReference;
             $record->website = $this->website;
-            $record->logo = $this->logo;
-            $record->contactName = $this->contactName;
-            $record->contactEmail = $this->contactEmail;
-            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-            $record->contactPhone = $this->contactPhone;
-            $record->contactBirthday = $this->contactBirthday;
-            $record->dateUpdated = $this->dateUpdated;
-            $record->dateCreated = $this->dateCreated;
-            $record->siteId = $this->siteId;
+//            $record->logo = $this->logo;
+//            $record->contactName = $this->contactName;
+//            $record->contactEmail = $this->contactEmail;
+//            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+//            $record->contactPhone = $this->contactPhone;
+//            $record->contactBirthday = $this->contactBirthday;
 
             $record->save(false);
 

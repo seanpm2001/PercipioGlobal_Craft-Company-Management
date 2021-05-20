@@ -133,7 +133,7 @@ class Install extends Migration
             );
         }
 
-        $this->execute('alter table {{%companymanagement_company}} modify column id int AUTO_INCREMENT');
+//        $this->execute('alter table {{%companymanagement_company}} modify column id int AUTO_INCREMENT');
 
         return $tablesCreated;
     }
@@ -173,6 +173,14 @@ class Install extends Migration
             '{{%sites}}',
             'id',
             'CASCADE',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_company}}', 'id'),
+            '{{%companymanagement_company}}',
+            'id',
+            '{{%elements}}',
+            'id',
             'CASCADE'
         );
     }

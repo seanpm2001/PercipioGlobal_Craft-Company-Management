@@ -36,8 +36,7 @@ use craft\db\ActiveRecord;
 /**
  * Product record.
  *
- * @property DateTime postDate
- * @property DateTime expiryDate
+ * @property int id
  * @property string name
  * @property string info
  * @property string shortName
@@ -55,34 +54,35 @@ use craft\db\ActiveRecord;
  * @property string contactRegistrationNumber
  * @property string contactPhone
  * @property string contactBirthday
- * @property int id
- * @property int siteId
+ *
+ *
+ * @package Formie
  *
  */
 class Company extends ActiveRecord
 {
-
-    public $postDate;
-    public $expiryDate;
-    public $name;
-    public $info;
-    public $shortName;
-    public $address;
-    public $town;
-    public $postcode;
-    public $registerNumber;
-    public $payeReference;
-    public $accountsOfficeReference;
-    public $taxReference;
-    public $website;
-    public $logo;
-    public $contactName;
-    public $contactEmail;
-    public $contactRegistrationNumber;
-    public $contactPhone;
-    public $contactBirthday;
-    public $id;
-    public $siteId;
+//
+//    public $postDate;
+//    public $expiryDate;
+//    public $name;
+//    public $info;
+//    public $shortName;
+//    public $address;
+//    public $town;
+//    public $postcode;
+//    public $registerNumber;
+//    public $payeReference;
+//    public $accountsOfficeReference;
+//    public $taxReference;
+//    public $website;
+//    public $logo;
+//    public $contactName;
+//    public $contactEmail;
+//    public $contactRegistrationNumber;
+//    public $contactPhone;
+//    public $contactBirthday;
+//    public $id;
+//    public $siteId;
 
 
     // Public Static Methods

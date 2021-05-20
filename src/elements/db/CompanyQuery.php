@@ -91,6 +91,7 @@ class CompanyQuery extends ElementQuery
 
     protected function beforePrepare(): bool
     {
+
         // join in the products table
         $this->joinElementTable('companymanagement_company');
 

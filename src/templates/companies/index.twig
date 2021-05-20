@@ -1,4 +1,5 @@
 {%- extends '_layouts/elementindex' -%}
+
 {%- set title = "Companies"|t('company-management') -%}
 {%- set selectedSubnavItem = 'companies' -%}
 
@@ -7,8 +8,4 @@
 {% block actionButton %}
     <a href="{{ url('company-management/companies/new') }}" class="btn submit add icon">Create Company</a>
     {{ parent() }}
-{% endblock %}
-
-{% block content %}
-{#    {{ dump(craft.companies()) }}#}
 {% endblock %}

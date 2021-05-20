@@ -39,7 +39,8 @@ class Company
             $company = static::companyFromPost($request);
         }
 
-        $company->title = $request->getBodyParam('title');
+        $company->title =  $request->getBodyParam('name');
+        $company->name = $request->getBodyParam('name');
         $company->info = $request->getBodyParam('info');
         $company->shortName = $request->getBodyParam('shortName');
         $company->address = $request->getBodyParam('address');
