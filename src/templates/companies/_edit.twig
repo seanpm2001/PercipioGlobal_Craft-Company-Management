@@ -15,6 +15,7 @@
     company: {label: 'Company'|t('company-management'), url: '#company'},
     contact: {label: 'Contact'|t('company-management'), url: '#contact'},
 } -%}
+{%- set selectedTab = 'company' -%}
 
 {% block header %}
     <div class="flex flex-nowrap">
@@ -42,7 +43,7 @@
     <div id="company">
         {{- companyFields.company(company) -}}
     </div>
-    <div id="contact">
+    <div id="contact" class="hidden">
         {{- companyFields.contact(company) -}}
     </div>
 
