@@ -14,7 +14,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Short Name"|t('company-management'),
         instructions: "What's the name of the company"|t('company-management'),
         id: 'shortName',
@@ -32,8 +31,9 @@
         errors: company ? company.getErrors('info')|merge(company.getErrors('uri')) : null
     }) -}}
 
+    <hr/>
+
     {{ forms.textField({
-        first: true,
         label: "Address"|t('company-management'),
         id: 'address',
         name: 'address',
@@ -42,7 +42,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Town"|t('company-management'),
         id: 'town',
         name: 'town',
@@ -51,7 +50,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Postcode"|t('company-management'),
         id: 'postcode',
         name: 'postcode',
@@ -59,8 +57,9 @@
         errors: company ? company.getErrors('postcode') : null,
     }) }}
 
+    <hr/>
+
     {{ forms.textField({
-        first: true,
         label: "Register Number"|t('company-management'),
         required: true,
         id: 'registerNumber',
@@ -70,7 +69,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "PAYE Reference"|t('company-management'),
         id: 'payeReference',
         name: 'payeReference',
@@ -79,7 +77,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Accounts Office Reference"|t('company-management'),
         id: 'accountsOfficeReference',
         name: 'accountsOfficeReference',
@@ -88,7 +85,6 @@
     }) }}
 
     {{ forms.textField({
-        first: true,
         label: "Tax Reference"|t('company-management'),
         id: 'taxReference',
         name: 'taxReference',
@@ -96,8 +92,9 @@
         errors: company ? company.getErrors('taxReference') : null,
     }) }}
 
+    <hr/>
+
     {{ forms.textField({
-        first: true,
         label: "Website"|t('company-management'),
         id: 'website',
         name: 'website',
@@ -105,12 +102,17 @@
         errors: company ? company.getErrors('website') : null,
     }) }}
 
-    {{ forms.textField({
-        first: true,
+    {{ forms.elementSelectField({
         label: "Logo"|t('company-management'),
         id: 'logo',
         name: 'logo',
+        elementType: 'craft\\elements\\Asset',
+        limit: 1,
+        criteria: {
+            'kind': ['image'],
+        },
         value: company ? company.logo : '',
+        instructions: "Upload or select a logo"|t('company-management'),
         errors: company ? company.getErrors('logo') : null,
     }) }}
 {% endmacro %}

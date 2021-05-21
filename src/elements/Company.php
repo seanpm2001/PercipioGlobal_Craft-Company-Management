@@ -331,6 +331,18 @@ class Company extends Element
                 $validator->addError($this, $attribute, $error);
             }
         }];
+        $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
+            $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+
+            if (!preg_match($preg, $this->$attribute)) {
+                $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                    'attribute' => $attribute,
+                    'value' => $this->$attribute,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
 
         return $rules;
     }
