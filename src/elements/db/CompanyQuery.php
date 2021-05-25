@@ -104,6 +104,36 @@ class CompanyQuery extends ElementQuery
         return $this;
     }
 
+    public function contactName($value)
+    {
+        $this->contactName = $value;
+        return $this;
+    }
+
+    public function contactEmail($value)
+    {
+        $this->contactEmail = $value;
+        return $this;
+    }
+
+    public function contactRegistrationNumber($value)
+    {
+        $this->contactRegistrationNumber = $value;
+        return $this;
+    }
+
+    public function contactPhone($value)
+    {
+        $this->contactPhone = $value;
+        return $this;
+    }
+
+    public function contactBirthday($value)
+    {
+        $this->contactBirthday = $value;
+        return $this;
+    }
+
     protected function beforePrepare(): bool
     {
 
@@ -124,7 +154,13 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.accountsOfficeReference',
             'companymanagement_company.taxReference',
             'companymanagement_company.website',
+            'companymanagement_company.logo',
             'companymanagement_company.uid',
+            'companymanagement_company.contactName',
+            'companymanagement_company.contactEmail',
+            'companymanagement_company.contactRegistrationNumber',
+            'companymanagement_company.contactPhone',
+            'companymanagement_company.contactBirthday',
         ]);
 
 

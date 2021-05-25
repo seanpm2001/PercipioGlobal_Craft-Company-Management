@@ -102,12 +102,14 @@
         errors: company ? company.getErrors('website') : null,
     }) }}
 
+    {%- set asset = company ? company.logo ? [craft.assets.id(company.logo).one()] : [] : [] -%}
     {{ forms.elementSelectField({
         label: "Logo"|t('company-management'),
         id: 'logo',
         name: 'logo',
         elementType: 'craft\\elements\\Asset',
         limit: 1,
+        elements:asset,
         criteria: {
             'kind': ['image'],
         },

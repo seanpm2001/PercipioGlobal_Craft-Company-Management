@@ -123,12 +123,12 @@ class Install extends Migration
                     'accountsOfficeReference' => $this->string()->notNull()->defaultValue(''),
                     'taxReference' => $this->string()->notNull()->defaultValue(''),
                     'website' => $this->string()->notNull()->defaultValue(''),
-                    'logo' => $this->string()->notNull()->defaultValue(''),
+                    'logo' => $this->integer(),
                     'contactName' => $this->string()->notNull()->defaultValue(''),
                     'contactEmail' => $this->string()->notNull()->defaultValue(''),
                     'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
-                    'contactPhone' => $this->string()->notNull()->defaultValue(''),
-                    'contactBirthday' => $this->dateTime()->notNull()->defaultValue($currentDate->format(\DateTime::ATOM)),
+                    'contactPhone' => $this->string(),
+                    'contactBirthday' => $this->dateTime(),
                 ]
             );
         }
@@ -180,6 +180,14 @@ class Install extends Migration
             '{{%companymanagement_company}}',
             'id',
             '{{%elements}}',
+            'id',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_company}}', 'logo'),
+            '{{%companymanagement_company}}',
+            'logo',
+            '{{%assets}}',
             'id',
             'CASCADE'
         );

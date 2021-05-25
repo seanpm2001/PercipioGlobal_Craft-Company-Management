@@ -11,6 +11,7 @@
 namespace percipiolondon\companymanagement\controllers;
 
 use craft\base\Element;
+use craft\elements\Asset;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 
@@ -70,8 +71,6 @@ class CompanyController extends Controller
      */
     public function actionEdit(int $companyId = null, Company $company = null)
     {
-        $variables = [];
-
         $variables = compact('companyId', 'company');
 
         if (empty($variables['company'])) {
