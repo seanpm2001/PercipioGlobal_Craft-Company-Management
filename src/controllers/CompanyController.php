@@ -68,16 +68,30 @@ class CompanyController extends Controller
     /**
      * @return mixed
      */
-    public function actionEdit(Company $company = null)
+    public function actionEdit(int $companyId = null, Company $company = null)
     {
-        $variables = compact('company');
+        $variables = [];
+
+        $variables = compact('companyId', 'company');
+
+        if (empty($variables['company'])) {
+            if (!empty($variables['companyId'])) {
+                $variables['company'] = CompanyManagement::$plugin->company->getCompanyById($variables['companyId'], 1);
+
+                if (!$variables['company']) {
+                    throw new Exception('Missing company data.');
+                }
+            } else {
+                $variables['company'] = new Company();
+            }
+        }
 
         $company = $variables['company'];
 
         if ($company === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new company');
         } else {
-            $variables['title'] = $company->title;
+            $variables['title'] = $company->name;
         }
 
         return $this->renderTemplate('company-management/companies/_edit', $variables);

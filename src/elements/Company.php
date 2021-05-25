@@ -215,8 +215,7 @@ class Company extends Element
    protected static function defineSources(string $context = null): array
     {
         $ids = self::_getCompanyIds();
-        // Craft::dd($ids);
-        $sources = [
+        return [
             [
                 'key' => '*',
                 'label' => 'All Companies',
@@ -224,9 +223,6 @@ class Company extends Element
                 'criteria' => ['id' => $ids],
             ]
         ];
-
-        //   Craft::dd($sources);
-        return $sources;
     }
 
     /**

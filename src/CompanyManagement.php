@@ -44,9 +44,6 @@ use yii\base\Event;
  * @package   CompanyManagement
  * @since     0.1.0
  *
- * @property  BenefitsService $benefits
- * @property  WagesService $wages
- * @property  CompanyService $companies
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -110,6 +107,7 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerAfterInstall();
         $this->_registerVariables();
+        $this->_registerServices();
 
         Craft::info(
             Craft::t(
@@ -182,7 +180,7 @@ class CompanyManagement extends Plugin
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['company-management/companies'] = 'company-management/company/index';
                 $event->rules['company-management/companies/new'] = 'company-management/company/edit';
-                $event->rules['company-management/companies/<companyId:\d+>'] = ['template' => 'company-management/companies/_edit'];
+                $event->rules['company-management/companies/<companyId:\d+>'] = 'company-management/company/edit';
             }
         );
     }
@@ -221,5 +219,12 @@ class CompanyManagement extends Plugin
                 $variable->attachBehavior('companies', CraftVariableBehavior::class);
             }
         );
+    }
+
+    private function _registerServices()
+    {
+        $this->setComponents([
+            'company' => CompanyService::class
+        ]);
     }
 }

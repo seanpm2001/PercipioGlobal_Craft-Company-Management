@@ -18,7 +18,7 @@ class Company
         $companyId = $request->getBodyParam('companyId');
 
         if($companyId) {
-            $company = CompanyManagement::getInstance()->companies->getCompanyById($companyId);
+            $company = CompanyManagement::$plugin->company->getCompanyById($companyId);
 
             if (!$company) {
                 throw new NotFoundHttpException(Craft::t('company-management', 'No company with the ID “{id}”', ['id' => $companyId]));
