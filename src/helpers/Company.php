@@ -18,7 +18,7 @@ class Company
         $companyId = $request->getBodyParam('companyId');
 
         if($companyId) {
-            $company = CompanyManagement::getInstance()->companies->getCompanyById($companyId);
+            $company = CompanyManagement::$plugin->company->getCompanyById($companyId);
 
             if (!$company) {
                 throw new NotFoundHttpException(Craft::t('company-management', 'No company with the ID “{id}”', ['id' => $companyId]));
@@ -52,11 +52,13 @@ class Company
         $company->accountsOfficeReference = $request->getBodyParam('accountsOfficeReference');
         $company->taxReference = $request->getBodyParam('taxReference');
         $company->website = $request->getBodyParam('website');
-        $company->logo = $request->getBodyParam('logo');
         $company->contactName = $request->getBodyParam('contactName');
         $company->contactEmail = $request->getBodyParam('contactEmail');
         $company->contactRegistrationNumber = strtoupper(str_replace(' ', '', $request->getBodyParam('contactRegistrationNumber')));
         $company->contactPhone = $request->getBodyParam('contactPhone');
+
+        $logo = $request->getBodyParam('logo');
+        $company->logo = is_array($logo) ? $logo[0] : null;
 
         $contactBirthday = DateTimeHelper::toDateTime($request->getBodyParam('contactBirthday'));
         $company->contactBirthday = $contactBirthday && $contactBirthday instanceOf \DateTime ? $contactBirthday->format(\DateTime::ATOM) : null;

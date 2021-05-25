@@ -41,11 +41,6 @@
         "developerUrl": "http://percipio.london/",
         "documentationUrl": "https://github.com/percipioglobal/company-management/blob/master/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/percipioglobal/company-management/master/CHANGELOG.md",
-        "components": {
-            "benefits": "percipiolondon\\companymanagement\\services\\Benefits",
-            "wages": "percipiolondon\\companymanagement\\services\\Wages",
-            "company": "percipiolondon\\companymanagement\\services\\Company"
-        },
         "class": "percipiolondon\\companymanagement\\CompanyManagement"
     }
 }
