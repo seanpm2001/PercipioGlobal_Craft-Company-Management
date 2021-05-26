@@ -58,6 +58,16 @@ class Company extends Component
         $layout->setFields($fields);
     }
 
+    public function uninstallCompanyUserFields()
+    {
+        $fieldGroups = Craft::$app->fields->getAllGroups();
+        foreach($fieldGroups as $fieldGroup) {
+            if('Company User Fields' === $fieldGroup->name) {
+                Craft::$app->fields->deleteGroupById($fieldGroup->id);
+            }
+        }
+    }
+
     private function _createFieldGroup()
     {
         // Make a field group

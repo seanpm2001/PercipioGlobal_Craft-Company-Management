@@ -107,9 +107,10 @@ class CompanyManagement extends Plugin
 
         $this->_registerCpRoutes();
         $this->_registerElementTypes();
-        $this->_registerAfterInstall();
         $this->_registerVariables();
         $this->_registerServices();
+        $this->_registerAfterInstall();
+        $this->_registerAfterUninstall();
 
         Craft::info(
             Craft::t(
@@ -199,6 +200,19 @@ class CompanyManagement extends Plugin
     }
 
     private function _registerAfterInstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
+                }
+            }
+        );
+    }
+
+    private function _registerAfterUninstall()
     {
         Event::on(
             Plugins::class,
