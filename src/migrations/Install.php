@@ -10,11 +10,14 @@
 
 namespace percipiolondon\companymanagement\migrations;
 
+use craft\fields\PlainText;
+use craft\models\FieldGroup;
 use percipiolondon\companymanagement\CompanyManagement;
 
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
+use yii\base\BaseObject;
 
 /**
  * Company Management Install Migration
@@ -61,7 +64,6 @@ class Install extends Migration
             $this->addForeignKeys();
             // Refresh the db schema caches
             Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
         }
 
         return true;
@@ -191,15 +193,6 @@ class Install extends Migration
             'id',
             'CASCADE'
         );
-    }
-
-    /**
-     * Populates the DB with the default data.
-     *
-     * @return void
-     */
-    protected function insertDefaultData()
-    {
     }
 
     /**

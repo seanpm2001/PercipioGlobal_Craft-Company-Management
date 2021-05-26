@@ -10,6 +10,7 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\fields\PlainText;
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
@@ -28,6 +29,7 @@ use craft\services\Elements;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 
+use yii\base\BaseObject;
 use yii\base\Event;
 
 /**
@@ -203,7 +205,7 @@ class CompanyManagement extends Plugin
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
-                    // We were just installed
+                    CompanyManagement::$plugin->company->installCompanyUserFields();
                 }
             }
         );
