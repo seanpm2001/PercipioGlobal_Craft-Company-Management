@@ -11,6 +11,8 @@
 namespace percipiolondon\companymanagement\elements;
 
 use craft\elements\db\ElementQuery;
+use craft\elements\User;
+use craft\models\UserGroup;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
@@ -19,6 +21,7 @@ use DateTime;
 use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
+use yii\base\BaseObject;
 use yii\validators\Validator;
 
 /**
@@ -94,6 +97,7 @@ class Company extends Element
     public $contactRegistrationNumber;
     public $contactPhone;
     public $contactBirthday;
+    public $userId;
 
     // Static Methods
     // =========================================================================
@@ -431,38 +435,7 @@ class Company extends Element
     public function afterSave(bool $isNew)
     {
         if (!$this->propagating) {
-            if (!$isNew) {
-                $record = CompanyRecord::findOne($this->id);
-
-                if (!$record) {
-                    throw new Exception('Invalid company ID: ' . $this->id);
-                }
-            } else {
-                $record = new CompanyRecord();
-                $record->id = $this->id;
-            }
-
-            $record->name = $this->name;
-            $record->info = $this->info;
-            $record->shortName = $this->shortName;
-            $record->address = $this->address;
-            $record->town = $this->town;
-            $record->postcode = $this->postcode;
-            $record->registerNumber = $this->registerNumber;
-            $record->payeReference = $this->payeReference;
-            $record->accountsOfficeReference = $this->accountsOfficeReference;
-            $record->taxReference = $this->taxReference;
-            $record->website = $this->website;
-            $record->logo = $this->logo;
-            $record->contactName = $this->contactName;
-            $record->contactEmail = $this->contactEmail;
-            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-            $record->contactPhone = $this->contactPhone;
-            $record->contactBirthday = $this->contactBirthday;
-
-            $record->save(false);
-
-            $this->id = $record->id;
+            $this->_saveRecord($isNew);
         }
 
         return parent::afterSave($isNew);
@@ -508,5 +481,95 @@ class Company extends Element
      */
     public function afterMoveInStructure(int $structureId)
     {
+    }
+
+    private function _saveRecord($isNew)
+    {
+        if (!$isNew) {
+            $record = CompanyRecord::findOne($this->id);
+            $record->userId = $this->userId;
+
+            if (!$record) {
+                throw new Exception('Invalid company ID: ' . $this->id);
+            }
+        } else {
+            $record = new CompanyRecord();
+            $record->id = $this->id;
+        }
+
+        $record->name = $this->name;
+        $record->info = $this->info;
+        $record->shortName = $this->shortName;
+        $record->address = $this->address;
+        $record->town = $this->town;
+        $record->postcode = $this->postcode;
+        $record->registerNumber = $this->registerNumber;
+        $record->payeReference = $this->payeReference;
+        $record->accountsOfficeReference = $this->accountsOfficeReference;
+        $record->taxReference = $this->taxReference;
+        $record->website = $this->website;
+        $record->logo = $this->logo;
+        $record->contactName = $this->contactName;
+        $record->contactEmail = $this->contactEmail;
+        $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+        $record->contactPhone = $this->contactPhone;
+        $record->contactBirthday = $this->contactBirthday;
+        $record->userId = $this->_saveUser();
+
+        $record->save(false);
+
+        $this->id = $record->id;
+    }
+
+    private function _saveUser()
+    {
+
+        // check if user exists
+        $user = User::find()
+//            ->cm_nationalInsuranceNumber($this->contactRegistrationNumber)
+            ->email($this->contactEmail)
+            ->anyStatus()
+            ->one();
+
+        if(!$user) {
+
+            // Make sure this is Craft Pro, since that's required for having multiple user accounts
+            Craft::$app->requireEdition(Craft::Pro);
+
+            $handle = urlencode($this->name);
+
+            $group = Craft::$app->getUserGroups()->getGroupByHandle($handle);
+
+            if(null === $group)
+            {
+                // Create a new user group
+                $userGroup = new UserGroup();
+                $userGroup->name = $this->name;
+                $userGroup->handle = $handle;
+                Craft::$app->getUserGroups()->saveGroup($userGroup, false);
+
+                $group = $userGroup;
+            }
+
+            // Create a new user
+            $user = new User();
+            $user->username = $this->contactEmail;
+            $user->email = $this->contactEmail;
+            $user->setFieldValue('cm_nationalInsuranceNumber', $this->contactRegistrationNumber);
+            $user->setFieldValue('cm_birthday', $this->contactBirthday);
+            $user->setFieldValue('cm_phone', $this->contactPhone);
+
+            $success = Craft::$app->getElements()->saveElement($user, true);
+
+            if($success){
+                Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
+                return $user->id;
+            }
+
+            return null;
+        }
+
+        return $user->id;
+
     }
 }

@@ -43,8 +43,13 @@
     <div id="company">
         {{- companyFields.company(company) -}}
     </div>
+
     <div id="contact" class="hidden">
-        {{- companyFields.contact(company) -}}
+        {%- if company and company.id -%}
+            {{- companyFields.user(company) -}}
+        {%- else -%}
+            {{- companyFields.contact(company) -}}
+        {%- endif -%}
     </div>
 
 {% endblock %}

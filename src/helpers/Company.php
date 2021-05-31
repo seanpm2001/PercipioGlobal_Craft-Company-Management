@@ -56,6 +56,7 @@ class Company
         $company->contactEmail = $request->getBodyParam('contactEmail');
         $company->contactRegistrationNumber = strtoupper(str_replace(' ', '', $request->getBodyParam('contactRegistrationNumber')));
         $company->contactPhone = $request->getBodyParam('contactPhone');
+        $company->userId = $request->getBodyParam('user');
 
         $logo = $request->getBodyParam('logo');
         $company->logo = is_array($logo) ? $logo[0] : null;

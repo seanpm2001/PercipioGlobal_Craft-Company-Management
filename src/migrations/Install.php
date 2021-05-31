@@ -131,6 +131,7 @@ class Install extends Migration
                     'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
                     'contactPhone' => $this->string(),
                     'contactBirthday' => $this->dateTime(),
+                    'userId' => $this->integer()->notNull(),
                 ]
             );
         }
@@ -190,6 +191,14 @@ class Install extends Migration
             '{{%companymanagement_company}}',
             'logo',
             '{{%assets}}',
+            'id',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_company}}', 'userId'),
+            '{{%companymanagement_company}}',
+            'userId',
+            '{{%users}}',
             'id',
             'CASCADE'
         );

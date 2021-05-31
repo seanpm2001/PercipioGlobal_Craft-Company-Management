@@ -54,6 +54,7 @@ use craft\db\ActiveRecord;
  * @property string contactRegistrationNumber
  * @property string contactPhone
  * @property string contactBirthday
+ * @property int userId
  *
  *
  * @package Formie
@@ -61,28 +62,6 @@ use craft\db\ActiveRecord;
  */
 class Company extends ActiveRecord
 {
-//
-//    public $postDate;
-//    public $expiryDate;
-//    public $name;
-//    public $info;
-//    public $shortName;
-//    public $address;
-//    public $town;
-//    public $postcode;
-//    public $registerNumber;
-//    public $payeReference;
-//    public $accountsOfficeReference;
-//    public $taxReference;
-//    public $website;
-//    public $logo;
-//    public $contactName;
-//    public $contactEmail;
-//    public $contactRegistrationNumber;
-//    public $contactPhone;
-//    public $contactBirthday;
-//    public $id;
-//    public $siteId;
 
 
     // Public Static Methods

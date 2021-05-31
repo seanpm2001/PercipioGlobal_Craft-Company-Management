@@ -161,6 +161,7 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.contactRegistrationNumber',
             'companymanagement_company.contactPhone',
             'companymanagement_company.contactBirthday',
+            'companymanagement_company.userId',
         ]);
 
 

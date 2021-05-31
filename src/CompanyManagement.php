@@ -111,6 +111,7 @@ class CompanyManagement extends Plugin
         $this->_registerServices();
         $this->_registerAfterInstall();
         $this->_registerAfterUninstall();
+        $this->_registerTemplateHooks();
 
         Craft::info(
             Craft::t(
@@ -242,5 +243,11 @@ class CompanyManagement extends Plugin
         $this->setComponents([
             'company' => CompanyService::class
         ]);
+    }
+
+    private function _registerTemplateHooks()
+    {
+        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->company, 'addEditUserCustomFieldTab']);
+        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->company, 'addEditUserCustomFieldContent']);
     }
 }

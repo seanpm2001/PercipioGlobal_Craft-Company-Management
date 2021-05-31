@@ -68,6 +68,23 @@ class Company extends Component
         }
     }
 
+    public function addEditUserCustomFieldTab(array &$context)
+    {
+        $context['tabs']['companyManagement'] = [
+            'label' => Craft::t('company-management', 'Company Management'),
+            'url' => '#companyManagement'
+        ];
+    }
+
+    public function addEditUserCustomFieldContent()
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        return Craft::$app->getView()->renderTemplate('company-management/_includes/_editUserTab', [
+            'currentUser' => $currentUser,
+//            'addressRedirect' => $context['user']->getCpEditUrl() . '#customerInfo',
+        ]);
+    }
+
     private function _createFieldGroup()
     {
         // Make a field group
@@ -100,19 +117,6 @@ class Company extends Component
         $fieldsService = Craft::$app->getFields();
 
         // Create custom fields added to the newly created field group
-        if(!$fieldsService->getFieldByHandle('cm_companies')) {
-
-            // Companies field for arrays
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => null,
-                'name' => "Companies",
-                'handle' => "cm_companies",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
         if(!$fieldsService->getFieldByHandle('cm_employeeStartDate')) {
 
             //Employee start date
@@ -165,14 +169,14 @@ class Company extends Component
             $fieldsService->saveField($field);
         }
 
-        if(!$fieldsService->getFieldByHandle('cm_nationalInsuranceNumber')) {
+        if(!$fieldsService->getFieldByHandle('cm_grossIncome')) {
 
             //Gross income
             $field = $fieldsService->createField([
                 'type' => Number::class,
                 'uid' => null,
                 'name' => "Gross Income",
-                'handle' => "cm_nationalInsuranceNumber",
+                'handle' => "cm_grossIncome",
                 'groupId' => $companyFieldGroup->id,
             ]);
             $fieldsService->saveField($field);
@@ -186,6 +190,19 @@ class Company extends Component
                 'uid' => null,
                 'name' => "Documents",
                 'handle' => "cm_documents",
+                'groupId' => $companyFieldGroup->id,
+            ]);
+            $fieldsService->saveField($field);
+        }
+
+        if(!$fieldsService->getFieldByHandle('cm_phone')) {
+
+            //National Insurance Number
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => null,
+                'name' => "Telephone Number",
+                'handle' => "cm_phone",
                 'groupId' => $companyFieldGroup->id,
             ]);
             $fieldsService->saveField($field);

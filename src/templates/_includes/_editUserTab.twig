@@ -1,0 +1,69 @@
+{%- import "_includes/forms" as forms -%}
+
+<div id="companyManagement" class="hidden">
+    {{ forms.textField({
+        first: true,
+        label: "National Insurance Number"|t('company-management'),
+        id: 'cm_nationalInsuranceNumber',
+        name: 'cm_nationalInsuranceNumber',
+        required: true,
+        value: currentUser ? currentUser.cm_nationalInsuranceNumber : '',
+        errors: currentUser ? currentUser.getErrors('cm_nationalInsuranceNumber') : null,
+    }) }}
+
+    {{ forms.dateField({
+        label: "Employee Start Date"|t('company-management'),
+        id: 'cm_employeeStartDate',
+        name: 'cm_employeeStartDate',
+        value: currentUser ? currentUser.cm_employeeStartDate : '',
+        errors: currentUser ? currentUser.getErrors('cm_employeeStartDate') : null,
+    }) }}
+
+    {{ forms.dateField({
+        label: "Employee End Date"|t('company-management'),
+        id: 'cm_employeeEndDate',
+        name: 'cm_employeeEndDate',
+        value: currentUser ? currentUser.cm_employeeEndDate : '',
+        errors: currentUser ? currentUser.getErrors('cm_employeeEndDate') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Phone"|t('company-management'),
+        id: 'cm_phone',
+        name: 'cm_phone',
+        value: currentUser ? currentUser.cm_phone : '',
+        errors: currentUser ? currentUser.getErrors('cm_phone') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        type: 'number',
+        label: "Gross Income"|t('company-management'),
+        id: 'cm_grossIncome',
+        name: 'cm_grossIncome',
+        value: currentUser ? currentUser.cm_grossIncome : '',
+        errors: currentUser ? currentUser.getErrors('cm_grossIncome') : null,
+    }) }}
+
+    {{ forms.dateField({
+        first: true,
+        label: "Birthday"|t('company-management'),
+        id: 'cm_birthday',
+        name: 'cm_birthday',
+        value: currentUser ? currentUser.cm_birthday : '',
+        errors: currentUser ? currentUser.getErrors('cm_birthday') : null,
+    }) }}
+
+    {%- set assets = currentUser ? currentUser.cm_documents ? [craft.assets.id(currentUser.mc_documents).all()] : [] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Documents"|t('company-management'),
+        id: 'cm_documents',
+        name: 'cm_documents',
+        elementType: 'craft\\elements\\Asset',
+        elements:assets,
+        value: currentUser ? currentUser.cm_documents : '',
+        instructions: "Upload or select documents"|t('company-management'),
+        errors: currentUser ? currentUser.getErrors('cm_documents') : null,
+    }) }}
+</div>

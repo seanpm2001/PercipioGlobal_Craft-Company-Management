@@ -170,3 +170,20 @@
         errors: company ? company.getErrors('contactBirthday') : null,
     }) }}
 {% endmacro %}
+
+
+{% macro user(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    {%- set user = company ? company.userId ? [craft.users.id(company.userId).one()] : [] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Contact"|t('company-management'),
+        id: 'userId',
+        name: 'User',
+        elementType: 'craft\\elements\\User',
+        limit: 1,
+        elements:user,
+        value: company ? company.userId : '',
+        errors: company ? company.getErrors('userId') : null,
+    }) }}
+{% endmacro %}
