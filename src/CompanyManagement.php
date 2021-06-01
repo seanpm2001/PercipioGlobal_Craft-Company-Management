@@ -20,6 +20,7 @@ use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
+use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
 use percipiolondon\companymanagement\models\Settings;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
 
@@ -112,8 +113,8 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerVariables();
         $this->_registerServices();
-        $this->_registerAfterInstall();
-        $this->_registerAfterUninstall();
+//        $this->_registerAfterInstall();
+//        $this->_registerAfterUninstall();
         $this->_registerTemplateHooks();
 
         Craft::info(
@@ -203,31 +204,31 @@ class CompanyManagement extends Plugin
         );
     }
 
-    private function _registerAfterInstall()
-    {
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
-                }
-            }
-        );
-    }
-
-    private function _registerAfterUninstall()
-    {
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    CompanyManagement::$plugin->company->installCompanyUserFields();
-                }
-            }
-        );
-    }
+//    private function _registerAfterInstall()
+//    {
+//        Event::on(
+//            Plugins::class,
+//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+//            function (PluginEvent $event) {
+//                if ($event->plugin === $this) {
+//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
+//                }
+//            }
+//        );
+//    }
+//
+//    private function _registerAfterUninstall()
+//    {
+//        Event::on(
+//            Plugins::class,
+//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+//            function (PluginEvent $event) {
+//                if ($event->plugin === $this) {
+//                    CompanyManagement::$plugin->company->installCompanyUserFields();
+//                }
+//            }
+//        );
+//    }
 
     private function _registerVariables()
     {
@@ -244,7 +245,8 @@ class CompanyManagement extends Plugin
     private function _registerServices()
     {
         $this->setComponents([
-            'company' => CompanyService::class
+            'company' => CompanyService::class,
+            'companyUser' => CompanyUserService::class,
         ]);
     }
 

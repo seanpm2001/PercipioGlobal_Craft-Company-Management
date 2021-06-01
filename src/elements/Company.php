@@ -13,6 +13,7 @@ namespace percipiolondon\companymanagement\elements;
 use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
@@ -523,13 +524,20 @@ class Company extends Element
 
     private function _saveUser()
     {
+        $companyUser = CompanyManagement::$plugin->companyUser->findCompanyUser($this->contactRegistrationNumber);
+        $user = null;
 
-        // check if user exists
-        $user = User::find()
+        if($companyUser){
+            $userId = $companyUser->userId;
+
+            // check if user exists
+            $user = User::find()
 //            ->cmNationalInsuranceNumber($this->contactRegistrationNumber)
-            ->email($this->contactEmail)
-            ->anyStatus()
-            ->one();
+//            ->email($this->contactEmail)
+                ->id($userId)
+                ->anyStatus()
+                ->one();
+        }
 
         if(!$user) {
 
@@ -555,11 +563,12 @@ class Company extends Element
             $user = new User();
             $user->username = $this->contactEmail;
             $user->email = $this->contactEmail;
-            $user->setFieldValue('cmNationalInsuranceNumber', $this->contactRegistrationNumber);
-            $user->setFieldValue('cmBirthday', $this->contactBirthday);
-            $user->setFieldValue('cmPhone', $this->contactPhone);
 
             $success = Craft::$app->elements->saveElement($user, true);
+
+            if($success) {
+                $success = CompanyManagement::$plugin->companyUser->saveCompanyUser($this,$user);
+            }
 
             if($success){
                 Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);

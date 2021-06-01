@@ -47,7 +47,7 @@ class Wages extends Component
     {
         $result = 'something';
         // Check our Plugin's settings for `someAttribute`
-        if (CompanyManagement::$plugin->getSettings()->someAttribute) {
+        if () {
         }
 
         return $result;

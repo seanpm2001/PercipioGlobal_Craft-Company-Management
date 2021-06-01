@@ -44,29 +44,29 @@ class Company extends Component
         return Craft::$app->getElements()->getElementById($id, \percipiolondon\companymanagement\elements\Company::class);
     }
 
-    public function installCompanyUserFields()
-    {
-        // Create field group
-        $companyFieldGroup = $this->_createFieldGroup();
+//    public function installCompanyUserFields()
+//    {
+//        // Create field group
+//        $companyFieldGroup = $this->_createFieldGroup();
+//
+//        // Create fields
+//        $this->_createFields($companyFieldGroup);
+//
+//        // Add fields to the user model
+//        $fields = $companyFieldGroup->getFields();
+//        $layout = Craft::$app->fields->getLayoutByType('craft/elements/User');
+//        $layout->setFields($fields);
+//    }
 
-        // Create fields
-        $this->_createFields($companyFieldGroup);
-
-        // Add fields to the user model
-        $fields = $companyFieldGroup->getFields();
-        $layout = Craft::$app->fields->getLayoutByType('craft/elements/User');
-        $layout->setFields($fields);
-    }
-
-    public function uninstallCompanyUserFields()
-    {
-        $fieldGroups = Craft::$app->fields->getAllGroups();
-        foreach($fieldGroups as $fieldGroup) {
-            if('Company User Fields' === $fieldGroup->name) {
-                Craft::$app->fields->deleteGroupById($fieldGroup->id);
-            }
-        }
-    }
+//    public function uninstallCompanyUserFields()
+//    {
+//        $fieldGroups = Craft::$app->fields->getAllGroups();
+//        foreach($fieldGroups as $fieldGroup) {
+//            if('Company User Fields' === $fieldGroup->name) {
+//                Craft::$app->fields->deleteGroupById($fieldGroup->id);
+//            }
+//        }
+//    }
 
     public function addEditUserCustomFieldTab(array &$context)
     {
@@ -83,128 +83,128 @@ class Company extends Component
         ]);
     }
 
-    private function _createFieldGroup()
-    {
-        // Make a field group
-        $fieldGroups = Craft::$app->fields->getAllGroups();
-        $companyFieldGroup = null;
-        foreach($fieldGroups as $fieldGroup) {
-            if('Company User Fields' === $fieldGroup->name) {
-                $companyFieldGroup = $fieldGroup;
-            }
-        }
+//    private function _createFieldGroup()
+//    {
+//        // Make a field group
+//        $fieldGroups = Craft::$app->fields->getAllGroups();
+//        $companyFieldGroup = null;
+//        foreach($fieldGroups as $fieldGroup) {
+//            if('Company User Fields' === $fieldGroup->name) {
+//                $companyFieldGroup = $fieldGroup;
+//            }
+//        }
+//
+//        if(null === $companyFieldGroup) {
+//            $groupModel = new FieldGroup();
+//            $groupModel->name = 'Company User Fields';
+//            Craft::$app->fields->saveGroup($groupModel);
+//            $fieldGroups = Craft::$app->fields->getAllGroups();
+//
+//            foreach($fieldGroups as $fieldGroup) {
+//                if('Company User Fields' === $fieldGroup->name) {
+//                    $companyFieldGroup = $fieldGroup;
+//                }
+//            }
+//        }
+//
+//        return $companyFieldGroup;
+//    }
 
-        if(null === $companyFieldGroup) {
-            $groupModel = new FieldGroup();
-            $groupModel->name = 'Company User Fields';
-            Craft::$app->fields->saveGroup($groupModel);
-            $fieldGroups = Craft::$app->fields->getAllGroups();
-
-            foreach($fieldGroups as $fieldGroup) {
-                if('Company User Fields' === $fieldGroup->name) {
-                    $companyFieldGroup = $fieldGroup;
-                }
-            }
-        }
-
-        return $companyFieldGroup;
-    }
-
-    private function _createFields($companyFieldGroup)
-    {
-        $fieldsService = Craft::$app->getFields();
-
-        // Create custom fields added to the newly created field group
-        if(!$fieldsService->getFieldByHandle('cmEmployeeStartDate')) {
-
-            //Employee start date
-            $field = $fieldsService->createField([
-                'type' => Date::class,
-                'uid' => null,
-                'name' => "Employee Start Date",
-                'handle' => "cmEmployeeStartDate",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmEmployeeEndDate')) {
-
-            //Employee end date
-            $field = $fieldsService->createField([
-                'type' => Date::class,
-                'uid' => null,
-                'name' => "Employee End Date",
-                'handle' => "cmEmployeeEndDate",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmBirthday')) {
-
-            //Birthday
-            $field = $fieldsService->createField([
-                'type' => Date::class,
-                'uid' => null,
-                'name' => "Birthday",
-                'handle' => "cmBirthday",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmNationalInsuranceNumber')) {
-
-            //National Insurance Number
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => null,
-                'name' => "National Insurance Number",
-                'handle' => "cmNationalInsuranceNumber",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmGrossIncome')) {
-
-            //Gross income
-            $field = $fieldsService->createField([
-                'type' => Number::class,
-                'uid' => null,
-                'name' => "Gross Income",
-                'handle' => "cmGrossIncome",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmDocuments')) {
-
-            //Documents
-            $field = $fieldsService->createField([
-                'type' => Assets::class,
-                'uid' => null,
-                'name' => "Documents",
-                'handle' => "cmDocuments",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-
-        if(!$fieldsService->getFieldByHandle('cmPhone')) {
-
-            //National Insurance Number
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => null,
-                'name' => "Telephone Number",
-                'handle' => "cmPhone",
-                'groupId' => $companyFieldGroup->id,
-            ]);
-            $fieldsService->saveField($field);
-        }
-    }
+//    private function _createFields($companyFieldGroup)
+//    {
+//        $fieldsService = Craft::$app->getFields();
+//
+//        // Create custom fields added to the newly created field group
+//        if(!$fieldsService->getFieldByHandle('cmEmployeeStartDate')) {
+//
+//            //Employee start date
+//            $field = $fieldsService->createField([
+//                'type' => Date::class,
+//                'uid' => null,
+//                'name' => "Employee Start Date",
+//                'handle' => "cmEmployeeStartDate",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmEmployeeEndDate')) {
+//
+//            //Employee end date
+//            $field = $fieldsService->createField([
+//                'type' => Date::class,
+//                'uid' => null,
+//                'name' => "Employee End Date",
+//                'handle' => "cmEmployeeEndDate",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmBirthday')) {
+//
+//            //Birthday
+//            $field = $fieldsService->createField([
+//                'type' => Date::class,
+//                'uid' => null,
+//                'name' => "Birthday",
+//                'handle' => "cmBirthday",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmNationalInsuranceNumber')) {
+//
+//            //National Insurance Number
+//            $field = $fieldsService->createField([
+//                'type' => PlainText::class,
+//                'uid' => null,
+//                'name' => "National Insurance Number",
+//                'handle' => "cmNationalInsuranceNumber",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmGrossIncome')) {
+//
+//            //Gross income
+//            $field = $fieldsService->createField([
+//                'type' => Number::class,
+//                'uid' => null,
+//                'name' => "Gross Income",
+//                'handle' => "cmGrossIncome",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmDocuments')) {
+//
+//            //Documents
+//            $field = $fieldsService->createField([
+//                'type' => Assets::class,
+//                'uid' => null,
+//                'name' => "Documents",
+//                'handle' => "cmDocuments",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//
+//        if(!$fieldsService->getFieldByHandle('cmPhone')) {
+//
+//            //National Insurance Number
+//            $field = $fieldsService->createField([
+//                'type' => PlainText::class,
+//                'uid' => null,
+//                'name' => "Telephone Number",
+//                'handle' => "cmPhone",
+//                'groupId' => $companyFieldGroup->id,
+//            ]);
+//            $fieldsService->saveField($field);
+//        }
+//    }
 
 }
