@@ -10,13 +10,16 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\elements\User;
 use craft\events\ElementEvent;
+use craft\events\ModelEvent;
 use craft\fields\PlainText;
 use craft\helpers\ElementHelper;
 use craft\services\Users;
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
+use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
@@ -113,6 +116,7 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerVariables();
         $this->_registerServices();
+        $this->_registerUserSave();
 //        $this->_registerAfterInstall();
 //        $this->_registerAfterUninstall();
         $this->_registerTemplateHooks();
@@ -252,7 +256,25 @@ class CompanyManagement extends Plugin
 
     private function _registerTemplateHooks()
     {
-        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->company, 'addEditUserCustomFieldTab']);
-        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->company, 'addEditUserCustomFieldContent']);
+        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldTab']);
+        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldContent']);
+    }
+
+    private function _registerUserSave()
+    {
+        Event::on(
+            User::class,
+            User::EVENT_BEFORE_SAVE,
+            function (ModelEvent $event) {
+                $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
+
+                $validateCompanyUser = $companyUser->validate();
+
+                $event->sender->addErrors(
+                    $companyUser->getErrors()
+                );
+                $event->isValid = $validateCompanyUser;
+            }
+        );
     }
 }

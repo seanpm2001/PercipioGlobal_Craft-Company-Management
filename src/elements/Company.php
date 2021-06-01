@@ -10,6 +10,7 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use craft\elements\actions\Delete;
 use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
@@ -240,6 +241,22 @@ class Company extends Element
                 'criteria' => ['id' => $ids],
             ]
         ];
+    }
+
+    protected static function defineActions(string $srouce = null): array
+    {
+        $actions = [];
+
+        $elementsService = Craft::$app->getElements();
+
+        // Delete
+        $actions[] = $elementsService->createAction([
+            'type' => Delete::class,
+            'confirmationMessage' => Craft::t('company-management', 'Are you sure you want to delete the selected companies?'),
+            'successMessage' => Craft::t('company-management', 'Companies deleted.'),
+        ]);
+
+        return $actions;
     }
 
     /**
@@ -554,7 +571,7 @@ class Company extends Element
 
     private function _saveUser()
     {
-        $companyUser = CompanyManagement::$plugin->companyUser->findCompanyUser($this->contactRegistrationNumber);
+        $companyUser = CompanyManagement::$plugin->companyUser->getCompanyUserByNin($this->contactRegistrationNumber);
         $user = null;
 
         if($companyUser) {

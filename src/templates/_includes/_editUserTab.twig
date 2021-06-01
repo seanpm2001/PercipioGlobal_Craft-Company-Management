@@ -1,71 +1,63 @@
 {%- import "_includes/forms" as forms -%}
 
+{% set companyUser = companyUser ?? null %}
 {% set user = user ?? null %}
 
 <div id="companyManagement" class="hidden">
     {{ forms.textField({
         first: true,
         label: "National Insurance Number"|t('company-management'),
-        id: 'cmNationalInsuranceNumber',
-        name: 'cmNationalInsuranceNumber',
+        id: 'nationalInsuranceNumber',
+        name: 'nationalInsuranceNumber',
         required: true,
-        value: currentUser ? currentUser.cmNationalInsuranceNumber : '',
-        errors: currentUser ? currentUser.getErrors('cmNationalInsuranceNumber') : null,
+        value: companyUser ? companyUser.nationalInsuranceNumber : '',
+        errors: user ? user.getErrors('nationalInsuranceNumber') : null,
     }) }}
 
     {{ forms.dateField({
         label: "Employee Start Date"|t('company-management'),
-        id: 'cmEmployeeStartDate',
-        name: 'cmEmployeeStartDate',
-        value: currentUser ? currentUser.cmEmployeeStartDate : '',
-        errors: currentUser ? currentUser.getErrors('cmEmployeeStartDate') : null,
+        id: 'employeeStartDate',
+        name: 'employeeStartDate',
+        value: companyUser ? companyUser.employeeStartDate : '',
+        errors: user ? user.getErrors('employeeStartDate') : null,
     }) }}
 
     {{ forms.dateField({
         label: "Employee End Date"|t('company-management'),
-        id: 'cmEmployeeEndDate',
-        name: 'cmEmployeeEndDate',
-        value: currentUser ? currentUser.cmEmployeeEndDate : '',
-        errors: currentUser ? currentUser.getErrors('cmEmployeeEndDate') : null,
-    }) }}
-
-    {{ forms.textField({
-        first: true,
-        label: "Phone"|t('company-management'),
-        id: 'cmPhone',
-        name: 'cmPhone',
-        value: currentUser ? currentUser.cmPhone : '',
-        errors: currentUser ? currentUser.getErrors('cmPhone') : null,
+        id: 'employeeEndDate',
+        name: 'employeeEndDate',
+        value: companyUser ? companyUser.employeeEndDate : '',
+        errors: user ? user.getErrors('employeeEndDate') : null,
     }) }}
 
     {{ forms.textField({
         first: true,
         type: 'number',
         label: "Gross Income"|t('company-management'),
-        id: 'cmGrossIncome',
-        name: 'cmGrossIncome',
-        value: currentUser ? currentUser.cmGrossIncome : '',
-        errors: currentUser ? currentUser.getErrors('cmGrossIncome') : null,
+        id: 'grossIncome',
+        name: 'grossIncome',
+        value: companyUser ? companyUser.grossIncome : '',
+        errors: companyUser ? companyUser.getErrors('grossIncome') : null,
     }) }}
 
     {{ forms.dateField({
         first: true,
         label: "Birthday"|t('company-management'),
-        id: 'cmBirthday',
-        name: 'cmBirthday',
-        value: currentUser ? currentUser.cmBirthday : '',
-        errors: currentUser ? currentUser.getErrors('cmBirthday') : null,
+        id: 'birthday',
+        name: 'birthday',
+        value: companyUser ? companyUser.birthday : '',
+        errors: companyUser ? companyUser.getErrors('birthday') : null,
     }) }}
 
-    {%- set assets = currentUser ? currentUser.cmDocuments ? [craft.assets.id(currentUser.mc_documents).all()] : [] : [] -%}
+    {%- set assets = companyUser ? companyUser.documents ? [craft.assets.id(companyUser.documents).all()] : [] : [] -%}
     {{ forms.elementSelectField({
         label: "Documents"|t('company-management'),
-        id: 'cmDocuments',
-        name: 'cmDocuments',
+        id: 'documents',
+        name: 'documents',
         elementType: 'craft\\elements\\Asset',
         elements:assets,
-        value: currentUser ? currentUser.cmDocuments : '',
+        value: companyUser ? companyUser.documents : '',
         instructions: "Upload or select documents"|t('company-management'),
-        errors: currentUser ? currentUser.getErrors('cmDocuments') : null,
+        errors: companyUser ? companyUser.getErrors('documents') : null,
     }) }}
 </div>

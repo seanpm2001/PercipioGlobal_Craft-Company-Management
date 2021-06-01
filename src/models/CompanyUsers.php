@@ -4,6 +4,7 @@ namespace percipiolondon\companymanagement\models;
 
 use craft\base\Model;
 use yii\validators\Validator;
+use Craft;
 
 class CompanyUsers extends Model
 {
@@ -40,12 +41,19 @@ class CompanyUsers extends Model
      */
     public $grossIncome;
 
+    /**
+     * @var array
+     */
+    public $documents;
+
 
     // Public Methods
     // =========================================================================
     public function rules()
     {
-        $rules = [];
+        $rules = parent::defineRules();
+
+        $rules[] = [['nationalInsuranceNumber'], 'required'];
 
         $rules[] = ['nationalInsuranceNumber', function($attribute, $params, Validator $validator){
 

@@ -79,21 +79,6 @@ class Company extends Component
 //        }
 //    }
 
-    public function addEditUserCustomFieldTab(array &$context)
-    {
-        $context['tabs']['companyManagement'] = [
-            'label' => Craft::t('company-management', 'Company Management'),
-            'url' => '#companyManagement'
-        ];
-    }
-
-    public function addEditUserCustomFieldContent(array &$context)
-    {
-        return Craft::$app->getView()->renderTemplate('company-management/_includes/_editUserTab', [
-            'user' => $context['user'] ?? null,
-        ]);
-    }
-
 //    private function _createFieldGroup()
 //    {
 //        // Make a field group
