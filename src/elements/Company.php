@@ -15,6 +15,7 @@ use craft\elements\User;
 use craft\models\UserGroup;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
+use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -344,6 +345,16 @@ class Company extends Element
                 $validator->addError($this, $attribute, $error);
             }
         }];
+        $rules[] = ['name', function($attribute, $params, Validator $validator){
+            if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0) {
+                $error = Craft::t('company-management', 'The company "{value}" already exists.', [
+                    'attribute' => $attribute,
+                    'value' => $this->$attribute,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
 
         return $rules;
     }
@@ -488,7 +499,6 @@ class Company extends Element
     {
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
-            $record->userId = $this->userId;
 
             if (!$record) {
                 throw new Exception('Invalid company ID: ' . $this->id);
@@ -500,7 +510,7 @@ class Company extends Element
 
         $record->name = $this->name;
         $record->info = $this->info;
-        $record->shortName = $this->shortName;
+        $record->shortName = CompanyHelper::cleanStringForUrl($this->name);
         $record->address = $this->address;
         $record->town = $this->town;
         $record->postcode = $this->postcode;
@@ -527,13 +537,11 @@ class Company extends Element
         $companyUser = CompanyManagement::$plugin->companyUser->findCompanyUser($this->contactRegistrationNumber);
         $user = null;
 
-        if($companyUser){
-            $userId = $companyUser->userId;
+        if($companyUser) {
+            $userId = $companyUser[0];
 
             // check if user exists
             $user = User::find()
-//            ->cmNationalInsuranceNumber($this->contactRegistrationNumber)
-//            ->email($this->contactEmail)
                 ->id($userId)
                 ->anyStatus()
                 ->one();
@@ -544,7 +552,7 @@ class Company extends Element
             // Make sure this is Craft Pro, since that's required for having multiple user accounts
             Craft::$app->requireEdition(Craft::Pro);
 
-            $handle = urlencode($this->name);
+            $handle = CompanyHelper::cleanStringForUrl($this->name);
 
             $group = Craft::$app->getUserGroups()->getGroupByHandle($handle);
 
@@ -557,6 +565,8 @@ class Company extends Element
                 Craft::$app->getUserGroups()->saveGroup($userGroup, false);
 
                 $group = $userGroup;
+            }else{
+                throw new Exception('A user group with: ' . $handle . ' already exists.');
             }
 
             // Create a new user

@@ -13,15 +13,6 @@
         required: true,
     }) }}
 
-    {{ forms.textField({
-        label: "Short Name"|t('company-management'),
-        instructions: "What's the name of the company"|t('company-management'),
-        id: 'shortName',
-        name: 'shortName',
-        value: company ? company.shortName : '',
-        errors: company ? company.getErrors('shortName') : null,
-    }) }}
-
     {{- forms.textareaField({
         label: "Info"|t('company-management'),
         instructions: "Give a little info about the company"|t('company-management'),

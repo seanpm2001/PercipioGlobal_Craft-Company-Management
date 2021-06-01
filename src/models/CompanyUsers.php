@@ -2,6 +2,7 @@
 
 namespace percipiolondon\companymanagement\models;
 
+use craft\base\Model;
 use yii\validators\Validator;
 
 class CompanyUsers extends Model

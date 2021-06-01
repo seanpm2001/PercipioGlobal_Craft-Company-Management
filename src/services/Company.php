@@ -10,10 +10,12 @@
 
 namespace percipiolondon\companymanagement\services;
 
+use craft\db\Query;
 use craft\fields\Assets;
 use craft\fields\Date;
 use craft\fields\Number;
 use craft\fields\PlainText;
+use craft\helpers\Db;
 use craft\models\FieldGroup;
 use percipiolondon\companymanagement\CompanyManagement;
 
@@ -42,6 +44,15 @@ class Company extends Component
     public function getCompanyById(int $id)
     {
         return Craft::$app->getElements()->getElementById($id, \percipiolondon\companymanagement\elements\Company::class);
+    }
+
+    public function getCompanyByName(string $name)
+    {
+        return (new Query())
+            ->select(['name'])
+            ->from(['{{%companymanagement_company}}'])
+            ->where(Db::parseParam('name', $name))
+            ->column();
     }
 
 //    public function installCompanyUserFields()

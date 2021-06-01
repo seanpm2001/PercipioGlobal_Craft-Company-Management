@@ -66,4 +66,12 @@ class Company
 
         return $company;
     }
+
+    public static function cleanStringForUrl(string $string)
+    {
+        $string = preg_replace('/[^A-Za-z0-9\-]/', ' ', $string); // Removes special chars.
+        $string = preg_replace('/-+/',' ',$string);
+        $string = preg_replace('/\s+/', '-', trim($string));
+        return strtolower($string);
+    }
 }
