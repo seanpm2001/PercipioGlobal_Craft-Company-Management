@@ -1,69 +1,71 @@
 {%- import "_includes/forms" as forms -%}
 
+{% set user = user ?? null %}
+
 <div id="companyManagement" class="hidden">
     {{ forms.textField({
         first: true,
         label: "National Insurance Number"|t('company-management'),
-        id: 'cm_nationalInsuranceNumber',
-        name: 'cm_nationalInsuranceNumber',
+        id: 'cmNationalInsuranceNumber',
+        name: 'cmNationalInsuranceNumber',
         required: true,
-        value: currentUser ? currentUser.cm_nationalInsuranceNumber : '',
-        errors: currentUser ? currentUser.getErrors('cm_nationalInsuranceNumber') : null,
+        value: currentUser ? currentUser.cmNationalInsuranceNumber : '',
+        errors: currentUser ? currentUser.getErrors('cmNationalInsuranceNumber') : null,
     }) }}
 
     {{ forms.dateField({
         label: "Employee Start Date"|t('company-management'),
-        id: 'cm_employeeStartDate',
-        name: 'cm_employeeStartDate',
-        value: currentUser ? currentUser.cm_employeeStartDate : '',
-        errors: currentUser ? currentUser.getErrors('cm_employeeStartDate') : null,
+        id: 'cmEmployeeStartDate',
+        name: 'cmEmployeeStartDate',
+        value: currentUser ? currentUser.cmEmployeeStartDate : '',
+        errors: currentUser ? currentUser.getErrors('cmEmployeeStartDate') : null,
     }) }}
 
     {{ forms.dateField({
         label: "Employee End Date"|t('company-management'),
-        id: 'cm_employeeEndDate',
-        name: 'cm_employeeEndDate',
-        value: currentUser ? currentUser.cm_employeeEndDate : '',
-        errors: currentUser ? currentUser.getErrors('cm_employeeEndDate') : null,
+        id: 'cmEmployeeEndDate',
+        name: 'cmEmployeeEndDate',
+        value: currentUser ? currentUser.cmEmployeeEndDate : '',
+        errors: currentUser ? currentUser.getErrors('cmEmployeeEndDate') : null,
     }) }}
 
     {{ forms.textField({
         first: true,
         label: "Phone"|t('company-management'),
-        id: 'cm_phone',
-        name: 'cm_phone',
-        value: currentUser ? currentUser.cm_phone : '',
-        errors: currentUser ? currentUser.getErrors('cm_phone') : null,
+        id: 'cmPhone',
+        name: 'cmPhone',
+        value: currentUser ? currentUser.cmPhone : '',
+        errors: currentUser ? currentUser.getErrors('cmPhone') : null,
     }) }}
 
     {{ forms.textField({
         first: true,
         type: 'number',
         label: "Gross Income"|t('company-management'),
-        id: 'cm_grossIncome',
-        name: 'cm_grossIncome',
-        value: currentUser ? currentUser.cm_grossIncome : '',
-        errors: currentUser ? currentUser.getErrors('cm_grossIncome') : null,
+        id: 'cmGrossIncome',
+        name: 'cmGrossIncome',
+        value: currentUser ? currentUser.cmGrossIncome : '',
+        errors: currentUser ? currentUser.getErrors('cmGrossIncome') : null,
     }) }}
 
     {{ forms.dateField({
         first: true,
         label: "Birthday"|t('company-management'),
-        id: 'cm_birthday',
-        name: 'cm_birthday',
-        value: currentUser ? currentUser.cm_birthday : '',
-        errors: currentUser ? currentUser.getErrors('cm_birthday') : null,
+        id: 'cmBirthday',
+        name: 'cmBirthday',
+        value: currentUser ? currentUser.cmBirthday : '',
+        errors: currentUser ? currentUser.getErrors('cmBirthday') : null,
     }) }}
 
-    {%- set assets = currentUser ? currentUser.cm_documents ? [craft.assets.id(currentUser.mc_documents).all()] : [] : [] -%}
+    {%- set assets = currentUser ? currentUser.cmDocuments ? [craft.assets.id(currentUser.mc_documents).all()] : [] : [] -%}
     {{ forms.elementSelectField({
         label: "Documents"|t('company-management'),
-        id: 'cm_documents',
-        name: 'cm_documents',
+        id: 'cmDocuments',
+        name: 'cmDocuments',
         elementType: 'craft\\elements\\Asset',
         elements:assets,
-        value: currentUser ? currentUser.cm_documents : '',
+        value: currentUser ? currentUser.cmDocuments : '',
         instructions: "Upload or select documents"|t('company-management'),
-        errors: currentUser ? currentUser.getErrors('cm_documents') : null,
+        errors: currentUser ? currentUser.getErrors('cmDocuments') : null,
     }) }}
 </div>

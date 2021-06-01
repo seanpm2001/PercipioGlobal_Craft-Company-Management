@@ -526,7 +526,7 @@ class Company extends Element
 
         // check if user exists
         $user = User::find()
-//            ->cm_nationalInsuranceNumber($this->contactRegistrationNumber)
+//            ->cmNationalInsuranceNumber($this->contactRegistrationNumber)
             ->email($this->contactEmail)
             ->anyStatus()
             ->one();
@@ -555,11 +555,11 @@ class Company extends Element
             $user = new User();
             $user->username = $this->contactEmail;
             $user->email = $this->contactEmail;
-            $user->setFieldValue('cm_nationalInsuranceNumber', $this->contactRegistrationNumber);
-            $user->setFieldValue('cm_birthday', $this->contactBirthday);
-            $user->setFieldValue('cm_phone', $this->contactPhone);
+            $user->setFieldValue('cmNationalInsuranceNumber', $this->contactRegistrationNumber);
+            $user->setFieldValue('cmBirthday', $this->contactBirthday);
+            $user->setFieldValue('cmPhone', $this->contactPhone);
 
-            $success = Craft::$app->getElements()->saveElement($user, true);
+            $success = Craft::$app->elements->saveElement($user, true);
 
             if($success){
                 Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);

@@ -10,7 +10,10 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\events\ElementEvent;
 use craft\fields\PlainText;
+use craft\helpers\ElementHelper;
+use craft\services\Users;
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
