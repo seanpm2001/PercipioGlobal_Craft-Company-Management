@@ -170,9 +170,10 @@
     {{ forms.elementSelectField({
         label: "Contact"|t('company-management'),
         id: 'userId',
-        name: 'User',
+        name: 'user',
         elementType: 'craft\\elements\\User',
         limit: 1,
+        required: true,
         elements:user,
         value: company ? company.userId : '',
         errors: company ? company.getErrors('userId') : null,

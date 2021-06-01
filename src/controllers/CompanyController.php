@@ -107,9 +107,7 @@ class CompanyController extends Controller
         $request = Craft::$app->getRequest();
         $elementsService = Craft::$app->getElements();
         $company = CompanyHelper::companyFromPost($request);
-
         $company = CompanyHelper::populateCompanyFromPost($company, $request);
-//        $company->setScenario(Element::SCENARIO_LIVE);
 
         $success = $elementsService->saveElement($company);
 

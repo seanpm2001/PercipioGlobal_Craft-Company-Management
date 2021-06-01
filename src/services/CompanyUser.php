@@ -3,7 +3,6 @@
 namespace percipiolondon\companymanagement\services;
 
 use craft\db\Query;
-use craft\db\Table;
 use craft\helpers\Db;
 use percipiolondon\companymanagement\models\CompanyUsers;
 use yii\base\Component;
@@ -14,11 +13,21 @@ class CompanyUser extends Component
     public function saveCompanyUser($fields,$user)
     {
         $companyUser = new CompanyUsers();
+        $companyUser->id = $fields->id;
         $companyUser->userId = $user->id;
         $companyUser->birthday = $fields->contactBirthday;
         $companyUser->nationalInsuranceNumber = $fields->contactRegistrationNumber;
 
-        $record = new CompanyUserRecord();
+        if(count($this->findCompanyUser($companyUser->userId)) > 0) {
+            $record = CompanyUserRecord::findOne($companyUser->id);
+
+            if (!$record) {
+                throw new Exception('Invalid company user ID: ' . $companyUser->id);
+            }
+        }else{
+            $record = new CompanyUserRecord();
+        }
+
         $record->userId = $companyUser->userId;
         $record->birthday = $companyUser->birthday;
         $record->nationalInsuranceNumber = $companyUser->nationalInsuranceNumber;

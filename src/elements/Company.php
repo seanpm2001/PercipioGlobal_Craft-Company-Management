@@ -72,6 +72,9 @@ use yii\validators\Validator;
  */
 class Company extends Element
 {
+    const STATUS_LIVE = 'live';
+    const STATUS_EXPIRED = 'expired';
+
     // Public Properties
     // =========================================================================
 
@@ -154,6 +157,14 @@ class Company extends Element
      * @return bool Whether elements of this type have statuses.
      * @see statuses()
      */
+    public static function statuses(): array
+    {
+        return [
+            self::STATUS_LIVE => Craft::t('company-management', 'Live'),
+            self::STATUS_EXPIRED => Craft::t('company-management', 'Expired'),
+        ];
+    }
+
     public static function isLocalized(): bool
     {
         return true;
@@ -318,43 +329,52 @@ class Company extends Element
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['name', 'registerNumber', 'contactName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
-        $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
+        $rules[] = [['name', 'registerNumber'], 'required'];
 
-            $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
-            $preg = "/^[A-CEGHJ-NOPR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[ABCD]?$/";
+        // New created form
+        if(null === $this->id){
+            $rules[] = [['contactName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
 
-            if (!preg_match($preg, $ssn)) {
-                $error = Craft::t('company-management', '"{value}" is not a valid National Insurance Number.', [
-                    'attribute' => $attribute,
-                    'value' => $ssn,
-                ]);
+            $rules[] = ['name', function($attribute, $params, Validator $validator){
+                if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0 && null === $this->id) {
+                    $error = Craft::t('company-management', 'The company "{value}" already exists.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
 
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
-        $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
-            $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+            $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
 
-            if (!preg_match($preg, $this->$attribute)) {
-                $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
-                    'attribute' => $attribute,
-                    'value' => $this->$attribute,
-                ]);
+                $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
+                $preg = "/^[A-CEGHJ-NOPR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[ABCD]?$/";
 
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
-        $rules[] = ['name', function($attribute, $params, Validator $validator){
-            if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0) {
-                $error = Craft::t('company-management', 'The company "{value}" already exists.', [
-                    'attribute' => $attribute,
-                    'value' => $this->$attribute,
-                ]);
+                if (!preg_match($preg, $ssn)) {
+                    $error = Craft::t('company-management', '"{value}" is not a valid National Insurance Number.', [
+                        'attribute' => $attribute,
+                        'value' => $ssn,
+                    ]);
 
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+            $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
+                $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+
+                if (!preg_match($preg, $this->$attribute)) {
+                    $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+        }else{
+            $rules[] = [['userId'], 'required'];
+        }
+
 
         return $rules;
     }
@@ -506,6 +526,11 @@ class Company extends Element
         } else {
             $record = new CompanyRecord();
             $record->id = $this->id;
+            $record->contactName = $this->contactName;
+            $record->contactEmail = $this->contactEmail;
+            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+            $record->contactPhone = $this->contactPhone;
+            $record->contactBirthday = $this->contactBirthday;
         }
 
         $record->name = $this->name;
@@ -520,11 +545,6 @@ class Company extends Element
         $record->taxReference = $this->taxReference;
         $record->website = $this->website;
         $record->logo = $this->logo;
-        $record->contactName = $this->contactName;
-        $record->contactEmail = $this->contactEmail;
-        $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-        $record->contactPhone = $this->contactPhone;
-        $record->contactBirthday = $this->contactBirthday;
         $record->userId = $this->_saveUser();
 
         $record->save(false);
