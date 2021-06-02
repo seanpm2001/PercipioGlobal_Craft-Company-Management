@@ -10,19 +10,23 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\elements\User;
+use craft\events\ModelEvent;
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
+use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
+use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
 use percipiolondon\companymanagement\models\Settings;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
+use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\web\UrlManager;
 use craft\services\Elements;
 use craft\events\RegisterComponentTypesEvent;
@@ -105,9 +109,12 @@ class CompanyManagement extends Plugin
 
         $this->_registerCpRoutes();
         $this->_registerElementTypes();
-        $this->_registerAfterInstall();
         $this->_registerVariables();
         $this->_registerServices();
+        $this->_registerUserSave();
+//        $this->_registerAfterInstall();
+//        $this->_registerAfterUninstall();
+        $this->_registerTemplateHooks();
 
         Craft::info(
             Craft::t(
@@ -196,18 +203,31 @@ class CompanyManagement extends Plugin
         );
     }
 
-    private function _registerAfterInstall()
-    {
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
-            }
-        );
-    }
+//    private function _registerAfterInstall()
+//    {
+//        Event::on(
+//            Plugins::class,
+//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+//            function (PluginEvent $event) {
+//                if ($event->plugin === $this) {
+//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
+//                }
+//            }
+//        );
+//    }
+//
+//    private function _registerAfterUninstall()
+//    {
+//        Event::on(
+//            Plugins::class,
+//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+//            function (PluginEvent $event) {
+//                if ($event->plugin === $this) {
+//                    CompanyManagement::$plugin->company->installCompanyUserFields();
+//                }
+//            }
+//        );
+//    }
 
     private function _registerVariables()
     {
@@ -217,6 +237,10 @@ class CompanyManagement extends Plugin
             function (Event $event) {
                 $variable = $event->sender;
                 $variable->attachBehavior('companies', CraftVariableBehavior::class);
+
+                $variable->set('companyUsers', [
+                    'class' => CompanyUserVariable::class,
+                ]);
             }
         );
     }
@@ -224,7 +248,44 @@ class CompanyManagement extends Plugin
     private function _registerServices()
     {
         $this->setComponents([
-            'company' => CompanyService::class
+            'company' => CompanyService::class,
+            'companyUser' => CompanyUserService::class,
         ]);
+    }
+
+    private function _registerTemplateHooks()
+    {
+        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldTab']);
+        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldContent']);
+    }
+
+    private function _registerUserSave()
+    {
+        Event::on(
+            User::class,
+            User::EVENT_BEFORE_SAVE,
+            function (ModelEvent $event) {
+
+                $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
+                $validateCompanyUser = $companyUser->validate();
+
+                $event->sender->addErrors(
+                    $companyUser->getErrors()
+                );
+
+                $event->isValid = $validateCompanyUser;
+            }
+        );
+
+        Event::on(
+            User::class,
+            User::EVENT_AFTER_SAVE,
+            function (ModelEvent $event) {
+
+                $companyUser = CompanyUserHelper::populateCompanyUserFromPost($event->sender->id);
+                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$event->sender->id);
+
+            }
+        );
     }
 }

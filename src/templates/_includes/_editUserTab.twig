@@ -1,0 +1,83 @@
+{%- import "_includes/forms" as forms -%}
+
+{% set companyUser = companyUser ?? null %}
+{% set user = user ?? null %}
+
+<div id="companyManagement" class="hidden">
+    {{ forms.textField({
+        first: true,
+        label: "National Insurance Number"|t('company-management'),
+        id: 'nationalInsuranceNumber',
+        name: 'nationalInsuranceNumber',
+        required: true,
+        value: companyUser ? companyUser.nationalInsuranceNumber : '',
+        errors: user ? user.getErrors('nationalInsuranceNumber') : null,
+    }) }}
+
+    {{ forms.dateField({
+        first: true,
+        label: "Birthday"|t('company-management'),
+        id: 'birthday',
+        name: 'birthday',
+        value: companyUser ? companyUser.birthday : '',
+        errors: companyUser ? companyUser.getErrors('birthday') : null,
+    }) }}
+
+    <hr/>
+
+    {{ forms.dateField({
+        label: "Employee Start Date"|t('company-management'),
+        id: 'employeeStartDate',
+        name: 'employeeStartDate',
+        value: companyUser ? companyUser.employeeStartDate : '',
+        errors: user ? user.getErrors('employeeStartDate') : null,
+    }) }}
+
+    {{ forms.dateField({
+        label: "Employee End Date"|t('company-management'),
+        id: 'employeeEndDate',
+        name: 'employeeEndDate',
+        value: companyUser ? companyUser.employeeEndDate : '',
+        errors: user ? user.getErrors('employeeEndDate') : null,
+    }) }}
+
+    <hr/>
+
+    {{ forms.textField({
+        first: true,
+        type: 'number',
+        label: "Gross Income"|t('company-management'),
+        id: 'grossIncome',
+        name: 'grossIncome',
+        value: companyUser ? companyUser.grossIncome : '',
+        errors: companyUser ? companyUser.getErrors('grossIncome') : null,
+    }) }}
+
+    <hr/>
+
+    {%- set assets = documents ? [craft.assets.id(documents).all()] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Documents"|t('company-management'),
+        id: 'documents',
+        name: 'documents',
+        elementType: 'craft\\elements\\Asset',
+        elements:assets,
+        value: documents ?? '',
+        instructions: "Upload or select documents"|t('company-management'),
+        errors: companyUser ? companyUser.getErrors('documents') : null,
+    }) }}
+
+    <hr/>
+
+    {%- set comp = company ? [craft.companies.id(company).one()] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Company"|t('company-management'),
+        id: 'companyId',
+        name: 'companyId',
+        elementType: 'percipiolondon\\companymanagement\\elements\\Company',
+        elements: comp,
+        value: company ?? '',
+        instructions: "Select a company"|t('company-management'),
+        errors: companyUser ? companyUser.getErrors('companies') : null,
+    }) }}
+</div>

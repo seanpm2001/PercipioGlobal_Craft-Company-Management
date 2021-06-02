@@ -10,11 +10,14 @@
 
 namespace percipiolondon\companymanagement\migrations;
 
+use craft\fields\PlainText;
+use craft\models\FieldGroup;
 use percipiolondon\companymanagement\CompanyManagement;
 
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
+use yii\base\BaseObject;
 
 /**
  * Company Management Install Migration
@@ -61,7 +64,6 @@ class Install extends Migration
             $this->addForeignKeys();
             // Refresh the db schema caches
             Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
         }
 
         return true;
@@ -95,14 +97,14 @@ class Install extends Migration
      */
     protected function createTables()
     {
-        $tablesCreated = false;
+        $tablesCount = 0;
 
-    // companymanagement_company table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%companymanagement_company}}');
+        $tableSchemaCompany = Craft::$app->db->schema->getTableSchema('{{%companymanagement_company}}');
+        $tableSchemaUsers = Craft::$app->db->schema->getTableSchema('{{%companymanagement_users}}');
+        $tableSchemaDocuments = Craft::$app->db->schema->getTableSchema('{{%companymanagement_documents}}');
 
-        $currentDate = new \DateTime('NOW');
-        if ($tableSchema === null) {
-            $tablesCreated = true;
+        if ($tableSchemaCompany === null) {
+            $tablesCount++;
             $this->createTable(
                 '{{%companymanagement_company}}',
                 [
@@ -110,7 +112,7 @@ class Install extends Migration
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
-                // Custom columns in the table
+                    // Custom columns in the table
                     'siteId' => $this->integer()->notNull()->defaultValue(1),
                     'info' => $this->string()->notNull()->defaultValue(''),
                     'name' => $this->string()->notNull()->defaultValue(''),
@@ -124,18 +126,52 @@ class Install extends Migration
                     'taxReference' => $this->string()->notNull()->defaultValue(''),
                     'website' => $this->string()->notNull()->defaultValue(''),
                     'logo' => $this->integer(),
-                    'contactName' => $this->string()->notNull()->defaultValue(''),
+                    'contactFirstName' => $this->string()->notNull()->defaultValue(''),
+                    'contactLastName' => $this->string()->notNull()->defaultValue(''),
                     'contactEmail' => $this->string()->notNull()->defaultValue(''),
                     'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
                     'contactPhone' => $this->string(),
                     'contactBirthday' => $this->dateTime(),
+                    'userId' => $this->integer()->notNull(),
+                ]
+            );
+        }
+
+        if ($tableSchemaUsers === null) {
+            $tablesCount++;
+            $this->createTable(
+                '{{%companymanagement_users}}',
+                [
+                    'id' => $this->primaryKey(),
+                    'userId' => $this->integer()->notNull(),
+                    'companyId' => $this->integer(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid' => $this->uid(),
+                    // Custom columns in the table
+                    'employeeStartDate' => $this->string(),
+                    'employeeEndDate' => $this->string(),
+                    'birthday' => $this->string(),
+                    'nationalInsuranceNumber' => $this->string()->notNull()->defaultValue(''),
+                    'grossIncome' => $this->string()->defaultValue(''),
+                ]
+            );
+        }
+
+        if ($tableSchemaDocuments === null) {
+            $tablesCount++;
+            $this->createTable(
+                '{{%companymanagement_documents}}',
+                [
+                    'userId' => $this->integer()->notNull(),
+                    'assetId' => $this->integer()->notNull(),
                 ]
             );
         }
 
 //        $this->execute('alter table {{%companymanagement_company}} modify column id int AUTO_INCREMENT');
 
-        return $tablesCreated;
+        return $tablesCount === 3;
     }
 
     /**
@@ -165,7 +201,7 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // companymanagement_company table
+        // companymanagement_company table
         $this->addForeignKey(
             $this->db->getForeignKeyName('{{%companymanagement_company}}', 'siteId'),
             '{{%companymanagement_company}}',
@@ -191,15 +227,50 @@ class Install extends Migration
             'id',
             'CASCADE'
         );
-    }
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_company}}', 'userId'),
+            '{{%companymanagement_company}}',
+            'userId',
+            '{{%users}}',
+            'id',
+            'CASCADE'
+        );
 
-    /**
-     * Populates the DB with the default data.
-     *
-     * @return void
-     */
-    protected function insertDefaultData()
-    {
+        // companymanagement_users table
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_users}}', 'userId'),
+            '{{%companymanagement_users}}',
+            'userId',
+            '{{%users}}',
+            'id',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_users}}', 'companyId'),
+            '{{%companymanagement_users}}',
+            'companyId',
+            '{{%companymanagement_company}}',
+            'id',
+            'CASCADE'
+        );
+
+        // companymanagement_documents table
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_documents}}', 'assetId'),
+            '{{%companymanagement_documents}}',
+            'assetId',
+            '{{%assets}}',
+            'id',
+            'CASCADE'
+        );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_documents}}', 'userId'),
+            '{{%companymanagement_documents}}',
+            'userId',
+            '{{%users}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -210,6 +281,8 @@ class Install extends Migration
     protected function removeTables()
     {
     // companymanagement_company table
+        $this->dropTableIfExists('{{%companymanagement_users}}');
+        $this->dropTableIfExists('{{%companymanagement_documents}}');
         $this->dropTableIfExists('{{%companymanagement_company}}');
     }
 }

@@ -26,7 +26,8 @@ class CompanyQuery extends ElementQuery
     public $logo;
 
     // Company Manager Info
-    public $contactName;
+    public $contactFirstName;
+    public $contactLastName;
     public $contactEmail;
     public $contactRegistrationNumber;
     public $contactPhone;
@@ -104,9 +105,15 @@ class CompanyQuery extends ElementQuery
         return $this;
     }
 
-    public function contactName($value)
+    public function contactFirstName($value)
     {
-        $this->contactName = $value;
+        $this->contactFirstName = $value;
+        return $this;
+    }
+
+    public function contactLastName($value)
+    {
+        $this->contactLastName = $value;
         return $this;
     }
 
@@ -156,11 +163,13 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.website',
             'companymanagement_company.logo',
             'companymanagement_company.uid',
-            'companymanagement_company.contactName',
+            'companymanagement_company.contactFirstName',
+            'companymanagement_company.contactLastName',
             'companymanagement_company.contactEmail',
             'companymanagement_company.contactRegistrationNumber',
             'companymanagement_company.contactPhone',
             'companymanagement_company.contactBirthday',
+            'companymanagement_company.userId',
         ]);
 
 

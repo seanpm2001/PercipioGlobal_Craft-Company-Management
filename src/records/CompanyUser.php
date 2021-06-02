@@ -37,38 +37,24 @@ use craft\db\ActiveRecord;
  * Company record.
  *
  * @property int id
- * @property string name
- * @property string info
- * @property string shortName
- * @property string address
- * @property string town
- * @property string postcode
- * @property string registerNumber
- * @property string payeReference
- * @property string accountsOfficeReference
- * @property string taxReference
- * @property string website
- * @property string logo
- * @property string contactFirstName
- * @property string contactLastName
- * @property string contactEmail
- * @property string contactRegistrationNumber
- * @property string contactPhone
- * @property string contactBirthday
  * @property int userId
+ * @property int companyId
+ * @property DateTime employeeStartDate
+ * @property DateTime employeeEndDate
+ * @property DateTime birthday
+ * @property string nationalInsuranceNumber
+ * @property string grossIncome
  *
  *
  * @package Company Management
  *
  */
-class Company extends ActiveRecord
+class CompanyUser extends ActiveRecord
 {
-
-
     // Public Static Methods
     // =========================================================================
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
@@ -82,6 +68,6 @@ class Company extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%companymanagement_company}}';
+        return '{{%companymanagement_users}}';
     }
 }

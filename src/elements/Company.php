@@ -10,8 +10,14 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use craft\elements\actions\Delete;
 use craft\elements\db\ElementQuery;
+use craft\elements\User;
+use craft\models\UserGroup;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
+use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
+use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -19,6 +25,10 @@ use DateTime;
 use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
+use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use yii\base\BaseObject;
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\validators\Validator;
 
 /**
@@ -67,6 +77,9 @@ use yii\validators\Validator;
  */
 class Company extends Element
 {
+    const STATUS_LIVE = 'live';
+    const STATUS_EXPIRED = 'expired';
+
     // Public Properties
     // =========================================================================
 
@@ -89,11 +102,13 @@ class Company extends Element
     public $logo;
 
     // Company Manager Info
-    public $contactName;
+    public $contactFirstName;
+    public $contactLastName;
     public $contactEmail;
     public $contactRegistrationNumber;
     public $contactPhone;
     public $contactBirthday;
+    public $userId;
 
     // Static Methods
     // =========================================================================
@@ -148,6 +163,14 @@ class Company extends Element
      * @return bool Whether elements of this type have statuses.
      * @see statuses()
      */
+    public static function statuses(): array
+    {
+        return [
+            self::STATUS_LIVE => Craft::t('company-management', 'Live'),
+            self::STATUS_EXPIRED => Craft::t('company-management', 'Expired'),
+        ];
+    }
+
     public static function isLocalized(): bool
     {
         return true;
@@ -223,6 +246,22 @@ class Company extends Element
                 'criteria' => ['id' => $ids],
             ]
         ];
+    }
+
+    protected static function defineActions(string $srouce = null): array
+    {
+        $actions = [];
+
+        $elementsService = Craft::$app->getElements();
+
+        // Delete
+        $actions[] = $elementsService->createAction([
+            'type' => Delete::class,
+            'confirmationMessage' => Craft::t('company-management', 'Are you sure you want to delete the selected companies?'),
+            'successMessage' => Craft::t('company-management', 'Companies deleted.'),
+        ]);
+
+        return $actions;
     }
 
     /**
@@ -312,33 +351,52 @@ class Company extends Element
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['name', 'registerNumber', 'contactName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
-        $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
+        $rules[] = [['name', 'registerNumber'], 'required'];
 
-            $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
-            $preg = "/^[A-CEGHJ-NOPR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[ABCD]?$/";
+        // New created form
+        if(null === $this->id){
+            $rules[] = [['contactFirstName', 'contactLastName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
 
-            if (!preg_match($preg, $ssn)) {
-                $error = Craft::t('company-management', '"{value}" is not a valid National Insurance Number.', [
-                    'attribute' => $attribute,
-                    'value' => $ssn,
-                ]);
+            $rules[] = ['name', function($attribute, $params, Validator $validator){
+                if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0 && null === $this->id) {
+                    $error = Craft::t('company-management', 'The company "{value}" already exists.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
 
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
-        $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
-            $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+            $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
 
-            if (!preg_match($preg, $this->$attribute)) {
-                $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
-                    'attribute' => $attribute,
-                    'value' => $this->$attribute,
-                ]);
+                $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
+                $preg = "/^[A-CEGHJ-NOPR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[ABCD]?$/";
 
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
+                if (!preg_match($preg, $ssn)) {
+                    $error = Craft::t('company-management', '"{value}" is not a valid National Insurance Number.', [
+                        'attribute' => $attribute,
+                        'value' => $ssn,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+            $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
+                $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+
+                if (!preg_match($preg, $this->$attribute)) {
+                    $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+        }else{
+            $rules[] = [['userId'], 'required'];
+        }
+
 
         return $rules;
     }
@@ -431,38 +489,7 @@ class Company extends Element
     public function afterSave(bool $isNew)
     {
         if (!$this->propagating) {
-            if (!$isNew) {
-                $record = CompanyRecord::findOne($this->id);
-
-                if (!$record) {
-                    throw new Exception('Invalid company ID: ' . $this->id);
-                }
-            } else {
-                $record = new CompanyRecord();
-                $record->id = $this->id;
-            }
-
-            $record->name = $this->name;
-            $record->info = $this->info;
-            $record->shortName = $this->shortName;
-            $record->address = $this->address;
-            $record->town = $this->town;
-            $record->postcode = $this->postcode;
-            $record->registerNumber = $this->registerNumber;
-            $record->payeReference = $this->payeReference;
-            $record->accountsOfficeReference = $this->accountsOfficeReference;
-            $record->taxReference = $this->taxReference;
-            $record->website = $this->website;
-            $record->logo = $this->logo;
-            $record->contactName = $this->contactName;
-            $record->contactEmail = $this->contactEmail;
-            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-            $record->contactPhone = $this->contactPhone;
-            $record->contactBirthday = $this->contactBirthday;
-
-            $record->save(false);
-
-            $this->id = $record->id;
+            $this->_saveRecord($isNew);
         }
 
         return parent::afterSave($isNew);
@@ -508,5 +535,127 @@ class Company extends Element
      */
     public function afterMoveInStructure(int $structureId)
     {
+    }
+
+    private function _saveRecord($isNew)
+    {
+        if (!$isNew) {
+            $record = CompanyRecord::findOne($this->id);
+
+            $this->contactFirstName = $record->contactFirstName;
+            $this->contactLastName = $record->contactLastName;
+            $this->contactEmail = $record->contactEmail;
+            $this->contactRegistrationNumber = $record->contactRegistrationNumber;
+            $this->contactPhone = $record->contactPhone;
+            $this->contactBirthday = $record->contactBirthday;
+
+            if (!$record) {
+                throw new Exception('Invalid company ID: ' . $this->id);
+            }
+        } else {
+            $record = new CompanyRecord();
+            $record->id = $this->id;
+            $record->contactFirstName = $this->contactFirstName;
+            $record->contactLastName = $this->contactLastName;
+            $record->contactEmail = $this->contactEmail;
+            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+            $record->contactPhone = $this->contactPhone;
+            $record->contactBirthday = $this->contactBirthday;
+        }
+
+        $userId = $this->_saveUser($record->id);
+
+        $record->name = $this->name;
+        $record->info = $this->info;
+        $record->shortName = CompanyHelper::cleanStringForUrl($this->name);
+        $record->address = $this->address;
+        $record->town = $this->town;
+        $record->postcode = $this->postcode;
+        $record->registerNumber = $this->registerNumber;
+        $record->payeReference = $this->payeReference;
+        $record->accountsOfficeReference = $this->accountsOfficeReference;
+        $record->taxReference = $this->taxReference;
+        $record->website = $this->website;
+        $record->logo = $this->logo;
+        $record->userId = $userId;
+
+        $record->save(false);
+
+        $this->id = $record->id;
+
+        // save company id into the companyUser
+        CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
+    }
+
+    private function _saveUser($companyId)
+    {
+        // Make sure this is Craft Pro, since that's required for having multiple user accounts
+        Craft::$app->requireEdition(Craft::Pro);
+
+//        $companyUser = CompanyUserRecord::findOne(['nationalInsuranceNumber' => $this->contactRegistrationNumber]);
+        $user = User::findOne(['email' => $this->contactEmail]);
+
+        if(!$user) {
+
+            // Create a new user
+            $user = new User();
+            $user->firstName = $this->contactFirstName;
+            $user->lastName = $this->contactLastName;
+            $user->username = $this->contactEmail;
+            $user->email = $this->contactEmail;
+
+            $success = Craft::$app->elements->saveElement($user, true);
+
+            if(!$success){
+                throw new Exception("The user couldn't be created");
+            }
+
+        }
+
+        //assign user to group
+        $this->_saveUserToGroup($user);
+
+        // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
+        $this->_updateCompanyUser($user, $companyId);
+
+        return $user->id;
+    }
+
+    private function _saveUserToGroup($user)
+    {
+        //register a new group
+        $handle = CompanyHelper::cleanStringForUrl($this->name);
+        $group = Craft::$app->getUserGroups()->getGroupByHandle($handle);
+
+        if(null === $group)
+        {
+            // Create a new user group
+            $userGroup = new UserGroup();
+            $userGroup->name = $this->name;
+            $userGroup->handle = $handle;
+            Craft::$app->getUserGroups()->saveGroup($userGroup, false);
+
+            //@TODO: set group permissions
+
+            $group = $userGroup;
+        }
+
+        // assign user to group
+        Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
+    }
+
+    private function _updateCompanyUser($user, $companyId)
+    {
+        $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
+
+        if(!$companyUser) {
+            $companyUser = CompanyUserHelper::populateCompanyUserFromPost($user->id, $companyId);
+
+            $validateCompanyUser = $companyUser->validate();
+
+            if($validateCompanyUser) {
+                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$user->id);
+            }
+        }
     }
 }
