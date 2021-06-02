@@ -126,7 +126,8 @@ class Install extends Migration
                     'taxReference' => $this->string()->notNull()->defaultValue(''),
                     'website' => $this->string()->notNull()->defaultValue(''),
                     'logo' => $this->integer(),
-                    'contactName' => $this->string()->notNull()->defaultValue(''),
+                    'contactFirstName' => $this->string()->notNull()->defaultValue(''),
+                    'contactLastName' => $this->string()->notNull()->defaultValue(''),
                     'contactEmail' => $this->string()->notNull()->defaultValue(''),
                     'contactRegistrationNumber' => $this->string()->notNull()->defaultValue(''),
                     'contactPhone' => $this->string(),
@@ -143,15 +144,16 @@ class Install extends Migration
                 [
                     'id' => $this->primaryKey(),
                     'userId' => $this->integer()->notNull(),
+                    'companyId' => $this->integer(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
                     // Custom columns in the table
-                    'employeeStartDate' => $this->dateTime(),
-                    'employeeEndDate' => $this->dateTime(),
-                    'birthday' => $this->dateTime(),
+                    'employeeStartDate' => $this->string(),
+                    'employeeEndDate' => $this->string(),
+                    'birthday' => $this->string(),
                     'nationalInsuranceNumber' => $this->string()->notNull()->defaultValue(''),
-                    'grossIncome' => $this->string()->notNull()->defaultValue(''),
+                    'grossIncome' => $this->string()->defaultValue(''),
                 ]
             );
         }
@@ -243,6 +245,14 @@ class Install extends Migration
             'id',
             'CASCADE'
         );
+        $this->addForeignKey(
+            $this->db->getForeignKeyName('{{%companymanagement_users}}', 'companyId'),
+            '{{%companymanagement_users}}',
+            'companyId',
+            '{{%companymanagement_company}}',
+            'id',
+            'CASCADE'
+        );
 
         // companymanagement_documents table
         $this->addForeignKey(
@@ -271,8 +281,8 @@ class Install extends Migration
     protected function removeTables()
     {
     // companymanagement_company table
-        $this->dropTableIfExists('{{%companymanagement_company}}');
         $this->dropTableIfExists('{{%companymanagement_users}}');
         $this->dropTableIfExists('{{%companymanagement_documents}}');
+        $this->dropTableIfExists('{{%companymanagement_company}}');
     }
 }

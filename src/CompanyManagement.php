@@ -11,11 +11,7 @@
 namespace percipiolondon\companymanagement;
 
 use craft\elements\User;
-use craft\events\ElementEvent;
 use craft\events\ModelEvent;
-use craft\fields\PlainText;
-use craft\helpers\ElementHelper;
-use craft\services\Users;
 use craft\web\twig\variables\CraftVariable;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
@@ -26,17 +22,16 @@ use percipiolondon\companymanagement\services\Company as CompanyService;
 use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
 use percipiolondon\companymanagement\models\Settings;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
+use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\web\UrlManager;
 use craft\services\Elements;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 
-use yii\base\BaseObject;
 use yii\base\Event;
 
 /**
@@ -242,6 +237,10 @@ class CompanyManagement extends Plugin
             function (Event $event) {
                 $variable = $event->sender;
                 $variable->attachBehavior('companies', CraftVariableBehavior::class);
+
+                $variable->set('companyUsers', [
+                    'class' => CompanyUserVariable::class,
+                ]);
             }
         );
     }
@@ -266,14 +265,26 @@ class CompanyManagement extends Plugin
             User::class,
             User::EVENT_BEFORE_SAVE,
             function (ModelEvent $event) {
-                $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
 
+                $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
                 $validateCompanyUser = $companyUser->validate();
 
                 $event->sender->addErrors(
                     $companyUser->getErrors()
                 );
+
                 $event->isValid = $validateCompanyUser;
+            }
+        );
+
+        Event::on(
+            User::class,
+            User::EVENT_AFTER_SAVE,
+            function (ModelEvent $event) {
+
+                $companyUser = CompanyUserHelper::populateCompanyUserFromPost($event->sender->id);
+                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$event->sender->id);
+
             }
         );
     }

@@ -3,55 +3,41 @@
 namespace percipiolondon\companymanagement\services;
 
 use craft\db\Query;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\models\CompanyUsers as CompanyUsersModel;
 use yii\base\Component;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use Craft;
+use yii\base\Exception;
 
 class CompanyUser extends Component
 {
-    public function saveCompanyUser($fields,$user)
+    public function saveCompanyUser(CompanyUsersModel $companyUser, int $userId)
     {
-        $companyUser = new CompanyUsers();
-        $companyUser->id = $fields->id;
-        $companyUser->userId = $user->id;
-        $companyUser->birthday = $fields->contactBirthday;
-        $companyUser->nationalInsuranceNumber = $fields->contactRegistrationNumber;
+        $companyUserRecord = CompanyUserRecord::findOne(['userId' => $companyUser->userId]);
 
-        if(count($this->getCompanyUserByNin($companyUser->userId)) > 0) {
-            $record = CompanyUserRecord::findOne($companyUser->id);
+        if($companyUserRecord) {
+            $record = $companyUserRecord;
 
             if (!$record) {
                 throw new Exception('Invalid company user ID: ' . $companyUser->id);
             }
         }else{
             $record = new CompanyUserRecord();
+            $record->userId = $userId;
         }
 
-        $record->userId = $companyUser->userId;
-        $record->birthday = $companyUser->birthday;
+        $record->birthday = Db::prepareDateForDb($companyUser->birthday);
+        $record->employeeStartDate = Db::prepareDateForDb($companyUser->employeeStartDate);
+        $record->employeeEndDate = Db::prepareDateForDb($companyUser->employeeEndDate);
+        $record->grossIncome = $companyUser->grossIncome;
         $record->nationalInsuranceNumber = $companyUser->nationalInsuranceNumber;
+        $record->companyId = $companyUser->companyId;
 
-        return $record->save(false);;
-    }
-
-    public function getCompanyUserByNin($nationalInsuranceNumber)
-    {
-        return (new Query())
-            ->select(['userId'])
-            ->from(['{{%companymanagement_users}}'])
-            ->where(Db::parseParam('nationalInsuranceNumber', $nationalInsuranceNumber))
-            ->column();
-    }
-
-    public function getCompanyUserById($id)
-    {
-        return (new Query())
-            ->select('*')
-            ->from(['{{%companymanagement_users}}'])
-            ->where(Db::parseParam('userId', $id))
-            ->all();
+        return $record->save(false);
     }
 
     public function addEditUserCustomFieldTab(array &$context)
@@ -64,26 +50,24 @@ class CompanyUser extends Component
 
     public function addEditUserCustomFieldContent(array &$context)
     {
-
-        $query = $context['user'] ? static::getCompanyUserById($context['user']->id) : null;
-        $companyUser = null;
-
-        if($query) {
-            $query = $query[0];
-
-            $companyUser = new CompanyUsersModel();
-            $companyUser->userId = $query["userId"];
-            $companyUser->employeeStartDate = $query["employeeStartDate"];
-            $companyUser->employeeEndDate = $query["employeeEndDate"];
-            $companyUser->birthday = $query["birthday"];
-            $companyUser->nationalInsuranceNumber = $query["nationalInsuranceNumber"];
-            $companyUser->grossIncome = $query["grossIncome"];
-            $companyUser->documents = [];
-        }
+        $companyUser = $context['user'] ? CompanyUserRecord::findOne(['userId' => $context['user']->id]) : null;
+        $companyId = $companyUser->companyId ?? Craft::$app->getRequest()->get('companyId') ?? null;
 
         return Craft::$app->getView()->renderTemplate('company-management/_includes/_editUserTab', [
             'user' => $context['user'] ?? null,
             'companyUser' => $companyUser,
+            'documents' => [],
+            'company' => $companyId,
         ]);
+    }
+
+    public function saveCompanyIdInCompanyUser(int $userId, int $companyId)
+    {
+        $companyUser = CompanyUserRecord::findOne(['userId' => $userId]);
+        $companyUser->companyId = $companyId;
+
+        $companyUser = CompanyUserHelper::populateCompanyUserFromRecord($companyUser, $userId, $companyId);
+
+        static::saveCompanyUser($companyUser,$userId);
     }
 }

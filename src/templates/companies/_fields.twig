@@ -113,15 +113,38 @@
 {% macro contact(company) %}
     {%- import "_includes/forms" as forms -%}
 
-    {{ forms.textField({
-        first: true,
-        label: "Contact Name"|t('company-management'),
-        id: 'contactName',
-        name: 'contactName',
-        required: true,
-        value: company ? company.contactName : '',
-        errors: company ? company.getErrors('contactName') : null,
-    }) }}
+    <div class="flex-fields">
+
+        <div class="field width-50">
+
+            {{ forms.textField({
+                first: true,
+                label: "Contact First Name"|t('company-management'),
+                id: 'contactFirstName',
+                name: 'contactFirstName',
+                required: true,
+                value: company ? company.contactFirstName : '',
+                errors: company ? company.getErrors('contactFirstName') : null,
+            }) }}
+
+        </div>
+
+        <div class="field width-50">
+
+            {{ forms.textField({
+                first: true,
+                label: "Contact Last Name"|t('company-management'),
+                id: 'contactLastName',
+                name: 'contactLastName',
+                required: true,
+                value: company ? company.contactLastName : '',
+                errors: company ? company.getErrors('contactLastName') : null,
+            }) }}
+
+        </div>
+
+    </div>
+    <div>&nbsp;</div>
 
     {{ forms.textField({
         first: true,

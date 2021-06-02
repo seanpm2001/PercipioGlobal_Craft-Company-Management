@@ -14,7 +14,17 @@ class CompanyUsers extends Model
     /**
      * @var integer
      */
+    public $id;
+
+    /**
+     * @var integer
+     */
     public $userId;
+
+    /**
+     * @var integer
+     */
+    public $companyId;
 
     /**
      * @var DateTime

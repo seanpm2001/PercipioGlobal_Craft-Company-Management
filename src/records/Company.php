@@ -49,7 +49,8 @@ use craft\db\ActiveRecord;
  * @property string taxReference
  * @property string website
  * @property string logo
- * @property string contactName
+ * @property string contactFirstName
+ * @property string contactLastName
  * @property string contactEmail
  * @property string contactRegistrationNumber
  * @property string contactPhone

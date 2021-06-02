@@ -53,7 +53,8 @@ class Company
         $company->accountsOfficeReference = $request->getBodyParam('accountsOfficeReference');
         $company->taxReference = $request->getBodyParam('taxReference');
         $company->website = $request->getBodyParam('website');
-        $company->contactName = $request->getBodyParam('contactName');
+        $company->contactFirstName = $request->getBodyParam('contactFirstName');
+        $company->contactLastName = $request->getBodyParam('contactLastName');
         $company->contactEmail = $request->getBodyParam('contactEmail');
         $company->contactRegistrationNumber = strtoupper(str_replace(' ', '', $request->getBodyParam('contactRegistrationNumber')));
         $company->contactPhone = $request->getBodyParam('contactPhone');

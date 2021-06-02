@@ -17,6 +17,7 @@ use craft\models\UserGroup;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
+use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -24,7 +25,10 @@ use DateTime;
 use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
+use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use yii\base\BaseObject;
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
 use yii\validators\Validator;
 
 /**
@@ -98,7 +102,8 @@ class Company extends Element
     public $logo;
 
     // Company Manager Info
-    public $contactName;
+    public $contactFirstName;
+    public $contactLastName;
     public $contactEmail;
     public $contactRegistrationNumber;
     public $contactPhone;
@@ -350,7 +355,7 @@ class Company extends Element
 
         // New created form
         if(null === $this->id){
-            $rules[] = [['contactName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
+            $rules[] = [['contactFirstName', 'contactLastName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
 
             $rules[] = ['name', function($attribute, $params, Validator $validator){
                 if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0 && null === $this->id) {
@@ -537,18 +542,28 @@ class Company extends Element
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
 
+            $this->contactFirstName = $record->contactFirstName;
+            $this->contactLastName = $record->contactLastName;
+            $this->contactEmail = $record->contactEmail;
+            $this->contactRegistrationNumber = $record->contactRegistrationNumber;
+            $this->contactPhone = $record->contactPhone;
+            $this->contactBirthday = $record->contactBirthday;
+
             if (!$record) {
                 throw new Exception('Invalid company ID: ' . $this->id);
             }
         } else {
             $record = new CompanyRecord();
             $record->id = $this->id;
-            $record->contactName = $this->contactName;
+            $record->contactFirstName = $this->contactFirstName;
+            $record->contactLastName = $this->contactLastName;
             $record->contactEmail = $this->contactEmail;
             $record->contactRegistrationNumber = $this->contactRegistrationNumber;
             $record->contactPhone = $this->contactPhone;
             $record->contactBirthday = $this->contactBirthday;
         }
+
+        $userId = $this->_saveUser($record->id);
 
         $record->name = $this->name;
         $record->info = $this->info;
@@ -562,70 +577,85 @@ class Company extends Element
         $record->taxReference = $this->taxReference;
         $record->website = $this->website;
         $record->logo = $this->logo;
-        $record->userId = $this->_saveUser();
+        $record->userId = $userId;
 
         $record->save(false);
 
         $this->id = $record->id;
+
+        // save company id into the companyUser
+        CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
     }
 
-    private function _saveUser()
+    private function _saveUser($companyId)
     {
-        $companyUser = CompanyManagement::$plugin->companyUser->getCompanyUserByNin($this->contactRegistrationNumber);
-        $user = null;
+        // Make sure this is Craft Pro, since that's required for having multiple user accounts
+        Craft::$app->requireEdition(Craft::Pro);
 
-        if($companyUser) {
-            $userId = $companyUser[0];
-
-            // check if user exists
-            $user = User::find()
-                ->id($userId)
-                ->anyStatus()
-                ->one();
-        }
+//        $companyUser = CompanyUserRecord::findOne(['nationalInsuranceNumber' => $this->contactRegistrationNumber]);
+        $user = User::findOne(['email' => $this->contactEmail]);
 
         if(!$user) {
 
-            // Make sure this is Craft Pro, since that's required for having multiple user accounts
-            Craft::$app->requireEdition(Craft::Pro);
-
-            $handle = CompanyHelper::cleanStringForUrl($this->name);
-
-            $group = Craft::$app->getUserGroups()->getGroupByHandle($handle);
-
-            if(null === $group)
-            {
-                // Create a new user group
-                $userGroup = new UserGroup();
-                $userGroup->name = $this->name;
-                $userGroup->handle = $handle;
-                Craft::$app->getUserGroups()->saveGroup($userGroup, false);
-
-                $group = $userGroup;
-            }else{
-                throw new Exception('A user group with: ' . $handle . ' already exists.');
-            }
-
             // Create a new user
             $user = new User();
+            $user->firstName = $this->contactFirstName;
+            $user->lastName = $this->contactLastName;
             $user->username = $this->contactEmail;
             $user->email = $this->contactEmail;
 
             $success = Craft::$app->elements->saveElement($user, true);
 
-            if($success) {
-                $success = CompanyManagement::$plugin->companyUser->saveCompanyUser($this,$user);
+            if(!$success){
+                throw new Exception("The user couldn't be created");
             }
 
-            if($success){
-                Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
-                return $user->id;
-            }
-
-            return null;
         }
 
-        return $user->id;
+        //assign user to group
+        $this->_saveUserToGroup($user);
 
+        // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
+        $this->_updateCompanyUser($user, $companyId);
+
+        return $user->id;
+    }
+
+    private function _saveUserToGroup($user)
+    {
+        //register a new group
+        $handle = CompanyHelper::cleanStringForUrl($this->name);
+        $group = Craft::$app->getUserGroups()->getGroupByHandle($handle);
+
+        if(null === $group)
+        {
+            // Create a new user group
+            $userGroup = new UserGroup();
+            $userGroup->name = $this->name;
+            $userGroup->handle = $handle;
+            Craft::$app->getUserGroups()->saveGroup($userGroup, false);
+
+            //@TODO: set group permissions
+
+            $group = $userGroup;
+        }
+
+        // assign user to group
+        Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
+    }
+
+    private function _updateCompanyUser($user, $companyId)
+    {
+        $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
+
+        if(!$companyUser) {
+            $companyUser = CompanyUserHelper::populateCompanyUserFromPost($user->id, $companyId);
+
+            $validateCompanyUser = $companyUser->validate();
+
+            if($validateCompanyUser) {
+                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$user->id);
+            }
+        }
     }
 }

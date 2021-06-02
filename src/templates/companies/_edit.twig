@@ -11,10 +11,18 @@
     { label: "Companies"|t('company-managament'), url: url('company-management/companies') },
 ] -%}
 
-{%- set tabs = {
-    company: {label: 'Company'|t('company-management'), url: '#company'},
-    contact: {label: 'Contact'|t('company-management'), url: '#contact'},
-} -%}
+{%- if company and company.id -%}
+    {%- set tabs = {
+        company: {label: 'Company'|t('company-management'), url: '#company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#contact'},
+        users: {label: 'Users'|t('company-management'), url: '#users'},
+    } -%}
+{%- else -%}
+    {%- set tabs = {
+        company: {label: 'Company'|t('company-management'), url: '#company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#contact'},
+    } -%}
+{%- endif -%}
 {%- set selectedTab = 'company' -%}
 
 {% block header %}
@@ -51,5 +59,41 @@
             {{- companyFields.contact(company) -}}
         {%- endif -%}
     </div>
+
+    {%- if company and company.id -%}
+        <div id="users" class="hidden">
+
+            <div class="flex">
+                <div class="flex flex-nowrap" style="flex-grow: 1;">
+                    <h2>Users</h2>
+                </div>
+                <div class="flex">
+                    {%- set companyUrl = company ? 'users/new?companyId=' ~ company.id : 'users/new' %}
+                    <a href="{{ url(companyUrl) }}" target="_blank" class="btn submit add icon">{{ 'Create a New User'|t('company-management') }}</a>
+                </div>
+            </div>
+
+
+            <table class="data fullwidth collapsible">
+                <thead>
+                    <tr>
+                        <th>{{ 'Name'|t('company-management') }}</th>
+                        <th>{{ 'Email'|t('company-management') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for companyUser in craft.companyUsers.getUsers(company.id) %}
+                        {% set user = craft.users.id(companyUser.userId).one() %}
+                        {% if user %}
+                            <tr>
+                                <th>{{- user.fullName ?? '-' -}}</th>
+                                <td>{{- user ?? '-' -}}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {%- endif -%}
 
 {% endblock %}

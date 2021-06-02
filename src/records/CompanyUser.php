@@ -38,6 +38,7 @@ use craft\db\ActiveRecord;
  *
  * @property int id
  * @property int userId
+ * @property int companyId
  * @property DateTime employeeStartDate
  * @property DateTime employeeEndDate
  * @property DateTime birthday
@@ -50,8 +51,6 @@ use craft\db\ActiveRecord;
  */
 class CompanyUser extends ActiveRecord
 {
-
-
     // Public Static Methods
     // =========================================================================
 
