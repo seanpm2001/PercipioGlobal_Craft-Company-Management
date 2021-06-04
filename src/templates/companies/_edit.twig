@@ -79,6 +79,8 @@
                     <tr>
                         <th>{{ 'Name'|t('company-management') }}</th>
                         <th>{{ 'Email'|t('company-management') }}</th>
+                        <th>{{ 'Date Created'|t('company-management') }}</th>
+                        <th>{{ 'Last Login'|t('company-management') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +89,9 @@
                         {% if user %}
                             <tr>
                                 <th>{{- user.fullName ?? '-' -}}</th>
-                                <td>{{- user ?? '-' -}}</td>
+                                <td>{{- user.email ?? '-' -}}</td>
+                                <td>{{- user.dateCreated|date('d/m/Y')}}</td>
+                                <td>{{- user.lastLoginDate ?? '-' -}}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
