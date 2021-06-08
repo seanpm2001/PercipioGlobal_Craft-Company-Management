@@ -10,9 +10,7 @@
 
 namespace percipiolondon\companymanagement;
 
-use craft\elements\User;
-use craft\events\ModelEvent;
-use craft\web\twig\variables\CraftVariable;
+use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
@@ -25,12 +23,17 @@ use percipiolondon\companymanagement\elements\Company as CompanyElement;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
+use nystudio107\pluginvite\services\VitePluginService;
+
 use Craft;
 use craft\base\Plugin;
-use craft\web\UrlManager;
-use craft\services\Elements;
+use craft\elements\User;
+use craft\events\ModelEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\services\Elements;
+use craft\web\UrlManager;
+use craft\web\twig\variables\CraftVariable;
 
 use yii\base\Event;
 
@@ -87,6 +90,31 @@ class CompanyManagement extends Plugin
      * @var bool
      */
     public $hasCpSection = true;
+
+    // Static Methods
+    // =========================================================================
+    /**
+     * @inheritdoc
+     */
+
+    public function __construct($id, $parent = null, array $config = [])
+    {
+        $config['components'] = [
+            'timeloop' => Timeloop::class,
+            'vite' => [
+                'class' => VitePluginService::class,
+                'assetClass' => TimeloopAsset::class,
+                'useDevServer' => true,
+                'devServerPublic' => 'http://localhost:3001',
+                'serverPublic' => 'http://localhost:8000',
+                'errorEntry' => '/src/js/timeloop.ts',
+                'devServerInternal' => 'http://craft-timeloop-buildchain:3001',
+                'checkDevServer' => true,
+            ]
+        ];
+
+        parent::__construct($id, $parent, $config);
+    }
 
     // Public Methods
     // =========================================================================

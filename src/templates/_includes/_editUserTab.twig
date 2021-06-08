@@ -1,5 +1,13 @@
 {%- import "_includes/forms" as forms -%}
 
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
+
 {% set companyUser = companyUser ?? null %}
 {% set user = user ?? null %}
 
