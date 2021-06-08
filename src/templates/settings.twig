@@ -15,7 +15,13 @@
 
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset") %}
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
 
 {{ forms.textField({
     label: 'Some Field',
