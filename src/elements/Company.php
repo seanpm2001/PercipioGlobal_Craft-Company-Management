@@ -314,6 +314,18 @@ class Company extends Element
         ];
     }
 
+    protected function tableAttributeHtml(string $attribute): string
+    {
+        switch ($attribute) {
+            case 'shortName':
+                // use this to customise returned values (add links / mailto's etc)
+                // https://docs.craftcms.com/commerce/api/v3/craft-commerce-elements-traits-orderelementtrait.html#protected-methods
+                 return $this->shortName;
+        }
+
+        return parent::tableAttributeHtml($attribute);
+    }
+
     private static function _getCompanyIds()
     {
 
