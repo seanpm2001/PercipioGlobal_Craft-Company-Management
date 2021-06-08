@@ -1,11 +1,11 @@
 TAG?=14-alpine
 CONTAINER?=$(shell basename $(dir $(CURDIR)))-buildchain
 DOCKERRUN=docker container run \
-	    --name ${CONTAINER} \
-	    --rm \
-	    -t \
+		--name ${CONTAINER} \
+		--rm \
+		-t \
         --network craft-plugin-playground_default \
-        -p 3001:3001 \
+		-p 3001:3001 \
         -v `pwd`/../:/app \
         ${CONTAINER}:${TAG}
 
