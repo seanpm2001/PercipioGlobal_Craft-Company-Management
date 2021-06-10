@@ -10,6 +10,7 @@
         "craft-plugin",
         "company management"
     ],
+    "minimum-stability": "alpha",
     "support": {
         "docs": "https://github.com/percipioglobal/company-management/blob/master/README.md",
         "issues": "https://github.com/percipioglobal/company-management/issues"

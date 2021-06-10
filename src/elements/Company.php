@@ -78,6 +78,7 @@ use yii\validators\Validator;
 class Company extends Element
 {
     const STATUS_LIVE = 'live';
+    const STATUS_PENDING = 'pending';
     const STATUS_EXPIRED = 'expired';
 
     // Public Properties
@@ -114,11 +115,17 @@ class Company extends Element
     // =========================================================================
 
     /**
-     * Returns the display name of this class.
-     *
-     * @return string The display name of this class.
+     * @inheritdoc
      */
     public static function displayName(): string
+    {
+        return Craft::t('company-management', 'Company');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function lowerDisplayName(): string
     {
         return Craft::t('company-management', 'Company');
     }
@@ -129,6 +136,22 @@ class Company extends Element
     public static function pluralDisplayName(): string
     {
         return Craft::t('company-management', 'Companies');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function pluralLowerDisplayName(): string
+    {
+        return Craft::t('company-management', 'companies');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function refHandle()
+    {
+        return 'company';
     }
 
     /**
@@ -148,6 +171,14 @@ class Company extends Element
      * @return bool Whether elements of this type have traditional titles.
      */
     public static function hasTitles(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function hasUris(): bool
     {
         return true;
     }
@@ -235,7 +266,7 @@ class Company extends Element
      * @return array The sources.
      * @see sources()
      */
-   protected static function defineSources(string $context = null): array
+    protected static function defineSources(string $context = null): array
     {
         $ids = self::_getCompanyIds();
         return [

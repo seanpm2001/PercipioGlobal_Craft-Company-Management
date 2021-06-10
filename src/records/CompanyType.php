@@ -13,6 +13,7 @@ namespace percipiolondon\companymanagement\records;
 use percipiolondon\companymanagement\CompanyManagement;
 
 use craft\db\ActiveRecord;
+use craft\db\SoftDeleteTrait;
 use craft\db\Table;
 use yii\db\ActiveQueryInterface;
 
@@ -30,50 +31,49 @@ use yii\db\ActiveQueryInterface;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     0.1.0
+ * @since     1.0.0
  */
+
 
 /**
- * Company record.
+ * Class CompanyType record.
  *
- * @property int id
- * @property string name
- * @property string info
- * @property string shortName
- * @property string address
- * @property string town
- * @property string postcode
- * @property string registerNumber
- * @property string payeReference
- * @property string accountsOfficeReference
- * @property string taxReference
- * @property string website
- * @property string logo
- * @property string contactFirstName
- * @property string contactLastName
- * @property string contactEmail
- * @property string contactRegistrationNumber
- * @property string contactPhone
- * @property string contactBirthday
- * @property int userId
- *
- *
- * @package Company Management
- *
+ * @property int $id ID
+ * @property int $companyId Company ID
+ * @property int $fieldLayoutId Field layout ID
+ * @property string $name Name
+ * @property string $handle Handle
+ * @property bool $hasTitleField Has title field
+ * @property string $titleTranslationMethod Title translation method
+ * @property string|null $titleTranslationKeyFormat Title translation key format
+ * @property string|null $titleFormat Title format
+ * @property int $sortOrder Sort order
+ * @property Company $compny Company
+ * @property FieldLayout $fieldLayout Field layout
+ * @author Percipio Global Ltd. <support@percipio.london>
+ * @since 3.0.0
  */
-class Company extends ActiveRecord
-{
 
+class CompanyType extends ActiveRecord
+{
+    use SoftDeleteTrait;
 
     /**
      * @inheritdoc
+     * @return string
      */
     public static function tableName(): string
     {
-        return Table::COMPANIES;
+        return Table::COMPANYTYPES;
     }
 
-
-        //return '{{%companymanagement_company}}';
-
+    /**
+     * Returns the entry type’s fieldLayout.
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getFieldLayout(): ActiveQueryInterface
+    {
+        return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
+    }
 }

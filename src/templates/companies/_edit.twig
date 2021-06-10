@@ -6,8 +6,6 @@
     ],
 } %}
 
-{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
-
 {%- import "_includes/forms" as forms -%}
 {%- import "company-management/companies/_fields" as companyFields -%}
 
@@ -49,6 +47,8 @@
 {% endblock %}
 
 {% block content %}
+    {{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
+
     <input type="hidden" name="action" value="company-management/company/save">
     {{- redirectInput('company-management/companies') -}}
 

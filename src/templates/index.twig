@@ -20,8 +20,6 @@
     ],
 } %}
 
-{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
-
 {% import "_includes/forms" as forms %}
 
 {# Link for the ? icon at the bottom of the page #}
@@ -45,6 +43,8 @@
 
 {# The content of the CP Section#}
 {% set content %}
+
+    {{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
     <h2>{{ "Index CP Section body goes here"|t('company-management') }}</h2>
 {#    <img src="{{ iconUrl }}" height="64" width="64" />#}
     <p class="textline"></p>
