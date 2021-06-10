@@ -19,6 +19,7 @@ use craft\helpers\Db;
 use craft\models\FieldGroup;
 use craft\models\FieldLayout;
 use percipiolondon\companymanagement\CompanyManagement;
+use percipiolondon\companymanagement\elements\Company as CompanyElement;
 
 use Craft;
 use craft\base\Component;
@@ -58,16 +59,13 @@ class Company extends Component
 
     public function installCompanyUserFields()
     {
-        // Create field group
-//        $companyFieldGroup = $this->_createFieldGroup();
-
-        $fieldLayout = new FieldLayout(['type' => \percipiolondon\companymanagement\elements\Company::class]);
+        // Create a field layout for our Company type
+        $fieldLayout = new FieldLayout(['type' => CompanyElement::class]);
 
         // Create fields
         $fields = $this->_createFields($fieldLayout);
 
-        // Add fields to the user model
-//        $layout = Craft::$app->fields->getLayoutByType('craft/elements/User');
+        // Add fields to the user layout
         $fieldLayout->setFields($fields);
 
         Craft::$app->fields->saveLayout($fieldLayout);
@@ -91,7 +89,7 @@ class Company extends Component
 //        foreach($fieldGroups as $fieldGroup) {
 //            if('Company User Fields' === $fieldGroup->name) {
 //                $companyFieldGroup = $fieldGroup;
-//            }
+//            } 
 //        }
 //
 //        if(null === $companyFieldGroup) {

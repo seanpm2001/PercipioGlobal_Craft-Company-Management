@@ -10,7 +10,9 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\events\FieldLayoutEvent;
 use craft\events\PluginEvent;
+use craft\services\Fields;
 use craft\services\Plugins;
 use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
@@ -242,6 +244,14 @@ class CompanyManagement extends Plugin
                 if ($event->plugin === $this) {
                     CompanyManagement::$plugin->company->uninstallCompanyUserFields();
                 }
+            }
+        );
+
+        Event::on(
+            Fields::class,
+            Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT,
+            function(FieldLayoutEvent $event) {
+                Craft::dd($event);
             }
         );
     }
