@@ -10,6 +10,8 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\events\PluginEvent;
+use craft\services\Plugins;
 use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
@@ -140,8 +142,8 @@ class CompanyManagement extends Plugin
         $this->_registerVariables();
         $this->_registerServices();
         $this->_registerUserSave();
-//        $this->_registerAfterInstall();
-//        $this->_registerAfterUninstall();
+        $this->_registerAfterInstall();
+        $this->_registerAfterUninstall();
         $this->_registerTemplateHooks();
 
         Craft::info(
@@ -231,31 +233,31 @@ class CompanyManagement extends Plugin
         );
     }
 
-//    private function _registerAfterInstall()
-//    {
-//        Event::on(
-//            Plugins::class,
-//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-//            function (PluginEvent $event) {
-//                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
-//                }
-//            }
-//        );
-//    }
-//
-//    private function _registerAfterUninstall()
-//    {
-//        Event::on(
-//            Plugins::class,
-//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-//            function (PluginEvent $event) {
-//                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->installCompanyUserFields();
-//                }
-//            }
-//        );
-//    }
+    private function _registerAfterInstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
+                }
+            }
+        );
+    }
+
+    private function _registerAfterUninstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    CompanyManagement::$plugin->company->installCompanyUserFields();
+                }
+            }
+        );
+    }
 
     private function _registerVariables()
     {
