@@ -14,7 +14,7 @@ class CompanyQuery extends ElementQuery
     // Company Info
     public $name;
     public $info;
-    public $shortName;
+    public $slug;
     public $address;
     public $town;
     public $postcode;
@@ -45,9 +45,9 @@ class CompanyQuery extends ElementQuery
         return $this;
     }
 
-    public function shortName($value)
+    public function slug($value)
     {
-        $this->shortName = $value;
+        $this->slug = $value;
         return $this;
     }
 
@@ -143,7 +143,6 @@ class CompanyQuery extends ElementQuery
 
     protected function beforePrepare(): bool
     {
-
         // join in the products table
         $this->joinElementTable('companymanagement_company');
 
@@ -152,7 +151,7 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.id',
             'companymanagement_company.name',
             'companymanagement_company.info',
-            'companymanagement_company.shortName',
+            'companymanagement_company.slug',
             'companymanagement_company.address',
             'companymanagement_company.town',
             'companymanagement_company.postcode',

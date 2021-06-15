@@ -39,7 +39,7 @@ use craft\db\ActiveRecord;
  * @property int id
  * @property string name
  * @property string info
- * @property string shortName
+ * @property string slug
  * @property string address
  * @property string town
  * @property string postcode
