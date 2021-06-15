@@ -7,17 +7,13 @@
  * @link      http://percipio.london/
  * @copyright Copyright (c) 2021 Percipio
  */
-
 namespace percipiolondon\companymanagement\migrations;
-
 use Craft;
 use craft\db\Migration;
 use craft\helpers\MigrationHelper;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company;
 use yii\base\NotSupportedException;
-
-
 /**
  * Installation Migration
  *
@@ -25,7 +21,6 @@ use yii\base\NotSupportedException;
  * @since 1.0.0
  */
 class Install extends Migration {
-
     /**
      * @inheritdoc
      */
@@ -34,10 +29,10 @@ class Install extends Migration {
         $this->createTables();
         $this->createIndexes();
         $this->addForeignKeys();
-
+        // Refresh the db schema caches
+        Craft::$app->db->schema->refresh();
         return true;
     }
-
     /**
      * @inheritdoc
      */
@@ -46,18 +41,14 @@ class Install extends Migration {
         $this->dropForeignKeys();
         $this->dropTables();
         $this->dropProjectConfig();
-
         $this->delete(\craft\db\Table::ELEMENTINDEXSETTINGS, ['type' => [ Company::class ]]);
         $this->delete(\craft\db\Table::FIELDLAYOUTS, ['type' => [ Company::class ]]);
     }
-
     // Protected Functions
     // =========================================================================
-
     /**
      * Creates the tables for Company Management
      */
-
     public function createTables()
     {
         $tableSchemaCompany = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANIES);
@@ -75,7 +66,7 @@ class Install extends Migration {
                 'siteId' => $this->integer()->notNull()->defaultValue(1),
                 'info' => $this->string()->notNull()->defaultValue(''),
                 'name' => $this->string()->notNull()->defaultValue(''),
-                'shortName' => $this->string()->notNull()->defaultValue(''),
+                'slug' => $this->string()->notNull()->defaultValue(''),
                 'address' => $this->string()->notNull()->defaultValue(''),
                 'town' => $this->string()->notNull()->defaultValue(''),
                 'postcode' => $this->string()->notNull()->defaultValue(''),
@@ -94,7 +85,6 @@ class Install extends Migration {
                 'userId' => $this->integer(),
             ]);
         }
-
         if ($tableSchemaTypes === null) {
             $this->createTable(Table::CM_COMPANYTYPES, [
                 'id' => $this->primaryKey(),
@@ -103,24 +93,22 @@ class Install extends Migration {
                 'handle' => $this->string()->notNull(),
             ]);
         }
-
         if ($tableSchemaUsers === null) {
             $this->createTable(Table::CM_USERS, [
-                'id' => $this->integer()->notNull(),
-                'companyId' => $this->integer()->notNull(),
+                'id' => $this->primaryKey(),
+                'companyId' => $this->integer(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
                 // Custom columns in the table
+                'userId' => $this->integer(),
                 'employeeStartDate' => $this->string(),
                 'employeeEndDate' => $this->string(),
                 'birthday' => $this->string(),
                 'nationalInsuranceNumber' => $this->string()->notNull()->defaultValue(''),
                 'grossIncome' => $this->string()->defaultValue(''),
-                'PRIMARY KEY(id)',
             ]);
         }
-
         if ($tableSchemaDocuments === null) {
             $this->createTable(Table::CM_DOCUMENTS, [
                 'id' => $this->integer()->notNull(),
@@ -130,7 +118,6 @@ class Install extends Migration {
             ]);
         }
     }
-
     /**
      * Drop the tables
      */
@@ -139,10 +126,8 @@ class Install extends Migration {
         $this->dropTableIfExists(Table::CM_COMPANIES);
         $this->dropTableIfExists(Table::CM_USERS);
         $this->dropTableIfExists(Table::CM_DOCUMENTS);
-
         return null;
     }
-
     /**
      * Drop the foreign keys
      */
@@ -153,12 +138,10 @@ class Install extends Migration {
             Table::CM_USERS,
             Table::CM_DOCUMENTS
         ];
-
         foreach ($tables as $table) {
             $this->_dropForeignKeyToAndFromTable($table);
         }
     }
-
     /**
      * Deletes the project config entry.
      */
@@ -166,19 +149,17 @@ class Install extends Migration {
     {
         Craft::$app->projectConfig->remove('companies');
     }
-
     /**
      * Creates the indexes.
      */
     public function createIndexes()
     {
 //        $this->createIndex(null, Table::CM_COMPANIES, 'typeId', false);
-        $this->createIndex(null, Table::CM_COMPANIES, 'id', false);
+        $this->createIndex(null, Table::CM_COMPANIES, 'id', true);
         $this->createIndex(null, Table::CM_COMPANYTYPES, 'handle', true);
         $this->createIndex(null, Table::CM_COMPANYTYPES, 'fieldLayoutId', true);
-        $this->createIndex(null, Table::CM_USERS, 'companyId', true);
+//        $this->createIndex(null, Table::CM_USERS, 'companyId', true);
     }
-
     /**
      * Adds the foreign keys.
      */
@@ -188,11 +169,11 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_COMPANIES, ['id'], \craft\db\Table::ELEMENTS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANIES, ['logo'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANIES, ['userId'], \craft\db\Table::USERS, ['id'], null, 'CASCADE');
-        $this->addForeignKey(null, Table::CM_USERS, ['id'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_USERS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_USERS, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
     }
-
     /**
      * Returns if the table exists.
      *
@@ -205,13 +186,10 @@ class Install extends Migration {
     {
         $schema = $this->db->getSchema();
         $schema->refresh();
-
         $rawTableName = $schema->getRawTableName($tableName);
         $table = $schema->getTableSchema($rawTableName);
-
         return (bool)$table;
     }
-
     /**
      * @param string $tableName
      * @throws NotSupportedException
@@ -224,3 +202,8 @@ class Install extends Migration {
         }
     }
 }
+
+
+
+
+
