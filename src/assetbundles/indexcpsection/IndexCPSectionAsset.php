@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Management plugin for Craft CMS 3.x
+ * Company.php Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *

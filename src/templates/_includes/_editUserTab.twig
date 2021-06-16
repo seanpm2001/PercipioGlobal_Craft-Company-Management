@@ -79,10 +79,10 @@
 
     {%- set comp = company ? [craft.companies.id(company).one()] : [] -%}
     {{ forms.elementSelectField({
-        label: "Company"|t('company-management'),
+        label: "Company.php"|t('company-management'),
         id: 'companyId',
         name: 'companyId',
-        elementType: 'percipiolondon\\companymanagement\\elements\\Company',
+        elementType: 'percipiolondon\\companymanagement\\elements\\Company.php',
         elements: comp,
         value: company ?? '',
         instructions: "Select a company"|t('company-management'),

@@ -1,5 +1,5 @@
 /**
- * Company Management plugin for Craft CMS
+ * Company.php Management plugin for Craft CMS
  *
  * Index Field JS
  *

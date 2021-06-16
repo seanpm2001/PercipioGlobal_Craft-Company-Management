@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Management plugin for Craft CMS 3.x
+ * Company.php Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -161,7 +161,7 @@ class CompanyManagement extends Plugin
     {
         $nav = parent::getCpNavItem();
 
-        $nav['label'] = Craft::t('company-management', 'Company Management');
+        $nav['label'] = Craft::t('company-management', 'Company.php Management');
 
         $nav['subnav']['dashboard'] = [
             'label' => Craft::t('company-management', 'Dashboard'),

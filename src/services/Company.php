@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Management plugin for Craft CMS 3.x
+ * Company.php Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -24,7 +24,7 @@ use craft\base\Component;
 use yii\base\BaseObject;
 
 /**
- * Company Service
+ * Company.php Service
  *
  * All of your plugin’s business logic should go in services, including saving data,
  * retrieving data, etc. They provide APIs that your controllers, template variables,
@@ -73,7 +73,7 @@ class Company extends Component
 //    {
 //        $fieldGroups = Craft::$app->fields->getAllGroups();
 //        foreach($fieldGroups as $fieldGroup) {
-//            if('Company User Fields' === $fieldGroup->name) {
+//            if('Company.php User Fields' === $fieldGroup->name) {
 //                Craft::$app->fields->deleteGroupById($fieldGroup->id);
 //            }
 //        }
@@ -85,19 +85,19 @@ class Company extends Component
 //        $fieldGroups = Craft::$app->fields->getAllGroups();
 //        $companyFieldGroup = null;
 //        foreach($fieldGroups as $fieldGroup) {
-//            if('Company User Fields' === $fieldGroup->name) {
+//            if('Company.php User Fields' === $fieldGroup->name) {
 //                $companyFieldGroup = $fieldGroup;
 //            }
 //        }
 //
 //        if(null === $companyFieldGroup) {
 //            $groupModel = new FieldGroup();
-//            $groupModel->name = 'Company User Fields';
+//            $groupModel->name = 'Company.php User Fields';
 //            Craft::$app->fields->saveGroup($groupModel);
 //            $fieldGroups = Craft::$app->fields->getAllGroups();
 //
 //            foreach($fieldGroups as $fieldGroup) {
-//                if('Company User Fields' === $fieldGroup->name) {
+//                if('Company.php User Fields' === $fieldGroup->name) {
 //                    $companyFieldGroup = $fieldGroup;
 //                }
 //            }
