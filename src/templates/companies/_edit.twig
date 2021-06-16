@@ -49,6 +49,7 @@
 {% endblock %}
 
 {% block content %}
+
     <input type="hidden" name="action" value="company-management/company/save">
     {{- redirectInput('company-management/companies') -}}
 
@@ -108,4 +109,24 @@
         </div>
     {%- endif -%}
 
+{% endblock %}
+
+{% block details %}
+    {%- if company and company.id -%}
+            <div id="meta-details" class="meta read-only">
+                <div class="data">
+                    <h5 class="heading">Slug</h5>
+                    <div id="status-value" class="value">{{ company.slug }}</div>
+                </div>
+                <div class="data">
+                    <h5 class="heading">Created at</h5>
+                    <div id="date-created-value" class="value">3/27/2020, 1:38 PM</div>
+                </div>
+                <div class="data">
+                    <h5 class="heading">Updated at</h5>
+                    <div id="date-updated-value" class="value">6/8/2021, 12:24 PM</div>
+                </div>
+
+            </div>
+    {%- endif -%}
 {% endblock %}

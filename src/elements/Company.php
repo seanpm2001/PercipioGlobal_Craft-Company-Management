@@ -476,6 +476,7 @@ class Company extends Element
         return 'company-management/companies/'.$this->id;
     }
 
+
     // Events
     // -------------------------------------------------------------------------
 
