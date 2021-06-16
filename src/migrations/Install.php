@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Management plugin for Craft CMS 3.x
+ * Company.php Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -59,7 +59,7 @@ class Install extends Migration {
     // Protected Functions
     // =========================================================================
     /**
-     * Creates the tables for Company Management
+     * Creates the tables for Company.php Management
      */
     public function createTables()
     {

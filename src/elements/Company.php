@@ -1,6 +1,6 @@
 <?php
 /**
- * Company Management plugin for Craft CMS 3.x
+ * Company.php Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -33,7 +33,7 @@ use yii\base\InvalidConfigException;
 use yii\validators\Validator;
 
 /**
- * Company Element
+ * Company.php Element
  *
  * Element is the base class for classes representing elements in terms of objects.
  *
@@ -88,7 +88,7 @@ class Company extends Element
     public $expiryDate;
     public $siteId;
 
-    // Company Info
+    // Company.php Info
     public $name;
     public $info;
     public $shortName;
@@ -102,7 +102,7 @@ class Company extends Element
     public $website;
     public $logo;
 
-    // Company Manager Info
+    // Company.php Manager Info
     public $contactFirstName;
     public $contactLastName;
     public $contactEmail;
@@ -121,7 +121,7 @@ class Company extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('company-management', 'Company');
+        return Craft::t('company-management', 'Company.php');
     }
 
     /**
@@ -319,7 +319,7 @@ class Company extends Element
             'address' => ['label' => Craft::t('company-management', 'Address')],
             'town' => ['label' => Craft::t('company-management', 'Town')],
             'postcode' => ['label' => Craft::t('company-management', 'Postcode')],
-            'registerNumber' => ['label' => Craft::t('company-management', 'Company No.')],
+            'registerNumber' => ['label' => Craft::t('company-management', 'Company.php No.')],
             'payeReference' => ['label' => Craft::t('company-management', 'PAYE No.')],
             'accountsOfficeReference' => ['label' => Craft::t('company-management', 'Accounts No.')],
             'taxReference' => ['label' => Craft::t('company-management', 'VAT No.')],
@@ -348,7 +348,7 @@ class Company extends Element
             'address' => Craft::t('company-management', 'Address'),
             'town' => Craft::t('company-management', 'Town'),
             'postcode' => Craft::t('company-management', 'Postcode'),
-            'registerNumber' => Craft::t('company-management', 'Company No.'),
+            'registerNumber' => Craft::t('company-management', 'Company.php No.'),
             'payeReference' => Craft::t('company-management', 'PAYE No.'),
             'accountsOfficeReference' => Craft::t('company-management', 'Accounts No.'),
             'taxReference' => Craft::t('company-management', 'VAT No.'),

@@ -11,7 +11,7 @@ use percipiolondon\companymanagement\elements\Company;
 
 class CompanyQuery extends ElementQuery
 {
-    // Company Info
+    // Company.php Info
     public $name;
     public $info;
     public $shortName;
@@ -25,7 +25,7 @@ class CompanyQuery extends ElementQuery
     public $website;
     public $logo;
 
-    // Company Manager Info
+    // Company.php Manager Info
     public $contactFirstName;
     public $contactLastName;
     public $contactEmail;

@@ -43,7 +43,7 @@ class CompanyUser extends Component
     public function addEditUserCustomFieldTab(array &$context)
     {
         $context['tabs']['companyManagement'] = [
-            'label' => Craft::t('company-management', 'Company Management'),
+            'label' => Craft::t('company-management', 'Company.php Management'),
             'url' => '#companyManagement'
         ];
     }

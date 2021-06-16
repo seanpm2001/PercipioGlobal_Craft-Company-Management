@@ -11,7 +11,7 @@
 {%- set title = "Companies"|t('company-management') -%}
 {%- set selectedSubnavItem = 'companies' -%}
 
-{%- set elementType = 'percipiolondon\\companymanagement\\elements\\Company' -%}
+{%- set elementType = 'percipiolondon\\companymanagement\\elements\\Company.php' -%}
 
 {% block actionButton %}
     <a href="{{ url('company-management/companies/new') }}" class="btn submit add icon">Create Company</a>
