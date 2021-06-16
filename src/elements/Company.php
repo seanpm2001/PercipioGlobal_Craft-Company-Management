@@ -91,7 +91,7 @@ class Company extends Element
     // Company.php Info
     public $name;
     public $info;
-    public $shortName;
+    public $slug;
     public $address;
     public $town;
     public $postcode;
@@ -315,7 +315,7 @@ class Company extends Element
         return [
             'id' => ['label' => Craft::t('company-management', 'ID')],
             'name' => ['label' => Craft::t('company-management', 'Name')],
-            'shortName' => ['label' => Craft::t('company-management', 'Short')],
+            'slug' => ['label' => Craft::t('company-management', 'Slug')],
             'address' => ['label' => Craft::t('company-management', 'Address')],
             'town' => ['label' => Craft::t('company-management', 'Town')],
             'postcode' => ['label' => Craft::t('company-management', 'Postcode')],
@@ -344,7 +344,7 @@ class Company extends Element
     {
         return [
             'name' => Craft::t('company-management', 'Name'),
-            'shortName' => Craft::t('company-management', 'Short'),
+            'slug' => Craft::t('company-management', 'Slug'),
             'address' => Craft::t('company-management', 'Address'),
             'town' => Craft::t('company-management', 'Town'),
             'postcode' => Craft::t('company-management', 'Postcode'),
@@ -360,10 +360,10 @@ class Company extends Element
     protected function tableAttributeHtml(string $attribute): string
     {
         switch ($attribute) {
-            case 'shortName':
+            case 'slug':
                 // use this to customise returned values (add links / mailto's etc)
                 // https://docs.craftcms.com/commerce/api/v3/craft-commerce-elements-traits-orderelementtrait.html#protected-methods
-                 return $this->shortName;
+                 return $this->slug;
         }
 
         return parent::tableAttributeHtml($attribute);
@@ -627,7 +627,7 @@ class Company extends Element
 
         $record->name = $this->name;
         $record->info = $this->info;
-        $record->shortName = CompanyHelper::cleanStringForUrl($this->name);
+        $record->slug = CompanyHelper::cleanStringForUrl($this->name);
         $record->address = $this->address;
         $record->town = $this->town;
         $record->postcode = $this->postcode;

@@ -44,7 +44,7 @@ class Company
         $company->title =  $request->getBodyParam('name');
         $company->name = $request->getBodyParam('name');
         $company->info = $request->getBodyParam('info');
-        $company->shortName = $request->getBodyParam('shortName');
+        $company->slug = $request->getBodyParam('slug');
         $company->address = $request->getBodyParam('address');
         $company->town = $request->getBodyParam('town');
         $company->postcode = $request->getBodyParam('postcode');

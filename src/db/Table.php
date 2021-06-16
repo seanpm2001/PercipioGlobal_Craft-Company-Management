@@ -2,7 +2,6 @@
 
 namespace percipiolondon\companymanagement\db;
 
-
 abstract class Table
 {
     const CM_COMPANIES = "{{%companymanagement_company}}";
