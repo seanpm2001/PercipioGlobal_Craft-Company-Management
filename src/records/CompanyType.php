@@ -10,10 +10,12 @@
 
 namespace percipiolondon\companymanagement\records;
 
-use craft\records\FieldLayout;
+use percipiolondon\companymanagement\db\Table;
 
 use craft\db\ActiveRecord;
-use percipiolondon\companymanagement\db\Table;
+use craft\db\SoftDeleteTrait;
+use yii\db\ActiveQueryInterface;
+
 
 /**
  * Company Type Record
@@ -69,5 +71,25 @@ class CompanyType extends ActiveRecord
     public static function tableName()
     {
         return Table::CM_COMPANYTYPES;
+    }
+
+    /**
+     * Returns the company type's company
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getCompany(): ActiveQueryInterface
+    {
+        return $this->hasOne(Company::class, ['id' => 'companyId']);
+    }
+
+    /**
+     * Return the company type's fieldLayout.
+     *
+     * @return ActiveQueryInterface The relational query object
+     */
+    public function getFieldLayout(): ActiveQueryInterface
+    {
+        return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
     }
 }
