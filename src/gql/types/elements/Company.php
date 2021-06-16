@@ -34,6 +34,14 @@ class Company extends ElementType
      */
     protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
     {
-        /**
+        /** @var CompanyElement $source */
+        $fieldName = $resolveInfo->fieldName;
+
+        switch ($fieldName) {
+            case 'companyTypeHandle':
+                return $source->getType()->handle;
+        }
+
+        return parent::resolve($source, $arguments, $context, $resolveInfo);
     }
 }
