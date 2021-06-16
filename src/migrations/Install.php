@@ -75,8 +75,9 @@ class Install extends Migration {
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
-                // Custom columns in the table
                 'siteId' => $this->integer()->notNull()->defaultValue(1),
+                'typeId' => $this->integer(),
+                // Custom columns in the table
                 'info' => $this->string()->notNull()->defaultValue(''),
                 'name' => $this->string()->notNull()->defaultValue(''),
                 'slug' => $this->string()->notNull()->defaultValue(''),
@@ -194,7 +195,7 @@ class Install extends Migration {
      */
     public function createIndexes()
     {
-//        $this->createIndex(null, Table::CM_COMPANIES, 'typeId', false);
+        $this->createIndex(null, Table::CM_COMPANIES, 'typeId', false);
         $this->createIndex(null, Table::CM_COMPANIES, 'id', true);
         $this->createIndex(null, Table::CM_COMPANYTYPES, 'handle', true);
         $this->createIndex(null, Table::CM_COMPANYTYPES, 'fieldLayoutId', true);
@@ -209,6 +210,7 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_COMPANIES, ['id'], \craft\db\Table::ELEMENTS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANIES, ['logo'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANIES, ['userId'], \craft\db\Table::USERS, ['id'], null, 'CASCADE');
+        $this->addForeignKey(null, Table::CM_COMPANIES, ['typeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE');
         $this->addForeignKey(null, Table::CM_USERS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_USERS, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
