@@ -14,6 +14,7 @@ use craft\elements\actions\Delete;
 use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
+use http\Params;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
@@ -80,6 +81,14 @@ class Company extends Element
 {
     const STATUS_LIVE = 'live';
     const STATUS_EXPIRED = 'expired';
+
+    /**
+     * @event DefineCompanyTypesEvent The event that is triggered when defining the available company types for the company
+     *
+     * @see getAvailableCompanyTypes()
+     * @since 3.6.0
+     */
+    const EVENT_DEFINE_COMPANY_TYPES = 'defineEntryTypes';
 
     // Public Properties
     // =========================================================================
@@ -474,15 +483,56 @@ class Company extends Element
      */
     public function getFieldLayout()
     {
-        return parent::getFieldLayout();
-//        $tagGroup = $this->getGroup();
-//
-//        if ($tagGroup) {
-//            return $tagGroup->getFieldLayout();
-//        }
-//
-//        return null;
+        if (($fieldLayout = parent::getFieldLayout()) !== null) {
+            return $fieldLayout;
+        }
+        try {
+            $companyType = $this->getCompanyType();
+        } catch (InvalidConfigException $e) {
+            // The company type was probably deleted
+            return null;
+        }
+
+        return $companyType->getFieldLayout();
     }
+
+    /**
+     * @return mixed
+     */
+
+    public function getCompany: Company
+    {
+        if ($this->companyId === null) {
+            throw new InvalidConfigException('Company is missing its company element ID');
+        }
+
+        return $company;
+    }
+
+    /**
+     * Return the available company types
+     *
+     * @return CompanyType()
+     * @throws InvalidConfigException
+     * @since 1.0.0
+     */
+    public function getAvailableCompanyTypes(): array
+    {
+        $companyTypes = $this->getCompany()->getCompanyTypes();
+
+        // Fire a 'defineCompanyTypes' event
+        if ($this->hasEventHandlers(self::EVENT_DEFINE_COMPANY_TYPES)) {
+            $event = newDefineCompanyTypesEvents([
+                'companyTypes' => $companyTypes,
+            ]);
+            $this->trigger(self::EVENT_DEFINE_COMPANY_TYPES, $event);
+            $companyTypes = $event->companyTypes;
+        }
+
+        return $companyTypes;
+    }
+
+
 
     public function getGroup()
     {
