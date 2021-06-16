@@ -6,6 +6,7 @@ use Craft;
 use craft\db\Query;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
+use craft\models\FieldLayout;
 use yii\base\Component;
 use craft\db\Table as CraftTable;
 use percipiolondon\companymanagement\db\Table;
@@ -113,7 +114,6 @@ class CompanyTypes extends Component
 
         if ($runValidation && !$companyType->validate()) {
             Craft::info('Company type not saved due to validation error.', __METHOD__);
-
             return false;
         }
 
@@ -144,7 +144,7 @@ class CompanyTypes extends Component
             'siteSettings' => []
         ];
 
-        function(\craft\models\FieldLayout $fieldLayout): array {
+        function(FieldLayout $fieldLayout): array {
             $fieldLayoutConfig = $fieldLayout->getConfig();
 
             if ($fieldLayoutConfig) {
@@ -188,7 +188,7 @@ class CompanyTypes extends Component
             $companyType->id = Db::idByUid(Table::CM_COMPANYTYPES, $companyType->uid);
         }
 
-        Craft::dd($companyType);
+        //Craft::dd($companyType);
 
         return true;
     }
