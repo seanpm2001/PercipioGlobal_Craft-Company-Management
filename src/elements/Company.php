@@ -148,6 +148,14 @@ class Company extends Element
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function refHandle()
+    {
+        return 'company';
+    }
+
+    /**
      * Returns whether elements of this type will be storing any data in the `content`
      * table (tiles or custom fields).
      *
