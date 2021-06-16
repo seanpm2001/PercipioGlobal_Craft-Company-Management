@@ -34,6 +34,11 @@ class Company extends Model
     // Company ID instead of section ID: https://github.com/craftcms/cms/blob/43dc0a6f1d406abfd6f33fa2d9ffb1a49e6d5257/src/models/EntryType.php
 
     /**
+     * @var int|null Company ID
+     */
+    public $companyId;
+
+    /**
      * @var int|null Field layout ID
      */
     public $fieldLayoutId;
@@ -77,7 +82,7 @@ class Company extends Model
     protected function defineRules(): array
     {
         $rules = parent::defineRules();
-        $rules[] = [['id', 'fieldLayoutId'], 'number', 'integerOnly' => true];
+        $rules[] = [['id', 'companyId', 'fieldLayoutId'], 'number', 'integerOnly' => true];
         $rules[] = [['name', 'handle'], 'required'];
         $rules[] = [['name', 'handle'], 'string', 'max' => 255];
         $rules[] = [
@@ -88,14 +93,14 @@ class Company extends Model
         $rules[] = [
             ['name'],
             UniqueValidator::class,
-            'targetClass' => EntryTypeRecord::class,
+            'targetClass' => CompanyTypeRecord::class,
             'targetAttribute' => ['name', 'sectionId'],
             'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
         ];
         $rules[] = [
             ['handle'],
             UniqueValidator::class,
-            'targetClass' => EntryTypeRecord::class,
+            'targetClass' => CompanyTypeRecord::class,
             'targetAttribute' => ['handle', 'sectionId'],
             'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
         ];

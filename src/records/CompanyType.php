@@ -64,7 +64,7 @@ class CompanyType extends ActiveRecord
      */
     public static function tableName(): string
     {
-        return Table::COMPANYTYPES;
+        return Table::CM_COMPANYTYPES;
     }
 
     /**
