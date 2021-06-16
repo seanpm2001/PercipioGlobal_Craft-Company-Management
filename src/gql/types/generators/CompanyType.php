@@ -21,4 +21,38 @@ use craft\gql\TypeManager;
 
 class CompanyType implements GeneratorInterface {
 
+    public static function generateTypes($context = null): array
+    {
+        $companyTypes = CompanyManagement::$plugin->companyTypes->getCompanyTypes()->getAllCompanyTypes();
+        $gqlTypes = [];
+
+        foreach ($companyTypes as $companyType) {
+            /** @var CompanyType $companyType */
+            $typeName = CompanyElement::gqlTypeNameByContext($companyType);
+            $requiredContexts = CompanyElement::gqlScopesByContext($companyType);
+
+            // TODO: Is Schema Aware Of ?????
+
+            $contentFields = $companyType->getFields();
+            $contentFieldGqlTypes = [];
+
+            /** @var Field $contentField */
+            foreach ($contentFields as $contentField) {
+                $contentFieldGqlTypes[$contentField->handle] = $contentField->getContentGqlType();
+            }
+
+            $companyTypeFields = TypeManager::prepareFieldDefinitions(array_merge(CompanyInterface::getFieldDefinitions(), $contentFieldGqlTypes), $typeName);
+
+            // Generate a type for each company type
+            $gqlTypes[$typeName] = GqlEntityRegistry::getEntityRegistry:getEntity($typeName) ?: GqlEntityRegistry::createEntity($typeName, new CompanyTypeElement([
+                'name' => $typeName,
+                'fields' => function() use ($companyTypeFields) {
+                    return $companyTypeFields;
+                }
+            ]));
+        }
+
+        return $gqlTypes;
+    }
+
 }

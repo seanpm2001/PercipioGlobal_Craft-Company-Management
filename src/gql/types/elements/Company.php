@@ -15,6 +15,25 @@ use GraphQL\Type\Definition\ResolveInfo;
  * @since 1.0.0
  */
 
-class Company extends ElementType {
+class Company extends ElementType
+{
+    /**
+     * @inheritdoc
+     */
+    public function __construct(array $config)
+    {
+        $config['interfaces'] = [
+            CompanyInterface::getType(),
+        ];
 
+        parent::__construct($config);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function resolve($source, $arguments, $context, ResolveInfo $resolveInfo)
+    {
+        /**
+    }
 }
