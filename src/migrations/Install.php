@@ -106,7 +106,10 @@ class Install extends Migration {
                 'name' => $this->string()->notNull(),
                 'handle' => $this->string()->notNull(),
                 'hasTitleField' => $this->boolean(),
+                'hasDimensions' => $this->boolean(),
                 'titleFormat' => $this->string()->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
             ]);
         }
@@ -222,6 +225,7 @@ class Install extends Migration {
         $data = [
             'name' => 'Default',
             'handle' => 'default',
+            'hasDimensions' => true,
             'hasTitleField' => true,
             'fieldLayoutId' => $this->_companyFieldLayoutId,
             'titleFormat' => null,
