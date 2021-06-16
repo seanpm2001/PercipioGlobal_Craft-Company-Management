@@ -49,6 +49,11 @@ class CompanyType extends Model
     public $uid;
 
     /**
+     * @var bool Has dimension
+     */
+    public $hasDimensions;
+
+    /**
      * @var string Template
      */
     public $template;

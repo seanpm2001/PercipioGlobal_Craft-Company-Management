@@ -141,6 +141,7 @@ class CompanyManagement extends Plugin
         $this->_registerVariables();
         $this->_registerServices();
         $this->_registerUserSave();
+        $this->_registerProejctConfigEventListeners();
 //        $this->_registerAfterInstall();
 //        $this->_registerAfterUninstall();
         $this->_registerTemplateHooks();
@@ -230,6 +231,12 @@ class CompanyManagement extends Plugin
                 $event->types[] = CompanyElement::class;
             }
         );
+    }
+
+    private function _registerProejctConfigEventListeners()
+    {
+        $projectConfigService = Craft::$app->getProjectConfig();
+        $projectConfigService->onAdd(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);
     }
 
 //    private function _registerAfterInstall()
