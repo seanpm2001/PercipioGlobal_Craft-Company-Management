@@ -213,6 +213,9 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_USERS, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_COMPANYTYPES, ['fieldLayoutId'], '{{%fieldlayouts}}', ['id'], 'SET NULL');
+        $this->addForeignKey(null, Table::CM_COMAPNYTYPES_SITES, ['siteId'], '{{%sites}}', ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_COMAPNYTYPES_SITES, ['companyTypeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE');
     }
     /**
      * Insert the default data
