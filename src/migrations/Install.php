@@ -1,6 +1,6 @@
 <?php
 /**
- * Company.php Management plugin for Craft CMS 3.x
+ * Company Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -19,9 +19,6 @@ use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\models\CompanyType as CompanyTypeModel;
 use percipiolondon\companymanagement\models\CompanyTypeSite as CompanyTypeSiteModel;
-use craft\helpers\MigrationHelper;
-use percipiolondon\companymanagement\db\Table;
-use percipiolondon\companymanagement\elements\Company;
 use yii\base\NotSupportedException;
 /**
  * Installation Migration
@@ -187,7 +184,7 @@ class Install extends Migration {
      */
     public function dropProjectConfig()
     {
-        Craft::$app->projectConfig->remove('companies');
+        Craft::$app->projectConfig->remove('companymanagement_companytypes');
     }
     /**
      * Creates the indexes.
@@ -253,20 +250,6 @@ class Install extends Migration {
         $companyType->setSiteSettings($allSiteSettings);
 
         CompanyManagement::$plugin->companyTypes->saveCompanyType($companyType);
-    }
-    /**
-     * Adds the foreign keys.
-     */
-    public function addForeignKeys()
-    {
-        $this->addForeignKey(null, Table::CM_COMPANIES, ['siteId'], \craft\db\Table::SITES, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_COMPANIES, ['id'], \craft\db\Table::ELEMENTS, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_COMPANIES, ['logo'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_COMPANIES, ['userId'], \craft\db\Table::USERS, ['id'], null, 'CASCADE');
-        $this->addForeignKey(null, Table::CM_USERS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_USERS, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
-        $this->addForeignKey(null, Table::CM_DOCUMENTS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
     }
     /**
      * Returns if the table exists.

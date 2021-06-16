@@ -21,13 +21,13 @@
 
 {%- if company and company.id -%}
     {%- set tabs = {
-        company: {label: 'Company.php'|t('company-management'), url: '#company'},
+        company: {label: 'Company'|t('company-management'), url: '#company'},
         contact: {label: 'Contact'|t('company-management'), url: '#contact'},
         users: {label: 'Users'|t('company-management'), url: '#users'},
     } -%}
 {%- else -%}
     {%- set tabs = {
-        company: {label: 'Company.php'|t('company-management'), url: '#company'},
+        company: {label: 'Company'|t('company-management'), url: '#company'},
         contact: {label: 'Contact'|t('company-management'), url: '#contact'},
     } -%}
 {%- endif -%}

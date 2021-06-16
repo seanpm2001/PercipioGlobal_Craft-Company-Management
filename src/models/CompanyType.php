@@ -9,7 +9,7 @@ use craft\validators\HandleValidator;
 use percipiolondon\companymanagement\CompanyManagement;
 use yii\helpers\ArrayHelper;
 use yii\validators\UniqueValidator;
-use percipiolondon\companymanagement\records\Company as CompanyTypeRecord;
+use percipiolondon\companymanagement\records\CompanyType as CompanyTypeRecord;
 
 class CompanyType extends Model
 {
@@ -64,32 +64,32 @@ class CompanyType extends Model
     protected function defineRules(): array
     {
         $rules = parent::defineRules();
-//        $rules[] = [['id', 'fieldLayoutId'], 'number', 'integerOnly' => true];
-//        $rules[] = [['name', 'handle'], 'required'];
-//        $rules[] = [['name', 'handle'], 'string', 'max' => 255];
-//        $rules[] = [
-//            ['handle'],
-//            HandleValidator::class,
-//            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title'],
-//        ];
-//        $rules[] = [
-//            ['name'],
-//            UniqueValidator::class,
-//            'targetClass' => CompanyTypeRecord::class,
-//            'targetAttribute' => ['name'],
-//            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
-//        ];
-//        $rules[] = [
-//            ['handle'],
-//            UniqueValidator::class,
-//            'targetClass' => CompanyTypeRecord::class,
-//            'targetAttribute' => ['handle'],
-//            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
-//        ];
-//
-//        if (!$this->hasTitleField) {
-//            $rules[] = [['titleFormat'], 'required'];
-//        }
+        $rules[] = [['id', 'fieldLayoutId'], 'number', 'integerOnly' => true];
+        $rules[] = [['name', 'handle'], 'required'];
+        $rules[] = [['name', 'handle'], 'string', 'max' => 255];
+        $rules[] = [
+            ['handle'],
+            HandleValidator::class,
+            'reservedWords' => ['id', 'dateCreated', 'dateUpdated', 'uid', 'title'],
+        ];
+        $rules[] = [
+            ['name'],
+            UniqueValidator::class,
+            'targetClass' => CompanyTypeRecord::class,
+            'targetAttribute' => ['name'],
+            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
+        ];
+        $rules[] = [
+            ['handle'],
+            UniqueValidator::class,
+            'targetClass' => CompanyTypeRecord::class,
+            'targetAttribute' => ['handle'],
+            'comboNotUnique' => Craft::t('yii', '{attribute} "{value}" has already been taken.'),
+        ];
+
+        if (!$this->hasTitleField) {
+            $rules[] = [['titleFormat'], 'required'];
+        }
 
         return $rules;
     }

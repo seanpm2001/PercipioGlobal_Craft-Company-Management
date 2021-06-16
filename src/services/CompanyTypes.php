@@ -111,15 +111,6 @@ class CompanyTypes extends Component
     {
         $isNewCompanyType = !$companyType->id;
 
-        // Fire a 'beforeSaveProductType' event
-//        if ($this->hasEventHandlers(self::EVENT_BEFORE_SAVE_COMPANYTYPE)) {
-//            $this->trigger(self::EVENT_BEFORE_SAVE_COMPANYTYPE, new ProductTypeEvent([
-//                'productType' => $productType,
-//                'isNew' => $isNewProductType,
-//            ]));
-//        }
-
-
         if ($runValidation && !$companyType->validate()) {
             Craft::info('Company type not saved due to validation error.', __METHOD__);
 
@@ -141,7 +132,7 @@ class CompanyTypes extends Component
             $companyType->uid = $existingCompanyTypeRecord->uid;
         }
 
-        $this->_savingCompanyTypes[$companyType->uid] = $companyType;
+//        $this->_savingCompanyTypes[$companyType->uid] = $companyType;
 
         $projectConfig = Craft::$app->getProjectConfig();
         $configData = [
@@ -196,6 +187,8 @@ class CompanyTypes extends Component
         if ($isNewCompanyType) {
             $companyType->id = Db::idByUid(Table::CM_COMPANYTYPES, $companyType->uid);
         }
+
+        Craft::dd($companyType);
 
         return true;
     }

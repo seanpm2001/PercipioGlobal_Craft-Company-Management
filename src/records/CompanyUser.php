@@ -1,6 +1,6 @@
 <?php
 /**
- * Company.php Management plugin for Craft CMS 3.x
+ * Company Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -17,7 +17,7 @@ use DateTime;
 use craft\db\ActiveRecord;
 
 /**
- * Company.php Record
+ * Company Record
  *
  * ActiveRecord is the base class for classes representing relational data in terms of objects.
  *
@@ -34,7 +34,7 @@ use craft\db\ActiveRecord;
  */
 
 /**
- * Company.php record.
+ * Company record.
  *
  * @property int id
  * @property int userId
@@ -46,7 +46,7 @@ use craft\db\ActiveRecord;
  * @property string grossIncome
  *
  *
- * @package Company.php Management
+ * @package Company Management
  *
  */
 class CompanyUser extends ActiveRecord

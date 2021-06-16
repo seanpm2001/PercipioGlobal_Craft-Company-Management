@@ -13,7 +13,7 @@ use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
 
 /**
- * Class Company.php
+ * Class Company
  *
  * @author Percipio Global Ltd. <support@percipio.london>
  * @since 1.0.0

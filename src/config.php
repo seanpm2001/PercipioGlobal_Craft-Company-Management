@@ -1,6 +1,6 @@
 <?php
 /**
- * Company.php Management plugin for Craft CMS 3.x
+ * Company Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -9,9 +9,9 @@
  */
 
 /**
- * Company.php Management config.php
+ * Company Management config.php
  *
- * This file exists only as a template for the Company.php Management settings.
+ * This file exists only as a template for the Company Management settings.
  * It does nothing on its own.
  *
  * Don't edit this file, instead copy it to 'craft/config' as 'companies-management.php'

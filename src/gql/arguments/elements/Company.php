@@ -11,7 +11,7 @@ use craft\gql\types\QueryArgument;
 use GraphQL\Type\Definition\Type;
 
 /**
- * Class Company.php
+ * Class Company
  *
  * @author Percipio Global Ltd. <support@percipio.london>
  * @since 1.0.0

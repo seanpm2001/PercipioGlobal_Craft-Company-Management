@@ -1,6 +1,6 @@
 <?php
 /**
- * Company.php Management plugin for Craft CMS 3.x
+ * Company Management plugin for Craft CMS 3.x
  *
  * A plugin to setup companies
  *
@@ -20,7 +20,7 @@ use craft\web\Controller;
 use percipiolondon\companymanagement\elements\Company;
 
 /**
- * Company.php Controller
+ * Company Controller
  *
  * Generally speaking, controllers are the middlemen between the front end of
  * the CP/website and your plugin’s services. They contain action methods which
@@ -122,7 +122,7 @@ class CompanyController extends Controller
             return null;
         }
 
-        $this->setSuccessFlash(Craft::t('company-management', 'Company.php saved.'));
+        $this->setSuccessFlash(Craft::t('company-management', 'Company saved.'));
         return $this->renderTemplate('company-management/companies');
     }
 

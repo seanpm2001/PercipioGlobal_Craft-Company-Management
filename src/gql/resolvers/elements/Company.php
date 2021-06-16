@@ -9,7 +9,7 @@ use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
 
 /**
- * Class Company.php
+ * Class Company
  *
  * @author Percipio Global Ltd. <support@percipio.london>
  * @since 1.0.0
