@@ -3,6 +3,8 @@
 namespace percipiolondon\companymanagement\models;
 
 
+use craft\behaviors\FieldLayoutBehavior;
+use craft\models\FieldLayout;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\records\CompanyType as CompanyTypeRecord;
@@ -154,7 +156,7 @@ class CompanyType extends Model
 
     public function getCompanyFieldLayout(): FieldLayout
     {
-        /** @var FieldLayoutBehaviour $behavior */
+        /** @var FieldLayoutBehavior $behavior */
         $behavior = $this->getBehavior('companyFieldLayout');
         $fieldLayout = $behavior->getFieldLayout();
 
@@ -172,6 +174,6 @@ class CompanyType extends Model
                 'elementType' => Company::class,
                 'idAttribute' => 'fieldLayoutId'
             ]
-        ]
+        ];
     }
 }
