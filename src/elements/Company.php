@@ -18,6 +18,7 @@ use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
+use percipiolondon\companymanagement\models\CompanyType;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -190,7 +191,7 @@ class Company extends Element
     public static function hasStatuses(): bool
     {
         return true;
-    }A
+    }
 
     /**
      * Returns whether elements of this type have statuses.
@@ -518,6 +519,11 @@ class Company extends Element
         return 'company-management/companies/'.$this->id;
     }
 
+    public function getType()
+    {
+
+    }
+
     // Events
     // -------------------------------------------------------------------------
 
@@ -722,7 +728,7 @@ class Company extends Element
      */
     public static function gqlTypeNameByContext($context): string
     {
-        /* @var EntryType $context */
+        /* @var CompanyType $context */
         return self::_getGqlIdentifierByContext($context) . '_Company';
     }
 
@@ -732,7 +738,7 @@ class Company extends Element
      */
     public static function gqlMutationNameByContext($context): string
     {
-        /* @var EntryType $context */
+        /* @var CompanyType $context */
         return 'save_' . self::_getGqlIdentifierByContext($context) . '_Company';
     }
 

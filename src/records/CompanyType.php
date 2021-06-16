@@ -10,15 +10,13 @@
 
 namespace percipiolondon\companymanagement\records;
 
-use percipiolondon\companymanagement\CompanyManagement;
+use craft\records\FieldLayout;
 
-use Craft;
-use DateTime;
 use craft\db\ActiveRecord;
 use percipiolondon\companymanagement\db\Table;
 
 /**
- * Company Record
+ * Company Type Record
  *
  * ActiveRecord is the base class for classes representing relational data in terms of objects.
  *
@@ -35,39 +33,26 @@ use percipiolondon\companymanagement\db\Table;
  */
 
 /**
- * Company record.
+ * Company type record.
  *
- * @property int id
- * @property string name
- * @property string info
- * @property string shortName
- * @property string address
- * @property string town
- * @property string postcode
- * @property string registerNumber
- * @property string payeReference
- * @property string accountsOfficeReference
- * @property string taxReference
- * @property string website
- * @property string logo
- * @property string contactFirstName
- * @property string contactLastName
- * @property string contactEmail
- * @property string contactRegistrationNumber
- * @property string contactPhone
- * @property string contactBirthday
- * @property int userId
+ * @property FieldLayout $fieldLayout
+ * @property int $fieldLayoutId
+ * @property string $handle
+ * @property int $id
+ * @property string $name
+ * @property string $titleFormat
+ * @property string $companyTitleFormat
  *
  *
  * @package Company Management
  *
  */
-class Company extends ActiveRecord
+class CompanyType extends ActiveRecord
 {
     // Public Static Methods
     // =========================================================================
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
@@ -81,6 +66,6 @@ class Company extends ActiveRecord
      */
     public static function tableName()
     {
-        return Table::CM_COMPANIES;
+        return Table::CM_COMPANYTYPES;
     }
 }

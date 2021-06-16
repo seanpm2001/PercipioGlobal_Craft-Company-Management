@@ -15,6 +15,7 @@ use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
+use percipiolondon\companymanagement\services\CompanyTypes;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
 use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
@@ -278,6 +279,7 @@ class CompanyManagement extends Plugin
         $this->setComponents([
             'company' => CompanyService::class,
             'companyUser' => CompanyUserService::class,
+            'companyTypes' => CompanyTypes::class,
         ]);
     }
 
