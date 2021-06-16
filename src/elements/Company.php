@@ -263,6 +263,7 @@ class Company extends Element
      *
      * @return ElementQueryInterface The newly created [[ElementQueryInterface]] instance.
      */
+
     public static function find(): ElementQueryInterface
     {
         return new CompanyQuery(static::class);
@@ -711,4 +712,43 @@ class Company extends Element
             }
         }
     }
+
+    /*
+     * GQL instantiation
+     */
+
+    /**
+     * @inheritdoc
+     */
+    public static function gqlTypeNameByContext($context): string
+    {
+        /* @var EntryType $context */
+        return self::_getGqlIdentifierByContext($context) . '_Company';
+    }
+
+    /**
+     * @inheritdoc
+     * @since 3.5.0
+     */
+    public static function gqlMutationNameByContext($context): string
+    {
+        /* @var EntryType $context */
+        return 'save_' . self::_getGqlIdentifierByContext($context) . '_Company';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function gqlScopesByContext($context): array
+    {
+        /* @var CompanyType $context */
+        return [
+            // getCompany()->uid
+            //'companies.' . $context->getCompany()->uid,
+            //'companytypes.' . $context->uid,
+        ];
+    }
+
 }
+
+
