@@ -2,14 +2,18 @@
 
 namespace percipiolondon\companymanagement\models;
 
+
+use percipiolondon\companymanagement\CompanyManagement;
+use percipiolondon\companymanagement\elements\Company;
+use percipiolondon\companymanagement\records\CompanyType as CompanyTypeRecord;
+
 use Craft;
 use craft\base\Field;
 use craft\base\Model;
 use craft\validators\HandleValidator;
-use percipiolondon\companymanagement\CompanyManagement;
+
 use yii\helpers\ArrayHelper;
 use yii\validators\UniqueValidator;
-use percipiolondon\companymanagement\records\CompanyType as CompanyTypeRecord;
 
 class CompanyType extends Model
 {
@@ -142,5 +146,32 @@ class CompanyType extends Model
         foreach ($this->_siteSettings as $settings) {
             $settings->setCompanyType($this);
         }
+    }
+
+    /**
+     * @return FieldLayout
+     */
+
+    public function getCompanyFieldLayout(): FieldLayout
+    {
+        /** @var FieldLayoutBehaviour $behavior */
+        $behavior = $this->getBehavior('companyFieldLayout');
+        $fieldLayout = $behavior->getFieldLayout();
+
+        return $fieldLayout;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors(): array
+    {
+        return [
+            'companyFieldLayout' => [
+                'class' => FieldLayoutBehavior::class,
+                'elementType' => Company::class,
+                'idAttribute' => 'fieldLayoutId'
+            ]
+        ]
     }
 }

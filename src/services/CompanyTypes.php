@@ -334,7 +334,6 @@ class CompanyTypes extends Component
 
         if ($runValidation && !$companyType->validate()) {
             Craft::info('Company type not saved due to validation error.', __METHOD__);
-
             return false;
         }
 
@@ -366,7 +365,7 @@ class CompanyTypes extends Component
             'siteSettings' => []
         ];
 
-        function(\craft\models\FieldLayout $fieldLayout): array {
+        function(FieldLayout $fieldLayout): array {
             $fieldLayoutConfig = $fieldLayout->getConfig();
 
             if ($fieldLayoutConfig) {
