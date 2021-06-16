@@ -177,6 +177,22 @@ class Company extends Element
     }
 
     /**
+     * @inheritdoc
+     */
+    public static function hasUris(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function hasStatuses(): bool
+    {
+        return true;
+    }A
+
+    /**
      * Returns whether elements of this type have statuses.
      *
      * If this returns `true`, the element index template will show a Status menu
@@ -192,6 +208,7 @@ class Company extends Element
         return [
             self::STATUS_LIVE => Craft::t('company-management', 'Live'),
             self::STATUS_EXPIRED => Craft::t('company-management', 'Expired'),
+            self::STATUS_DISABLED => Craft::t('app', 'Disabled'),
         ];
     }
 
