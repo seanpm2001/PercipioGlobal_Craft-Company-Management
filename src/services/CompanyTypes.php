@@ -7,6 +7,7 @@ use craft\fieldlayoutelements\CustomField;
 use craft\db\Query;
 use craft\events\ConfigEvent;
 use craft\fields\Number;
+use craft\fields\PlainText;
 use craft\helpers\App;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
@@ -15,6 +16,7 @@ use craft\models\FieldLayout;
 use craft\queue\jobs\ResaveElements;
 use craft\fields\Date;
 use percipiolondon\companymanagement\events\CompanyTypeEvent;
+use percipiolondon\timeloop\fields\TimeloopField;
 use yii\base\Component;
 use craft\db\Table as CraftTable;
 use craft\helpers\ProjectConfig as ProjectConfigHelper;
@@ -458,28 +460,85 @@ class CompanyTypes extends Component
 
         $fieldsService = Craft::$app->getFields();
 
-        $cmGrossIncome = $fieldsService->getFieldByHandle('cmGrossIncome');
-        if(!$cmGrossIncome) {
+        $cmRegnNr = $fieldsService->getFieldByHandle('cmRegNr');
+        if(!$cmRegnNr) {
             $field = $fieldsService->createField([
-                'type' => Number::class,
+                'type' => PlainText::class,
                 'uid' => StringHelper::UUID(),
-                'name' => "Gross Income",
-                'handle' => "cmGrossIncome",
+                'name' => "Company Registration Number",
+                'handle' => "cmRegNr",
+                'required' => true,
                 'groupId' => $fieldGroup->id
             ]);
             $fieldsService->saveField($field);
-            $cmGrossIncome = $field;
+            $cmRegnNr = $field;
+        }
+
+        $cmPaye = $fieldsService->getFieldByHandle('cmPaye');
+        if(!$cmPaye) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "PAYE Reference",
+                'handle' => "cmPaye",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+            $cmPaye = $field;
+        }
+
+        $cmAccOffRef = $fieldsService->getFieldByHandle('cmAccOffRef');
+        if(!$cmAccOffRef) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Accounts office reference",
+                'handle' => "cmAccOffRef",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+            $cmAccOffRef = $field;
+        }
+
+        $cmTaxRef = $fieldsService->getFieldByHandle('cmTaxRef');
+        if(!$cmTaxRef) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Corporation Tax Reference",
+                'handle' => "cmTaxRef",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+            $cmTaxRef = $field;
+        }
+
+        $cmPayroll = $fieldsService->getFieldByHandle('cmPayroll');
+        if(!$cmPayroll) {
+            $field = $fieldsService->createField([
+                'type' => TimeloopField::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Payroll Date",
+                'handle' => "cmPayroll",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+            $cmPayroll = $field;
         }
 
         $layout = Craft::$app->getFields()->getLayoutById($layoutId);
         $layout->tabs = [
             [
-                'name' => 'Content',
+                'name' => 'Company Reference',
                 'sortOrder' => 1,
                 'elements' => [
-                    new CustomField($cmGrossIncome)
+                    new CustomField($cmRegnNr),
+                    new CustomField($cmPaye),
+                    new CustomField($cmAccOffRef),
+                    new CustomField($cmTaxRef),
+                    new CustomField($cmPayroll),
                 ]
-            ]
+            ],
         ];
         Craft::$app->fields->saveLayout($layout);
     }
