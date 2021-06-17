@@ -60,6 +60,8 @@ class Company
         $company->contactPhone = $request->getBodyParam('contactPhone');
         $company->userId = $request->getBodyParam('user');
 
+        $company->setFieldValues($request->getBodyParam('fields'));
+
         $logo = $request->getBodyParam('logo');
         $company->logo = is_array($logo) ? $logo[0] : null;
 

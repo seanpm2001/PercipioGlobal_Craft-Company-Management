@@ -158,7 +158,9 @@ class CompanyType extends Model
     {
         /** @var FieldLayoutBehavior $behavior */
         $behavior = $this->getBehavior('companyFieldLayout');
+
         $fieldLayout = $behavior->getFieldLayout();
+
 
         return $fieldLayout;
     }

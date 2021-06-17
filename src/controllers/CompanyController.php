@@ -118,6 +118,8 @@ class CompanyController extends Controller
         $company = CompanyHelper::companyFromPost($request);
         $company = CompanyHelper::populateCompanyFromPost($company, $request);
 
+        $company->setFieldValues($request->getBodyParam('fields'));
+
         $success = $elementsService->saveElement($company);
 
         if(!$success) {

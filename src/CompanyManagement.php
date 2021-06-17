@@ -10,6 +10,8 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\events\PluginEvent;
+use craft\services\Plugins;
 use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
@@ -243,10 +245,10 @@ class CompanyManagement extends Plugin
 //    {
 //        Event::on(
 //            Plugins::class,
-//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
 //            function (PluginEvent $event) {
 //                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
+//                    CompanyManagement::$plugin->company->installCompanyUserFields();
 //                }
 //            }
 //        );
@@ -256,10 +258,10 @@ class CompanyManagement extends Plugin
 //    {
 //        Event::on(
 //            Plugins::class,
-//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
 //            function (PluginEvent $event) {
 //                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->installCompanyUserFields();
+//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
 //                }
 //            }
 //        );

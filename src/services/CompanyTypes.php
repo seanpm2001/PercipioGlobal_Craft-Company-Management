@@ -3,13 +3,17 @@
 namespace percipiolondon\companymanagement\services;
 
 use Craft;
+use craft\fieldlayoutelements\CustomField;
 use craft\db\Query;
 use craft\events\ConfigEvent;
+use craft\fields\Number;
 use craft\helpers\App;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
+use craft\models\FieldGroup;
 use craft\models\FieldLayout;
 use craft\queue\jobs\ResaveElements;
+use craft\fields\Date;
 use percipiolondon\companymanagement\events\CompanyTypeEvent;
 use yii\base\Component;
 use craft\db\Table as CraftTable;
@@ -26,6 +30,7 @@ class CompanyTypes extends Component
 {
     const CONFIG_COMPANYTYPES_KEY = 'companymanagement_companytypes.companyTypes';
     const EVENT_BEFORE_SAVE_COMPANYTYPE = 'beforeSaveCompanyType';
+    const EVENT_AFTER_SAVE_COMPANYTYPE = 'afterSaveCompanyType';
 
     /**
      * @var bool
@@ -176,19 +181,25 @@ class CompanyTypes extends Component
             $companyTypeRecord->titleFormat = $data['titleFormat'] ?? '{company.title}';
             $companyTypeRecord->hasTitleField = $data['hasTitleField'];
 
-            if (!empty($data['companyFieldLayouts']) && !empty($config = reset($data['companyFieldLayouts']))) {
-                // Save the main field layout
-                $layout = FieldLayout::createFromConfig($config);
-                $layout->id = $companyTypeRecord->fieldLayoutId;
-                $layout->type = \percipiolondon\companymanagement\elements\Company::class;
-                $layout->uid = key($data['companyFieldLayouts']);
-                $fieldsService->saveLayout($layout);
-                $companyTypeRecord->fieldLayoutId = $layout->id;
-            } else if ($companyTypeRecord->fieldLayoutId) {
-                // Delete the main field layout
-                $fieldsService->deleteLayoutById($companyTypeRecord->fieldLayoutId);
-                $companyTypeRecord->fieldLayoutId = null;
-            }
+//            if (!empty($data['companyFieldLayouts']) && !empty($config = reset($data['companyFieldLayouts']))) {
+//                // Save the main field layout
+//                $layout = FieldLayout::createFromConfig($config);
+//                $layout->id = $companyTypeRecord->fieldLayoutId;
+//                $layout->type = \percipiolondon\companymanagement\elements\Company::class;
+//                $layout->uid = key($data['companyFieldLayouts']);
+//                $fieldsService->saveLayout($layout);
+//                $companyTypeRecord->fieldLayoutId = $layout->id;
+//            } else if ($companyTypeRecord->fieldLayoutId) {
+//                // Delete the main field layout
+//                $fieldsService->deleteLayoutById($companyTypeRecord->fieldLayoutId);
+//                $companyTypeRecord->fieldLayoutId = null;
+//            }
+
+            $companyTypeRecord->fieldLayoutId = $data['fieldLayoutId'];
+
+            // Install default fields for the layout
+            // -----------------------------------------------------------------
+            $this->_installCompanyFields($companyTypeRecord->fieldLayoutId);
 
             $companyTypeRecord->save(false);
 
@@ -332,9 +343,9 @@ class CompanyTypes extends Component
             $this->_siteSettingsByCompanyId[$companyTypeRecord->id]
         );
 
-        // Fire an 'afterSaveProductType' event
-        if ($this->hasEventHandlers(self::EVENT_BEFORE_SAVE_COMPANYTYPE)) {
-            $this->trigger(self::EVENT_BEFORE_SAVE_COMPANYTYPE, new CompanyTypeEvent([
+        // Fire an 'afterCompayType' event
+        if ($this->hasEventHandlers(self::EVENT_AFTER_SAVE_COMPANYTYPE)) {
+            $this->trigger(self::EVENT_AFTER_SAVE_COMPANYTYPE, new CompanyTypeEvent([
                 'productType' => $this->getCompanyTypeById($companyTypeRecord->id),
                 'isNew' => empty($this->_savingProductTypes[$companyTypeUid]),
             ]));
@@ -390,11 +401,12 @@ class CompanyTypes extends Component
             'hasTitleField' => $companyType->hasTitleField,
             'titleFormat' => $companyType->titleFormat,
             'hasDimensions' => $companyType->hasDimensions,
+            'fieldLayoutId' => $companyType->getFieldLayout()->id,
             'uid' => $companyType->uid,
             'siteSettings' => []
         ];
 
-        function(FieldLayout $fieldLayout): array {
+        $generateLayoutConfig = function(FieldLayout $fieldLayout): array {
             $fieldLayoutConfig = $fieldLayout->getConfig();
 
             if ($fieldLayoutConfig) {
@@ -410,7 +422,6 @@ class CompanyTypes extends Component
 
             return [];
         };
-
 
         // Get the site settings
         $allSiteSettings = $companyType->getSiteSettings();
@@ -439,6 +450,65 @@ class CompanyTypes extends Component
         }
 
         return true;
+    }
+
+    private function _installCompanyFields($layoutId)
+    {
+        $fieldGroup = $this->_createFieldGroup();
+
+        $fieldsService = Craft::$app->getFields();
+
+        $cmGrossIncome = $fieldsService->getFieldByHandle('cmGrossIncome');
+        if(!$cmGrossIncome) {
+            $field = $fieldsService->createField([
+                'type' => Number::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Gross Income",
+                'handle' => "cmGrossIncome",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+            $cmGrossIncome = $field;
+        }
+
+        $layout = Craft::$app->getFields()->getLayoutById($layoutId);
+        $layout->tabs = [
+            [
+                'name' => 'Content',
+                'sortOrder' => 1,
+                'elements' => [
+                    new CustomField($cmGrossIncome)
+                ]
+            ]
+        ];
+        Craft::$app->fields->saveLayout($layout);
+    }
+
+    private function _createFieldGroup(): FieldGroup
+    {
+        // Make a field group
+        $fieldGroups = Craft::$app->fields->getAllGroups();
+        $companyFieldGroup = null;
+        foreach($fieldGroups as $fieldGroup) {
+            if('Company Fields' === $fieldGroup->name) {
+                $companyFieldGroup = $fieldGroup;
+            }
+        }
+
+        if(null === $companyFieldGroup) {
+            $groupModel = new FieldGroup();
+            $groupModel->name = 'Company Fields';
+            Craft::$app->fields->saveGroup($groupModel);
+            $fieldGroups = Craft::$app->fields->getAllGroups();
+
+            foreach($fieldGroups as $fieldGroup) {
+                if('Company Fields' === $fieldGroup->name) {
+                    $companyFieldGroup = $fieldGroup;
+                }
+            }
+        }
+
+        return $companyFieldGroup;
     }
 
     private function _createCompanyTypeQuery(): Query

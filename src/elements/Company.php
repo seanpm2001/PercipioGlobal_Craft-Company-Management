@@ -250,7 +250,7 @@ class Company extends Element
      */
     public static function hasContent(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -406,8 +406,7 @@ class Company extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'id' => ['label' => Craft::t('company-management', 'ID')],
-            'name' => ['label' => Craft::t('company-management', 'Name')],
+            'title' => ['label' => Craft::t('company-management', 'Name')],
             'slug' => ['label' => Craft::t('company-management', 'Slug')],
             'address' => ['label' => Craft::t('company-management', 'Address')],
             'town' => ['label' => Craft::t('company-management', 'Town')],
@@ -417,6 +416,7 @@ class Company extends Element
             'accountsOfficeReference' => ['label' => Craft::t('company-management', 'Accounts No.')],
             'taxReference' => ['label' => Craft::t('company-management', 'VAT No.')],
             'website' => ['label' => Craft::t('company-management', 'Url')],
+            'postDate' => ['label' => Craft::t('company-management', 'Post Date')],
         ];
     }
 
@@ -514,20 +514,20 @@ class Company extends Element
         $rules[] = [['name', 'registerNumber'], 'required'];
         $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
 
-        $rules[] = ['name', function($attribute, $params, Validator $validator){
-            if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0) {
-                $error = Craft::t('company-management', 'The company "{value}" already exists.', [
-                    'attribute' => $attribute,
-                    'value' => $this->$attribute,
-                ]);
-
-                $validator->addError($this, $attribute, $error);
-            }
-        }];
-
         // New created form
         if(null === $this->id){
             $rules[] = [['contactFirstName', 'contactLastName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
+
+            $rules[] = ['name', function($attribute, $params, Validator $validator){
+                if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0 && null === $this->id) {
+                    $error = Craft::t('company-management', 'The company "{value}" already exists.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
 
             $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
 
