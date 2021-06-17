@@ -52,8 +52,14 @@
     <input type="hidden" name="action" value="company-management/company/save">
     {{- redirectInput('company-management/companies') -}}
 
+    #TEST FIELD LAYOUT#<br/><br/>
+    {{ fieldsHtml|raw }}
+    <br/>#END TEST FIELD LAYOUT#<br/><br/><br/>
 
-    {%- if company -%}<input type="hidden" name="companyId" value="{{ company.id }}">{%- endif -%}
+    {%- if company -%}
+        <input type="hidden" name="companyId" value="{{ company.id }}">
+    {%- endif -%}
+    <input type="hidden" name="typeId" value="{{ typeId }}">
     <input type="hidden" name="siteId" value="{{ company ? company.siteId : currentSite.id }}">
 
     <div id="company">
@@ -109,3 +115,10 @@
     {%- endif -%}
 
 {% endblock %}
+
+
+{% if not company.slug %}
+  {% js %}
+      window.slugGenerator = new Craft.SlugGenerator('#name', '#slug');
+  {% endjs %}
+{% endif %}

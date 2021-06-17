@@ -41,6 +41,7 @@ use percipiolondon\companymanagement\db\Table;
  * @property string name
  * @property string info
  * @property string slug
+ * @property int typeId
  * @property string address
  * @property string town
  * @property string postcode

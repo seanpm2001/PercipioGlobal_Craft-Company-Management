@@ -131,7 +131,7 @@ class CompanyType extends Model
             return [];
         }
 
-        $this->setSiteSettings(ArrayHelper::index(CompanyManagement::$plugin->companyTypes()->getProductTypeSites($this->id), 'siteId'));
+        $this->setSiteSettings(ArrayHelper::index(CompanyManagement::$plugin->companyTypes->getCompanyTypeSites($this->id), 'siteId'));
 
         return $this->_siteSettings;
     }

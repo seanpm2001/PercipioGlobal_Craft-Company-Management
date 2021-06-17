@@ -87,6 +87,35 @@ class CompanyTypes extends Component
     }
 
     /**
+     * Returns a company type by its handle.
+     *
+     * @param string $handle The company type's handle.
+     * @return CompanyType|null The company type or `null`.
+     */
+    public function getCompanyTypeByHandle(string $handle)
+    {
+        if (isset($this->_companyTypesByHandle[$handle])) {
+            return $this->_companyTypesByHandle[$handle];
+        }
+
+        if ($this->_fetchedAllCompanyTypes) {
+            return null;
+        }
+
+        $result = $this->_createCompanyTypeQuery()
+            ->where(['handle' => $handle])
+            ->one();
+
+        if (!$result) {
+            return null;
+        }
+
+        $this->_memorizeCompanytype(new CompanyType($result));
+
+        return $this->_companyTypesByHandle[$handle];
+    }
+
+    /**
      * Returns an array of company type site settings for a company type by its ID.
      *
      * @param int $companyTypeId the company type ID
@@ -416,11 +445,11 @@ class CompanyTypes extends Component
     {
          return (new Query())
              ->select([
-                 'companyTypes.id',
-                 'companyTypes.fieldLayoutId',
-                 'companyTypes.name',
-                 'companyTypes.handle',
-                 'companyTypes.titleFormat',
+                 'companymanagement_companytypes.id',
+                 'companymanagement_companytypes.fieldLayoutId',
+                 'companymanagement_companytypes.name',
+                 'companymanagement_companytypes.handle',
+                 'companymanagement_companytypes.titleFormat',
              ])
              ->from([Table::CM_COMPANYTYPES]);
     }

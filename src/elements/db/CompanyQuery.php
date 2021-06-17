@@ -11,10 +11,12 @@ use percipiolondon\companymanagement\elements\Company;
 
 class CompanyQuery extends ElementQuery
 {
+    public $typeId;
+    public $slug;
+
     // Company Info
     public $name;
     public $info;
-    public $slug;
     public $address;
     public $town;
     public $postcode;
@@ -36,6 +38,12 @@ class CompanyQuery extends ElementQuery
     public function name($value)
     {
         $this->name = $value;
+        return $this;
+    }
+
+    public function typeId($value)
+    {
+        $this->typeId = $value;
         return $this;
     }
 
@@ -152,6 +160,7 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.name',
             'companymanagement_company.info',
             'companymanagement_company.slug',
+            'companymanagement_company.typeId',
             'companymanagement_company.address',
             'companymanagement_company.town',
             'companymanagement_company.postcode',

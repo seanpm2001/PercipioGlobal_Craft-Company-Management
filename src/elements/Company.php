@@ -14,6 +14,7 @@ use craft\elements\actions\Delete;
 use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
+use craft\validators\DateTimeValidator;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
@@ -78,37 +79,113 @@ use yii\validators\Validator;
  */
 class Company extends Element
 {
+    /**
+     *
+     */
     const STATUS_LIVE = 'live';
+    /**
+     *
+     */
     const STATUS_EXPIRED = 'expired';
 
     // Public Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $postDate;
+    /**
+     * @var
+     */
     public $expiryDate;
+    /**
+     * @var
+     */
     public $siteId;
+    /**
+     * @var
+     */
+    public $typeId;
 
     // Company Info
+    /**
+     * @var
+     */
     public $name;
+    /**
+     * @var
+     */
     public $info;
+    /**
+     * @var
+     */
     public $slug;
+    /**
+     * @var
+     */
     public $address;
+    /**
+     * @var
+     */
     public $town;
+    /**
+     * @var
+     */
     public $postcode;
+    /**
+     * @var
+     */
     public $registerNumber;
+    /**
+     * @var
+     */
     public $payeReference;
+    /**
+     * @var
+     */
     public $accountsOfficeReference;
+    /**
+     * @var
+     */
     public $taxReference;
+    /**
+     * @var
+     */
     public $website;
+    /**
+     * @var
+     */
     public $logo;
 
     // Company Manager Info
+    /**
+     * @var
+     */
     public $contactFirstName;
+    /**
+     * @var
+     */
     public $contactLastName;
+    /**
+     * @var
+     */
     public $contactEmail;
+    /**
+     * @var
+     */
     public $contactRegistrationNumber;
+    /**
+     * @var
+     */
     public $contactPhone;
+    /**
+     * @var
+     */
     public $contactBirthday;
+    /**
+     * @var
+     */
     public $userId;
 
     // Static Methods
@@ -213,6 +290,9 @@ class Company extends Element
         ];
     }
 
+    /**
+     * @return bool
+     */
     public static function isLocalized(): bool
     {
         return true;
@@ -291,6 +371,10 @@ class Company extends Element
         ];
     }
 
+    /**
+     * @param string|null $srouce
+     * @return array
+     */
     protected static function defineActions(string $srouce = null): array
     {
         $actions = [];
@@ -327,6 +411,10 @@ class Company extends Element
         ];
     }
 
+    /**
+     * @param string $source
+     * @return array
+     */
     protected static function defineDefaultTableAttributes(string $source): array
     {
         $attributes = [];
@@ -357,6 +445,11 @@ class Company extends Element
         ];
     }
 
+    /**
+     * @param string $attribute
+     * @return string
+     * @throws InvalidConfigException
+     */
     protected function tableAttributeHtml(string $attribute): string
     {
         switch ($attribute) {
@@ -369,6 +462,9 @@ class Company extends Element
         return parent::tableAttributeHtml($attribute);
     }
 
+    /**
+     * @return array
+     */
     private static function _getCompanyIds()
     {
 
@@ -407,21 +503,23 @@ class Company extends Element
         $rules = parent::defineRules();
 
         $rules[] = [['name', 'registerNumber'], 'required'];
+        $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
+
+        $rules[] = ['name', function($attribute, $params, Validator $validator){
+            if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0) {
+                $error = Craft::t('company-management', 'The company "{value}" already exists.', [
+                    'attribute' => $attribute,
+                    'value' => $this->$attribute,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
 
         // New created form
         if(null === $this->id){
             $rules[] = [['contactFirstName', 'contactLastName', 'contactEmail', 'contactRegistrationNumber'], 'required'];
 
-            $rules[] = ['name', function($attribute, $params, Validator $validator){
-                if(count(CompanyManagement::$plugin->company->getCompanyByName($this->$attribute)) > 0 && null === $this->id) {
-                    $error = Craft::t('company-management', 'The company "{value}" already exists.', [
-                        'attribute' => $attribute,
-                        'value' => $this->$attribute,
-                    ]);
-
-                    $validator->addError($this, $attribute, $error);
-                }
-            }];
             $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
 
                 $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
@@ -439,8 +537,23 @@ class Company extends Element
             $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
                 $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
 
+                // Valid email
                 if (!preg_match($preg, $this->$attribute)) {
                     $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+
+                // Check if user doesn't already exists
+                $user = \craft\elements\User::find()
+                    ->email($this->$attribute)
+                    ->one();
+
+                if($user) {
+                    $error = Craft::t('company-management', 'The user "{value}" already exists.', [
                         'attribute' => $attribute,
                         'value' => $this->$attribute,
                     ]);
@@ -474,7 +587,8 @@ class Company extends Element
      */
     public function getFieldLayout()
     {
-        return parent::getFieldLayout();
+        return Craft::$app->getFields()->getLayoutByType(self::class);
+//        return parent::getFieldLayout();
 //        $tagGroup = $this->getGroup();
 //
 //        if ($tagGroup) {
@@ -484,6 +598,10 @@ class Company extends Element
 //        return null;
     }
 
+    /**
+     * @return \craft\models\TagGroup|null
+     * @throws InvalidConfigException
+     */
     public function getGroup()
     {
         if ($this->groupId === null) {
@@ -514,14 +632,35 @@ class Company extends Element
         return $html;
     }
 
+    /**
+     * @return string
+     */
     public function getCpEditUrl()
     {
         return 'company-management/companies/'.$this->id;
     }
 
-    public function getType()
+    /**
+     * @return mixed|string|null
+     */
+    public function getUriFormat()
     {
+        $companyTypeSiteSettings = $this->getType()->getSiteSettings();
 
+        if (!isset($companyTypeSiteSettings[$this->siteId])) {
+            throw new InvalidConfigException('The "' . $this->getType()->name . '" company type is not enabled for the "' . $this->getSite()->name . '" site.');
+        }
+
+        return $companyTypeSiteSettings[$this->siteId]->uriFormat;
+    }
+
+    /**
+     * @return CompanyType
+     */
+    public function getType(): CompanyType
+    {
+        $companyType = CompanyManagement::$plugin->companyTypes->getCompanyTypeByHandle('default');
+        return $companyType;
     }
 
     // Events
@@ -597,6 +736,10 @@ class Company extends Element
     {
     }
 
+    /**
+     * @param $isNew
+     * @throws Exception
+     */
     private function _saveRecord($isNew)
     {
         if (!$isNew) {
@@ -627,6 +770,7 @@ class Company extends Element
 
         $record->name = $this->name;
         $record->info = $this->info;
+        $record->typeId = $this->typeId;
         $record->slug = CompanyHelper::cleanStringForUrl($this->name);
         $record->address = $this->address;
         $record->town = $this->town;
@@ -647,6 +791,14 @@ class Company extends Element
         CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
     }
 
+    /**
+     * @param $companyId
+     * @return int|null
+     * @throws Exception
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \craft\errors\WrongEditionException
+     */
     private function _saveUser($companyId)
     {
         // Make sure this is Craft Pro, since that's required for having multiple user accounts
@@ -681,6 +833,11 @@ class Company extends Element
         return $user->id;
     }
 
+    /**
+     * @param $user
+     * @throws \Throwable
+     * @throws \craft\errors\WrongEditionException
+     */
     private function _saveUserToGroup($user)
     {
         //register a new group
@@ -704,6 +861,10 @@ class Company extends Element
         Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
     }
 
+    /**
+     * @param $user
+     * @param $companyId
+     */
     private function _updateCompanyUser($user, $companyId)
     {
         $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
