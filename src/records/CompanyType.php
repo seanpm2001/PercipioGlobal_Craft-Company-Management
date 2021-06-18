@@ -10,15 +10,15 @@
 
 namespace percipiolondon\companymanagement\records;
 
-use percipiolondon\companymanagement\CompanyManagement;
-
-use Craft;
-use DateTime;
-use craft\db\ActiveRecord;
 use percipiolondon\companymanagement\db\Table;
 
+use craft\db\ActiveRecord;
+use craft\db\SoftDeleteTrait;
+use yii\db\ActiveQueryInterface;
+
+
 /**
- * Company Record
+ * Company Type Record
  *
  * ActiveRecord is the base class for classes representing relational data in terms of objects.
  *
@@ -31,40 +31,32 @@ use percipiolondon\companymanagement\db\Table;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     0.1.0
+ * @since     1.0.0
  */
 
 /**
- * Company record.
+ * Company type record.
  *
- * @property int id
- * @property string name
- * @property string info
- * @property string slug
- * @property int typeId
- * @property string address
- * @property string town
- * @property string postcode
- * @property string website
- * @property string logo
- * @property string contactFirstName
- * @property string contactLastName
- * @property string contactEmail
- * @property string contactRegistrationNumber
- * @property string contactPhone
- * @property string contactBirthday
- * @property int userId
+ * @property FieldLayout $fieldLayout
+ * @property int $fieldLayoutId
+ * @property string $handle
+ * @property int $id
+ * @property string $name
+ * @property string $titleFormat
+ * @property bool $hasDimensions
+ * @property bool $hasTitleField
+ * @property string $companyTitleFormat
  *
  *
  * @package Company Management
  *
  */
-class Company extends ActiveRecord
+class CompanyType extends ActiveRecord
 {
     // Public Static Methods
     // =========================================================================
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
@@ -78,6 +70,26 @@ class Company extends ActiveRecord
      */
     public static function tableName()
     {
-        return Table::CM_COMPANIES;
+        return Table::CM_COMPANYTYPES;
+    }
+
+    /**
+     * Returns the company type's company
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getCompany(): ActiveQueryInterface
+    {
+        return $this->hasOne(Company::class, ['id' => 'companyId']);
+    }
+
+    /**
+     * Return the company type's fieldLayout.
+     *
+     * @return ActiveQueryInterface The relational query object
+     */
+    public function getFieldLayout(): ActiveQueryInterface
+    {
+        return $this->hasOne(FieldLayout::class, ['id' => 'fieldLayoutId']);
     }
 }

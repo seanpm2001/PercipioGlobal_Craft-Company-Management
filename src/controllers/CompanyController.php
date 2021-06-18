@@ -85,7 +85,15 @@ class CompanyController extends Controller
             }
         }
 
+        $variables['tabs'] = [];
+
         $company = $variables['company'];
+        $companyType = CompanyManagement::$plugin->companyTypes->getCompanyTypeByHandle('default');
+
+        $form = $companyType->getCompanyFieldLayout()->createForm($company);
+        $variables['tabNav'] = $form->getTabMenu();
+        $variables['fieldsHtml'] = str_replace('class="flex-fields"', 'class="flex-fields hidden"', $form->render());
+        $variables['typeId'] = $companyType->id;
 
         if ($company === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new company');
@@ -108,6 +116,8 @@ class CompanyController extends Controller
         $elementsService = Craft::$app->getElements();
         $company = CompanyHelper::companyFromPost($request);
         $company = CompanyHelper::populateCompanyFromPost($company, $request);
+
+        $company->setFieldValues($request->getBodyParam('fields'));
 
         $success = $elementsService->saveElement($company);
 

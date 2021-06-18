@@ -21,6 +21,7 @@ use percipiolondon\companymanagement\CompanyManagement;
 
 use Craft;
 use craft\base\Component;
+use percipiolondon\companymanagement\db\Table;
 use yii\base\BaseObject;
 
 /**
@@ -50,7 +51,7 @@ class Company extends Component
     {
         return (new Query())
             ->select(['name'])
-            ->from(['{{%companymanagement_company}}'])
+            ->from([Table::CM_COMPANIES])
             ->where(Db::parseParam('name', $name))
             ->column();
     }

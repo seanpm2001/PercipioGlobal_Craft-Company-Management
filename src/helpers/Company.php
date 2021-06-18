@@ -48,10 +48,6 @@ class Company
         $company->address = $request->getBodyParam('address');
         $company->town = $request->getBodyParam('town');
         $company->postcode = $request->getBodyParam('postcode');
-        $company->registerNumber = $request->getBodyParam('registerNumber');
-        $company->payeReference = $request->getBodyParam('payeReference');
-        $company->accountsOfficeReference = $request->getBodyParam('accountsOfficeReference');
-        $company->taxReference = $request->getBodyParam('taxReference');
         $company->website = $request->getBodyParam('website');
         $company->contactFirstName = $request->getBodyParam('contactFirstName');
         $company->contactLastName = $request->getBodyParam('contactLastName');
@@ -59,6 +55,8 @@ class Company
         $company->contactRegistrationNumber = strtoupper(str_replace(' ', '', $request->getBodyParam('contactRegistrationNumber')));
         $company->contactPhone = $request->getBodyParam('contactPhone');
         $company->userId = $request->getBodyParam('user');
+
+        $company->setFieldValues($request->getBodyParam('fields'));
 
         $logo = $request->getBodyParam('logo');
         $company->logo = is_array($logo) ? $logo[0] : null;
