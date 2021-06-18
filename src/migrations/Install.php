@@ -66,7 +66,7 @@ class Install extends Migration {
         $tableSchemaCompany = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANIES);
         $tableSchemaUsers = Craft::$app->db->schema->getTableSchema(Table::CM_USERS);
         $tableSchemaTypes = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANYTYPES);
-        $tableSchemaTypesSites = Craft::$app->db->schema->getTableSchema(Table::CM_COMAPNYTYPES_SITES);
+        $tableSchemaTypesSites = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANYTYPES_SITES);
         $tableSchemaDocuments = Craft::$app->db->schema->getTableSchema(Table::CM_DOCUMENTS);
 
         if ($tableSchemaCompany === null) {
@@ -116,7 +116,7 @@ class Install extends Migration {
         }
 
         if($tableSchemaTypesSites === null) {
-            $this->createTable(Table::CM_COMAPNYTYPES_SITES, [
+            $this->createTable(Table::CM_COMPANYTYPES_SITES, [
                 'id' => $this->primaryKey(),
                 'companyTypeId' => $this->integer()->notNull(),
                 'siteId' => $this->integer()->notNull(),
@@ -164,7 +164,7 @@ class Install extends Migration {
         $this->dropTableIfExists(Table::CM_USERS);
         $this->dropTableIfExists(Table::CM_DOCUMENTS);
         $this->dropTableIfExists(Table::CM_COMPANYTYPES);
-        $this->dropTableIfExists(Table::CM_COMAPNYTYPES_SITES);
+        $this->dropTableIfExists(Table::CM_COMPANYTYPES_SITES);
         return null;
     }
     /**
@@ -177,7 +177,7 @@ class Install extends Migration {
             Table::CM_USERS,
             Table::CM_DOCUMENTS,
             Table::CM_COMPANYTYPES,
-            Table::CM_COMAPNYTYPES_SITES
+            Table::CM_COMPANYTYPES_SITES
         ];
         foreach ($tables as $table) {
             $this->_dropForeignKeyToAndFromTable($table);
@@ -216,7 +216,7 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANYTYPES, ['fieldLayoutId'], '{{%fieldlayouts}}', ['id'], 'SET NULL');
-        $this->addForeignKey(null, Table::CM_COMAPNYTYPES_SITES, ['siteId'], '{{%sites}}', ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_COMPANYTYPES_SITES, ['siteId'], '{{%sites}}', ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMAPNYTYPES_SITES, ['companyTypeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE');
     }
     /**

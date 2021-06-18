@@ -23,7 +23,7 @@ class CompanyType implements GeneratorInterface {
 
     public static function generateTypes($context = null): array
     {
-        $companyTypes = CompanyManagement::$plugin->companyTypes->getCompanyTypes()->getAllCompanyTypes();
+        $companyTypes = CompanyManagement::$plugin->companyTypes->getAllCompanyTypes();
         $gqlTypes = [];
 
         foreach ($companyTypes as $companyType) {
