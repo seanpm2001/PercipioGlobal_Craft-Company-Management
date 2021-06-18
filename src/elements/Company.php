@@ -908,7 +908,7 @@ class Company extends Element
         return static::gqlTypeNameByContext($this->getType());
     }
 
-    public static function getTypeNameByContext($context): string
+    public static function gqlTypeNameByContext($context): string
     {
         /* @var CompanyType $context */
         return $context->handle . '_Company';
