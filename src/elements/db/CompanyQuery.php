@@ -20,10 +20,6 @@ class CompanyQuery extends ElementQuery
     public $address;
     public $town;
     public $postcode;
-    public $registerNumber;
-    public $payeReference;
-    public $accountsOfficeReference;
-    public $taxReference;
     public $website;
     public $logo;
 
@@ -77,31 +73,7 @@ class CompanyQuery extends ElementQuery
         return $this;
     }
 
-    public function registerNumber($value)
-    {
-        $this->registerNumber = $value;
-        return $this;
-    }
-
-    public function payeReference($value)
-    {
-        $this->payeReference = $value;
-        return $this;
-    }
-
-    public function accountsOfficeReference($value)
-    {
-        $this->accountsOfficeReference = $value;
-        return $this;
-    }
-
-    public function taxReference($value)
-    {
-        $this->taxReference = $value;
-        return $this;
-    }
-
-    public function website($value)
+   public function website($value)
     {
         $this->website = $value;
         return $this;
@@ -164,10 +136,6 @@ class CompanyQuery extends ElementQuery
             'companymanagement_company.address',
             'companymanagement_company.town',
             'companymanagement_company.postcode',
-            'companymanagement_company.registerNumber',
-            'companymanagement_company.payeReference',
-            'companymanagement_company.accountsOfficeReference',
-            'companymanagement_company.taxReference',
             'companymanagement_company.website',
             'companymanagement_company.logo',
             'companymanagement_company.uid',

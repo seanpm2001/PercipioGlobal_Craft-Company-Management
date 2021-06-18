@@ -45,10 +45,6 @@ use percipiolondon\companymanagement\db\Table;
  * @property string address
  * @property string town
  * @property string postcode
- * @property string registerNumber
- * @property string payeReference
- * @property string accountsOfficeReference
- * @property string taxReference
  * @property string website
  * @property string logo
  * @property string contactFirstName

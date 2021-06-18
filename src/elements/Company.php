@@ -145,22 +145,6 @@ class Company extends Element
     /**
      * @var
      */
-    public $registerNumber;
-    /**
-     * @var
-     */
-    public $payeReference;
-    /**
-     * @var
-     */
-    public $accountsOfficeReference;
-    /**
-     * @var
-     */
-    public $taxReference;
-    /**
-     * @var
-     */
     public $website;
     /**
      * @var
@@ -411,12 +395,7 @@ class Company extends Element
             'address' => ['label' => Craft::t('company-management', 'Address')],
             'town' => ['label' => Craft::t('company-management', 'Town')],
             'postcode' => ['label' => Craft::t('company-management', 'Postcode')],
-            'registerNumber' => ['label' => Craft::t('company-management', 'Company No.')],
-            'payeReference' => ['label' => Craft::t('company-management', 'PAYE No.')],
-            'accountsOfficeReference' => ['label' => Craft::t('company-management', 'Accounts No.')],
-            'taxReference' => ['label' => Craft::t('company-management', 'VAT No.')],
-            'website' => ['label' => Craft::t('company-management', 'Url')],
-            'postDate' => ['label' => Craft::t('company-management', 'Post Date')],
+            'dateCreated' => ['label' => Craft::t('company-management', 'Date Created')],
         ];
     }
 
@@ -445,11 +424,7 @@ class Company extends Element
             'address' => Craft::t('company-management', 'Address'),
             'town' => Craft::t('company-management', 'Town'),
             'postcode' => Craft::t('company-management', 'Postcode'),
-            'registerNumber' => Craft::t('company-management', 'Company No.'),
-            'payeReference' => Craft::t('company-management', 'PAYE No.'),
-            'accountsOfficeReference' => Craft::t('company-management', 'Accounts No.'),
-            'taxReference' => Craft::t('company-management', 'VAT No.'),
-            'website' => Craft::t('company-management', 'Url'),
+            'dateCreated' => Craft::t('company-management', 'Date Created'),
 
         ];
     }
@@ -511,7 +486,7 @@ class Company extends Element
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['name', 'registerNumber'], 'required'];
+        $rules[] = [['name'], 'required'];
         $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
 
         // New created form
@@ -820,10 +795,6 @@ class Company extends Element
         $record->address = $this->address;
         $record->town = $this->town;
         $record->postcode = $this->postcode;
-        $record->registerNumber = $this->registerNumber;
-        $record->payeReference = $this->payeReference;
-        $record->accountsOfficeReference = $this->accountsOfficeReference;
-        $record->taxReference = $this->taxReference;
         $record->website = $this->website;
         $record->logo = $this->logo;
         $record->userId = $userId;
