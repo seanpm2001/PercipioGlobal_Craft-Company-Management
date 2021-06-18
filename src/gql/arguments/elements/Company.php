@@ -2,6 +2,7 @@
 
 namespace percipiolondon\companymanagement\gql\arguments\elements;
 
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
 use percipiolondon\companymanagement\Plugin;
 
@@ -43,7 +44,7 @@ class Company extends ElementArguments
 
     public static function getContentArguments(): array
     {
-        $companyTypeFieldArguments = Craft::$app->getGql()->getContentArguments(CompanyManagement::$plugin->companyTypes->getComapnyTypes()->getAllCompanyTypes(), CompanyElement::class);
+        $companyTypeFieldArguments = Craft::$app->getGql()->getContentArguments(CompanyManagement::$plugin->companyTypes->getAllCompanyTypes(), CompanyElement::class);
 
         return array_merge(parent::getContentArguments(), $companyTypeFieldArguments);
     }

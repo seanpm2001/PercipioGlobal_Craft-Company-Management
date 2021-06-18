@@ -4,6 +4,7 @@ namespace percipiolondon\companymanagement\gql\resolvers\elements;
 
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
+use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
 use craft\gql\base\ElementResolver;
 use craft\helpers\Db;
@@ -45,8 +46,13 @@ class Company extends ElementResolver {
             }
         }
 
+        $pairs = GqlHelper::extractAllowedEntitiesFromSchema('read');
 
-        // TODO: Create our query == $query->andWhere(['in', 'typeId', ......
+        if (!GqlHelper::canQueryCompanies()) {
+            return [];
+        }
+
+        $query->andWhere(['in', 'typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
 
         return $query;
 

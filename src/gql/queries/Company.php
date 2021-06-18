@@ -25,8 +25,8 @@ class Company extends Query {
     {
 
         if ($checkToken && !GqlHelper::canQueryCompanies()) {
-             return [];
-         }
+            return [];
+        }
 
         return [
             'companies' => [

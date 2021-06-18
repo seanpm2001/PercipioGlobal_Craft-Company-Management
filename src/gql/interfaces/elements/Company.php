@@ -2,7 +2,7 @@
 
 namespace percipiolondon\companymanagement\gql\interfaces\elements;
 
-use percipiolondon\companymanagement\elmeents\Company as CompanyElement;
+use percipiolondon\companymanagement\elements\Company as CompanyElement;
 use percipiolondon\companymanagement\gql\types\generators\CompanyType;
 
 use craft\gql\GqlEntityRegistry;
@@ -39,7 +39,18 @@ class Company extends Element {
 
         $type = GqlEntityRegistry::createEntity(self::getName(), new InterfaceType([
             'name' => static::getName(),
-            'fields' => self::class, '::getFieldDefinitions',
+            'fields' => [
+                'name' => [
+                    'name' => 'name',
+                    'type' => Type::string(),
+                    'description' => 'The company’s name',
+                ],
+                'info' => [
+                    'name' => 'info',
+                    'type' => Type::string(),
+                    'description' => 'The company’s info',
+                ]
+            ],
             'description' => 'This is the interface implemented by all companies.',
             'resolveType' => function(CompanyElement $value) {
                 return $value->getGqlTypeName();
@@ -62,15 +73,22 @@ class Company extends Element {
     /**
      * @inheritdoc
      */
-    public static function getFieldDefinition(): array
+    public static function getFieldDefinitions(): array
     {
+
         return TypeManager::prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
-                'url' => [
-                    'name' => 'url',
+                'name' => [
+                    'name' => 'name',
                     'type' => Type::string(),
-                    'description' => 'The company\'s full URL',
+                    'description' => 'The company’s name',
+                ],
+                'info' => [
+                    'name' => 'info',
+                    'type' => Type::string(),
+                    'description' => 'The company’s info',
                 ]
-        ]));
+        ]), self::getName());
+
     }
 
 }

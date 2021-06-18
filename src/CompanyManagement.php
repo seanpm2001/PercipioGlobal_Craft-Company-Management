@@ -277,7 +277,7 @@ class CompanyManagement extends Plugin
      */
     private function _registerGqlQueries()
     {
-        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_QUERIES, function(RegisterGqlQueriesEvent $event) {
             // Add our GQL Queries
             $event->queries = array_merge(
                 $event->queries,

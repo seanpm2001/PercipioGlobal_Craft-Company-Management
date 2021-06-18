@@ -474,7 +474,7 @@ class Company extends Element
     /**
      * @return array
      */
-    private static function _getCompanyIds()
+    private static function _getCompanyIds(): array
     {
 
         $companyIds = [];
@@ -489,7 +489,6 @@ class Company extends Element
         foreach ($companyInfo as $company) {
             $companyIds[] = $company['id'];
         }
-        // Craft:dd( $companyIds);
 
         return $companyIds;
     }
@@ -931,36 +930,23 @@ class Company extends Element
 
     /**
      * @inheritdoc
+     * @since 1.0.0
      */
-    public static function gqlTypeNameByContext($context): string
+    public function getGqlTypeName(): string
     {
-        /* @var CompanyType $context */
-        return self::_getGqlIdentifierByContext($context) . '_Company';
+        return static::gqlTypeNameByContext($this->getType());
     }
 
-    /**
-     * @inheritdoc
-     * @since 3.5.0
-     */
-    public static function gqlMutationNameByContext($context): string
+    public static function getTypeNameByContext($context): string
     {
         /* @var CompanyType $context */
-        return 'save_' . self::_getGqlIdentifierByContext($context) . '_Company';
+        return $context->handle . '_Company';
     }
-
-    /**
-     * @inheritdoc
-     */
-    public static function gqlScopesByContext($context): array
+    
+    public static function gqlScopesByContext($context): array 
     {
-        /* @var CompanyType $context */
-        return [
-            // getCompany()->uid
-            //'companies.' . $context->getCompany()->uid,
-            //'companytypes.' . $context->uid,
-        ];
+        /** @var ProductType $context */
+        return ['companyTypes.' . $context->uid];
     }
 
 }
-
-
