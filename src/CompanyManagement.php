@@ -26,6 +26,9 @@ use percipiolondon\companymanagement\elements\Company as CompanyElement;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
+use percipiolondon\companymanagement\gql\interfaces\elements\Company as GqlCompanyInterface;
+use percipiolondon\companymanagement\gql\queries\Company as GqlCompanyQueries;
+
 use nystudio107\pluginvite\services\VitePluginService;
 
 use Craft;
@@ -33,8 +36,15 @@ use craft\base\Plugin;
 use craft\elements\User;
 use craft\events\ModelEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterGqlQueriesEvent;
+use craft\events\RegisterGqlSchemaComponentsEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\ProjectConfigData;
 use craft\services\Elements;
+use craft\services\Gql;
+use craft\services\GraphQL;
+use craft\services\ProjectConfig;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -52,7 +62,7 @@ use yii\base\Event;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     0.1.0
+ * @since     1.0.0
  *
  * @property  Settings $settings
  * @method    Settings getSettings()
@@ -136,6 +146,7 @@ class CompanyManagement extends Plugin
     public function init()
     {
         parent::init();
+
         self::$plugin = $this;
 
         $this->_registerCpRoutes();
@@ -143,10 +154,25 @@ class CompanyManagement extends Plugin
         $this->_registerVariables();
         $this->_registerServices();
         $this->_registerUserSave();
-        $this->_registerProejctConfigEventListeners();
+        $this->_registerProjectConfigEventListeners();
 //        $this->_registerAfterInstall();
         $this->_registerAfterUninstall();
-        $this->_registerTemplateHooks();
+
+        // GQL
+        $this->_registerGqlInterfaces();
+        $this->_registerGqlQueries();
+        $this->_registerGqlComponents();
+
+        $request = Craft::$app->getRequest();
+
+        if ($request->getIsConsoleRequest()) {
+
+        } else if ($request->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+            $this->_registerTemplateHooks();
+        }
+
+
 
         Craft::info(
             Craft::t(
@@ -226,16 +252,68 @@ class CompanyManagement extends Plugin
 
     private function _registerElementTypes()
     {
-        Event::on(
-            Elements::class,
-            Elements::EVENT_REGISTER_ELEMENT_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+        Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function (RegisterComponentTypesEvent $event) {
                 $event->types[] = CompanyElement::class;
             }
         );
     }
 
-    private function _registerProejctConfigEventListeners()
+    /**
+     * Register the Gql Interfaces
+     */
+
+    private function _registerGqlInterfaces()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+            // Add our GQL Types
+            $types = $event->types;
+            $types[] = GqlCompanyInterface::class;
+            $event->types = $types;
+        });
+    }
+
+    /**
+     * Register the Gql Queries
+     */
+    private function _registerGqlQueries()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+            // Add our GQL Queries
+            $event->queries = array_merge(
+                $event->queries,
+                GqlCompanyQueries::getQueries()
+            );
+        });
+    }
+
+    /**
+     * Register the Gql permissions
+     */
+
+    private function _registerGqlComponents()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_SCHEMA_COMPONENTS, function(RegisterGqlSchemaComponentsEvent $event) {
+            $queryComponents = [];
+
+            $companyTypes = CompanyManagement::$plugin->companyTypes->getAllCompanyTypes();
+
+            if (!empty($companyTypes)) {
+                $label = Craft::t('company-management', 'Companies');
+                $companyPermissions = [];
+
+                foreach ($companyTypes as $companyType) {
+                    $suffix = 'companyTypes.' . $companyType->uid;
+                    $companyPermissions[$suffix . ':read'] = ['label' => Craft::t('company-management', 'View company type - {companyType}', ['companyType' => Craft::t('site', $companyType->name)])];
+                }
+
+                $queryComponents[$label] = $companyPermissions;
+
+                $event->queries = array_merge($event->queries, $queryComponents);
+            }
+        });
+    }
+
+    private function _registerProjectConfigEventListeners()
     {
         $projectConfigService = Craft::$app->getProjectConfig();
         $projectConfigService->onAdd(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);

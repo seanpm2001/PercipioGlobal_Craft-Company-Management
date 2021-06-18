@@ -27,7 +27,7 @@ class CompanyTypeSite extends ActiveRecord
      */
     public static function tableName(): string
     {
-        return Table::CM_COMAPNYTYPES_SITES;
+        return Table::CM_COMPANYTYPES_SITES;
     }
 
     /**

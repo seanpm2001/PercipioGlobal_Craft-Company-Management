@@ -5,6 +5,7 @@ namespace percipiolondon\companymanagement\gql\queries;
 use percipiolondon\companymanagement\gql\arguments\elements\Company as CompanyArguments;
 use percipiolondon\companymanagement\gql\interfaces\elements\Company as CompanyInterface;
 use percipiolondon\companymanagement\gql\resolvers\elements\Company as CompanyResolver;
+use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
 use craft\gql\base\Query;
 use GraphQL\Type\Definition\Type;
@@ -23,10 +24,9 @@ class Company extends Query {
     public static function getQueries($checkToken = true): array
     {
 
-        /** if ($checkToken && !GqlHelper::canQueryCompanies()) {
-         *      return [];
-         *  }
-         */
+        if ($checkToken && !GqlHelper::canQueryCompanies()) {
+             return [];
+         }
 
         return [
             'companies' => [

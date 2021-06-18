@@ -89,7 +89,7 @@ class CompanyTypes extends Component
             return null;
         }
 
-        $this->_memorizeCompanyType(new CompanyType($result));
+        $this->_memoizeCompanyType(new CompanyType($result));
 
         return $this->_companyTypesById[$companyTypeId];
 
@@ -119,9 +119,29 @@ class CompanyTypes extends Component
             return null;
         }
 
-        $this->_memorizeCompanytype(new CompanyType($result));
+        $this->_memoizeCompanyType(new CompanyType($result));
 
         return $this->_companyTypesByHandle[$handle];
+    }
+
+    /**
+     * Returns all company types
+     *
+     * @return CompanyType[] An array of all company types
+     */
+    public function getAllCompanyTypes(): array
+    {
+        if(!$this->_fetchedAllCompanyTypes) {
+            $results = $this->_createCompanyTypeQuery()->all();
+
+            foreach ($results as $result) {
+                $this->_memoizeCompanyType(new CompanyType($result));
+            }
+
+            $this->_fetchedAllCompanyTypes = true;
+        }
+
+        return $this->_companyTypesById ?: [];
     }
 
     /**
@@ -142,7 +162,7 @@ class CompanyTypes extends Component
                     'hasUrls',
                     'template'
                 ])
-                ->from(Table::CM_COMAPNYTYPES_SITES)
+                ->from(Table::CM_COMPANYTYPES_SITES)
                 ->where(['companytypeId' => $companyTypeId])
                 ->all();
 
@@ -1009,18 +1029,18 @@ class CompanyTypes extends Component
 
     private function _createCompanyTypeQuery(): Query
     {
-         return (new Query())
-             ->select([
-                 'companymanagement_companytypes.id',
-                 'companymanagement_companytypes.fieldLayoutId',
-                 'companymanagement_companytypes.name',
-                 'companymanagement_companytypes.handle',
-                 'companymanagement_companytypes.titleFormat',
-             ])
-             ->from([Table::CM_COMPANYTYPES]);
+        return (new Query())
+            ->select([
+                'companymanagement_companytypes.id',
+                'companymanagement_companytypes.fieldLayoutId',
+                'companymanagement_companytypes.name',
+                'companymanagement_companytypes.handle',
+                'companymanagement_companytypes.titleFormat',
+            ])
+            ->from([Table::CM_COMPANYTYPES]);
     }
 
-    private function _memorizeCompanytype(CompanyType  $companyType)
+    private function _memoizeCompanyType(CompanyType  $companyType)
     {
         $this->_companyTypesById[$companyType->id] = $companyType;
         $this->_companyTypesByHandle[$companyType->handle] = $companyType;
