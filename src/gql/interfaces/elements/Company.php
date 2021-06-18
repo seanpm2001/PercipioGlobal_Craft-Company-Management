@@ -39,23 +39,14 @@ class Company extends Element {
 
         $type = GqlEntityRegistry::createEntity(self::getName(), new InterfaceType([
             'name' => static::getName(),
-            'fields' => [
-                'name' => [
-                    'name' => 'name',
-                    'type' => Type::string(),
-                    'description' => 'The company’s name',
-                ],
-                'info' => [
-                    'name' => 'info',
-                    'type' => Type::string(),
-                    'description' => 'The company’s info',
-                ]
-            ],
+            'fields' => self::class . '::getFieldDefinitions',
             'description' => 'This is the interface implemented by all companies.',
             'resolveType' => function(CompanyElement $value) {
                 return $value->getGqlTypeName();
             }
         ]));
+
+//        \Craft::dd($type);
 
         CompanyType::generateTypes();
 
