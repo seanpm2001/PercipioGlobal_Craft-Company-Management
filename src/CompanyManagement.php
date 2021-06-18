@@ -145,7 +145,7 @@ class CompanyManagement extends Plugin
         $this->_registerUserSave();
         $this->_registerProejctConfigEventListeners();
 //        $this->_registerAfterInstall();
-//        $this->_registerAfterUninstall();
+        $this->_registerAfterUninstall();
         $this->_registerTemplateHooks();
 
         Craft::info(
@@ -254,18 +254,18 @@ class CompanyManagement extends Plugin
 //        );
 //    }
 //
-//    private function _registerAfterUninstall()
-//    {
-//        Event::on(
-//            Plugins::class,
-//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-//            function (PluginEvent $event) {
-//                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
-//                }
-//            }
-//        );
-//    }
+    private function _registerAfterUninstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    CompanyManagement::$plugin->companyTypes->uninstallFields();
+                }
+            }
+        );
+    }
 
     private function _registerVariables()
     {

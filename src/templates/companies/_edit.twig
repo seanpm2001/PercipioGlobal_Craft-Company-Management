@@ -19,18 +19,20 @@
     { label: "Companies"|t('company-managament'), url: url('company-management/companies') },
 ] -%}
 
+{%- set templateTabs = {} -%}
 {%- if company and company.id -%}
-    {%- set tabs = {
-        company: {label: 'Company'|t('company-management'), url: '#company'},
-        contact: {label: 'Contact'|t('company-management'), url: '#contact'},
-        users: {label: 'Users'|t('company-management'), url: '#users'},
+    {%- set templateTabs = {
+        company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
+        users: {label: 'Users'|t('company-management'), url: '#tabpanel-users'},
     } -%}
 {%- else -%}
-    {%- set tabs = {
-        company: {label: 'Company'|t('company-management'), url: '#company'},
-        contact: {label: 'Contact'|t('company-management'), url: '#contact'},
+    {%- set templateTabs = {
+        company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
     } -%}
 {%- endif -%}
+{%- set tabs = templateTabs|merge(tabNav) -%}
 {%- set selectedTab = 'company' -%}
 
 {% block header %}
@@ -49,12 +51,9 @@
 {% endblock %}
 
 {% block content %}
+
     <input type="hidden" name="action" value="company-management/company/save">
     {{- redirectInput('company-management/companies') -}}
-
-    #TEST FIELD LAYOUT#<br/><br/>
-    {{ fieldsHtml|raw }}
-    <br/>#END TEST FIELD LAYOUT#<br/><br/><br/>
 
     {%- if company -%}
         <input type="hidden" name="companyId" value="{{ company.id }}">
@@ -62,11 +61,11 @@
     <input type="hidden" name="typeId" value="{{ typeId }}">
     <input type="hidden" name="siteId" value="{{ company ? company.siteId : currentSite.id }}">
 
-    <div id="company">
+    <div id="tabpanel-company">
         {{- companyFields.company(company) -}}
     </div>
 
-    <div id="contact" class="hidden">
+    <div id="tabpanel-contact" class="hidden">
         {%- if company and company.id -%}
             {{- companyFields.user(company) -}}
         {%- else -%}
@@ -75,7 +74,7 @@
     </div>
 
     {%- if company and company.id -%}
-        <div id="users" class="hidden">
+        <div id="tabpanel-users" class="hidden">
 
             <div class="flex">
                 <div class="flex flex-nowrap" style="flex-grow: 1;">
@@ -113,6 +112,8 @@
             </table>
         </div>
     {%- endif -%}
+
+    {{ fieldsHtml|raw }}
 
 {% endblock %}
 

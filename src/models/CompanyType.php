@@ -161,7 +161,6 @@ class CompanyType extends Model
 
         $fieldLayout = $behavior->getFieldLayout();
 
-
         return $fieldLayout;
     }
 

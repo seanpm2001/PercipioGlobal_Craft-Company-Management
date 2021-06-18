@@ -6,6 +6,8 @@ use Craft;
 use craft\fieldlayoutelements\CustomField;
 use craft\db\Query;
 use craft\events\ConfigEvent;
+use craft\fields\Dropdown;
+use craft\fields\Lightswitch;
 use craft\fields\Number;
 use craft\fields\PlainText;
 use craft\helpers\App;
@@ -454,89 +456,62 @@ class CompanyTypes extends Component
         return true;
     }
 
+    public function uninstallFields()
+    {
+        $fieldGroups = Craft::$app->fields->getAllGroups();
+        foreach($fieldGroups as $fieldGroup) {
+            if('Company Fields' === $fieldGroup->name) {
+                Craft::$app->fields->deleteGroupById($fieldGroup->id);
+            }
+        }
+    }
+
     private function _installCompanyFields($layoutId)
     {
         $fieldGroup = $this->_createFieldGroup();
-
-        $fieldsService = Craft::$app->getFields();
-
-        $cmRegnNr = $fieldsService->getFieldByHandle('cmRegNr');
-        if(!$cmRegnNr) {
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => StringHelper::UUID(),
-                'name' => "Company Registration Number",
-                'handle' => "cmRegNr",
-                'required' => true,
-                'groupId' => $fieldGroup->id
-            ]);
-            $fieldsService->saveField($field);
-            $cmRegnNr = $field;
-        }
-
-        $cmPaye = $fieldsService->getFieldByHandle('cmPaye');
-        if(!$cmPaye) {
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => StringHelper::UUID(),
-                'name' => "PAYE Reference",
-                'handle' => "cmPaye",
-                'groupId' => $fieldGroup->id
-            ]);
-            $fieldsService->saveField($field);
-            $cmPaye = $field;
-        }
-
-        $cmAccOffRef = $fieldsService->getFieldByHandle('cmAccOffRef');
-        if(!$cmAccOffRef) {
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => StringHelper::UUID(),
-                'name' => "Accounts office reference",
-                'handle' => "cmAccOffRef",
-                'groupId' => $fieldGroup->id
-            ]);
-            $fieldsService->saveField($field);
-            $cmAccOffRef = $field;
-        }
-
-        $cmTaxRef = $fieldsService->getFieldByHandle('cmTaxRef');
-        if(!$cmTaxRef) {
-            $field = $fieldsService->createField([
-                'type' => PlainText::class,
-                'uid' => StringHelper::UUID(),
-                'name' => "Corporation Tax Reference",
-                'handle' => "cmTaxRef",
-                'groupId' => $fieldGroup->id
-            ]);
-            $fieldsService->saveField($field);
-            $cmTaxRef = $field;
-        }
-
-        $cmPayroll = $fieldsService->getFieldByHandle('cmPayroll');
-        if(!$cmPayroll) {
-            $field = $fieldsService->createField([
-                'type' => TimeloopField::class,
-                'uid' => StringHelper::UUID(),
-                'name' => "Payroll Date",
-                'handle' => "cmPayroll",
-                'groupId' => $fieldGroup->id
-            ]);
-            $fieldsService->saveField($field);
-            $cmPayroll = $field;
-        }
+        $fields = $this->_createFields($fieldGroup);
 
         $layout = Craft::$app->getFields()->getLayoutById($layoutId);
         $layout->tabs = [
             [
                 'name' => 'Company Reference',
-                'sortOrder' => 1,
+                'sortOrder' => 2,
                 'elements' => [
-                    new CustomField($cmRegnNr),
-                    new CustomField($cmPaye),
-                    new CustomField($cmAccOffRef),
-                    new CustomField($cmTaxRef),
-                    new CustomField($cmPayroll),
+                    new CustomField($fields['cmRegNr'], ['required' => true]),
+                    new CustomField($fields['cmPaye']),
+                    new CustomField($fields['cmAccOffRef']),
+                    new CustomField($fields['cmTaxRef']),
+                ]
+            ],
+            [
+                'name' => 'Company Dates',
+                'sortOrder' => 3,
+                'elements' => [
+                    new CustomField($fields['cmAccYearEndDate']),
+                    new CustomField($fields['cmBusinessCat']),
+                    new CustomField($fields['cmPayrollDate']),
+                    new CustomField($fields['cmStagingDate']),
+                    new CustomField($fields['cmPensionDate']),
+                    new CustomField($fields['cmPayCutOffDate']),
+                ]
+            ],
+            [
+                'name' => 'Pension Scheme',
+                'sortOrder' => 3,
+                'elements' => [
+                    new CustomField($fields['cmEmployeeContribution']),
+                    new CustomField($fields['cmEmployerContribution']),
+                    new CustomField($fields['cmTaxRelief']),
+                    new CustomField($fields['cmCalculateQualifyingEarning']),
+                    new CustomField($fields['cmPayPeriodEnd']),
+                ]
+            ],
+            [
+                'name' => 'Connections',
+                'sortOrder' => 4,
+                'elements' => [
+                    new CustomField($fields['cmXeroApi']),
+                    new CustomField($fields['cmBlackhawkApi']),
                 ]
             ],
         ];
@@ -568,6 +543,468 @@ class CompanyTypes extends Component
         }
 
         return $companyFieldGroup;
+    }
+
+    private function _createFields($fieldGroup)
+    {
+        $fields = [];
+
+        $fieldsService = Craft::$app->getFields();
+
+        $field = $fieldsService->getFieldByHandle('cmRegNr');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Company Registration Number",
+                'handle' => "cmRegNr",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmRegNr'] = $field;
+
+
+        $field = $fieldsService->getFieldByHandle('cmPaye');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "PAYE Reference",
+                'handle' => "cmPaye",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmPaye'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmAccOffRef');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Accounts office reference",
+                'handle' => "cmAccOffRef",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmAccOffRef'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmTaxRef');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Corporation Tax Reference",
+                'handle' => "cmTaxRef",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmTaxRef'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmAccYearEndDate');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Date::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Accounting Year End Date",
+                'handle' => "cmAccYearEndDate",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmAccYearEndDate'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmPayrollDate');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => TimeloopField::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Payroll Date",
+                'handle' => "cmPayrollDate",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmPayrollDate'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmBusinessCat');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Dropdown::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Business Category",
+                'handle' => "cmBusinessCat",
+                'options' => [
+                    [
+                        "value" => 2,
+                        "label" => "Administration"
+                    ],
+                    [
+                        "value" => 3,
+                        "label" => "Agriculture"
+                    ],
+                    [
+                        "value" => 4,
+                        "label" => "Apparel & Fashion"
+                    ],
+                    [
+                        "value" => 5,
+                        "label" => "Architecture & Planning"
+                    ],
+                    [
+                        "value" => 6,
+                        "label" => "Arts & Crafts"
+                    ],
+                    [
+                        "value" => 7,
+                        "label" => "Automotive"
+                    ],
+                    [
+                        "value" => 8,
+                        "label" => "Aviation"
+                    ],
+                    [
+                        "value" => 9,
+                        "label" => "Biotechnology"
+                    ],
+                    [
+                        "value" => 10,
+                        "label" => "Builder"
+                    ],
+                    [
+                        "value" => 38,
+                        "label" => "Business / Management Consulting"
+                    ],
+                    [
+                        "value" => 11,
+                        "label" => "Childcare"
+                    ],
+                    [
+                        "value" => 12,
+                        "label" => "Cleaning"
+                    ],
+                    [
+                        "value" => 13,
+                        "label" => "Commercial Property"
+                    ],
+                    [
+                        "value" => 14,
+                        "label" => "Communications"
+                    ],
+                    [
+                        "value" => 15,
+                        "label" => "Courier"
+                    ],
+                    [
+                        "value" => 16,
+                        "label" => "Design"
+                    ],
+                    [
+                        "value" => 17,
+                        "label" => "Driver (Taxi / Private)"
+                    ],
+                    [
+                        "value" => 18,
+                        "label" => "Education"
+                    ],
+                    [
+                        "value" => 19,
+                        "label" => "Electrician"
+                    ],
+                    [
+                        "value" => 20,
+                        "label" => "Energy"
+                    ],
+                    [
+                        "value" => 21,
+                        "label" => "Engineering"
+                    ],
+                    [
+                        "value" => 22,
+                        "label" => "Entertainment"
+                    ],
+                    [
+                        "value" => 23,
+                        "label" => "Events"
+                    ],
+                    [
+                        "value" => 24,
+                        "label" => "Film & TV"
+                    ],
+                    [
+                        "value" => 25,
+                        "label" => "Financial Services"
+                    ],
+                    [
+                        "value" => 26,
+                        "label" => "Floristry"
+                    ],
+                    [
+                        "value" => 27,
+                        "label" => "Food & Beverages"
+                    ],
+                    [
+                        "value" => 28,
+                        "label" => "Gambling & Casinos"
+                    ],
+                    [
+                        "value" => 54,
+                        "label" => "Hair & Beauty"
+                    ],
+                    [
+                        "value" => 29,
+                        "label" => "Health & Social Care"
+                    ],
+                    [
+                        "value" => 30,
+                        "label" => "Health, Wellness and Fitness"
+                    ],
+                    [
+                        "value" => 31,
+                        "label" => "Hospitality"
+                    ],
+                    [
+                        "value" => 32,
+                        "label" => "IT Contractor / Consulting"
+                    ],
+                    [
+                        "value" => 33,
+                        "label" => "Joiner"
+                    ],
+                    [
+                        "value" => 34,
+                        "label" => "Landscape Gardener"
+                    ],
+                    [
+                        "value" => 35,
+                        "label" => "Legal Services"
+                    ],
+                    [
+                        "value" => 36,
+                        "label" => "Leisure & Tourism"
+                    ],
+                    [
+                        "value" => 37,
+                        "label" => "Logistics"
+                    ],
+                    [
+                        "value" => 39,
+                        "label" => "Marketing & Advertising"
+                    ],
+                    [
+                        "value" => 40,
+                        "label" => "Music"
+                    ],
+                    [
+                        "value" => 41,
+                        "label" => "Painter and Decorator"
+                    ],
+                    [
+                        "value" => 42,
+                        "label" => "Performing Arts"
+                    ],
+                    [
+                        "value" => 43,
+                        "label" => "Photography"
+                    ],
+                    [
+                        "value" => 44,
+                        "label" => "Plasterer"
+                    ],
+                    [
+                        "value" => 45,
+                        "label" => "Plumber"
+                    ],
+                    [
+                        "value" => 46,
+                        "label" => "Property / Landlord"
+                    ],
+                    [
+                        "value" => 47,
+                        "label" => "Retail"
+                    ],
+                    [
+                        "value" => 48,
+                        "label" => "Social Clubs"
+                    ],
+                    [
+                        "value" => 49,
+                        "label" => "Software Development"
+                    ],
+                    [
+                        "value" => 50,
+                        "label" => "Utilities"
+                    ],
+                    [
+                        "value" => 51,
+                        "label" => "Vet & Pet Care"
+                    ],
+                    [
+                        "value" => 52,
+                        "label" => "Web Design"
+                    ]
+                ],
+                'groupId' => $fieldGroup->id,
+
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmBusinessCat'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmStagingDate');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Date::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Staging Date",
+                'handle' => "cmStagingDate",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmStagingDate'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmPensionDate');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => TimeloopField::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Pension Date",
+                'handle' => "cmPensionDate",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmPensionDate'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmPayCutOffDate');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => TimeloopField::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Pay Cut Off Date",
+                'handle' => "cmPayCutOffDate",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmPayCutOffDate'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmEmployeeContribution');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Number::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Employee Contribution ( % )",
+                'handle' => "cmEmployeeContribution",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmEmployeeContribution'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmEmployerContribution');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Number::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Employer Contribution ( % )",
+                'handle' => "cmEmployerContribution",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmEmployerContribution'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmTaxRelief');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Dropdown::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Tax Relief Method",
+                'handle' => "cmTaxRelief",
+                'options' => [
+                    [
+                        "value" => "salary",
+                        "label" => "Salaray Sacrifice"
+                    ],
+                    [
+                        "value" => "relief",
+                        "label" => "Relief at Source"
+                    ],
+                    [
+                        "value" => "net",
+                        "label" => "Net Pay"
+                    ],
+                ],
+                'groupId' => $fieldGroup->id,
+
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmTaxRelief'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmCalculateQualifyingEarning');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Lightswitch::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Calculate on Qualifying Earning",
+                'handle' => "cmCalculateQualifyingEarning",
+                'groupId' => $fieldGroup->id
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmCalculateQualifyingEarning'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmPayPeriodEnd');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => Number::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Day in Month Following Pay Period End ( 1 - 31 )",
+                'handle' => "cmPayPeriodEnd",
+                'groupId' => $fieldGroup->id,
+                'settings' => [
+                    'min' => 1,
+                    'max' => 31
+                ]
+
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmPayPeriodEnd'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmXeroApi');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "XERO payroll API connect",
+                'handle' => "cmXeroApi",
+                'groupId' => $fieldGroup->id,
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmXeroApi'] = $field;
+
+        $field = $fieldsService->getFieldByHandle('cmBlackhawkApi');
+        if(!$field) {
+            $field = $fieldsService->createField([
+                'type' => PlainText::class,
+                'uid' => StringHelper::UUID(),
+                'name' => "Blackhawk network API connect",
+                'handle' => "cmBlackhawkApi",
+                'groupId' => $fieldGroup->id,
+            ]);
+            $fieldsService->saveField($field);
+        }
+        $fields['cmBlackhawkApi'] = $field;
+
+        return $fields;
     }
 
     private function _createCompanyTypeQuery(): Query

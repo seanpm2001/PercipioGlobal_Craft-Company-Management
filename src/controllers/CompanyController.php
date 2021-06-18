@@ -91,10 +91,9 @@ class CompanyController extends Controller
         $companyType = CompanyManagement::$plugin->companyTypes->getCompanyTypeByHandle('default');
 
         $form = $companyType->getCompanyFieldLayout()->createForm($company);
-        $variables['tabs'] = $form->getTabMenu();
-        $variables['fieldsHtml'] = $form->render();
+        $variables['tabNav'] = $form->getTabMenu();
+        $variables['fieldsHtml'] = str_replace('class="flex-fields"', 'class="flex-fields hidden"', $form->render());
         $variables['typeId'] = $companyType->id;
-
 
         if ($company === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new company');
