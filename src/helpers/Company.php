@@ -48,10 +48,6 @@ class Company
         $company->address = $request->getBodyParam('address');
         $company->town = $request->getBodyParam('town');
         $company->postcode = $request->getBodyParam('postcode');
-        $company->registerNumber = $request->getBodyParam('registerNumber');
-        $company->payeReference = $request->getBodyParam('payeReference');
-        $company->accountsOfficeReference = $request->getBodyParam('accountsOfficeReference');
-        $company->taxReference = $request->getBodyParam('taxReference');
         $company->website = $request->getBodyParam('website');
         $company->contactFirstName = $request->getBodyParam('contactFirstName');
         $company->contactLastName = $request->getBodyParam('contactLastName');

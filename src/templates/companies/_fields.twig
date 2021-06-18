@@ -51,41 +51,6 @@
     <hr/>
 
     {{ forms.textField({
-        label: "Register Number"|t('company-management'),
-        required: true,
-        id: 'registerNumber',
-        name: 'registerNumber',
-        value: company ? company.registerNumber : '',
-        errors: company ? company.getErrors('registerNumber') : null,
-    }) }}
-
-    {{ forms.textField({
-        label: "PAYE Reference"|t('company-management'),
-        id: 'payeReference',
-        name: 'payeReference',
-        value: company ? company.payeReference : '',
-        errors: company ? company.getErrors('payeReference') : null,
-    }) }}
-
-    {{ forms.textField({
-        label: "Accounts Office Reference"|t('company-management'),
-        id: 'accountsOfficeReference',
-        name: 'accountsOfficeReference',
-        value: company ? company.accountsOfficeReference : '',
-        errors: company ? company.getErrors('accountsOfficeReference') : null,
-    }) }}
-
-    {{ forms.textField({
-        label: "Tax Reference"|t('company-management'),
-        id: 'taxReference',
-        name: 'taxReference',
-        value: company ? company.taxReference : '',
-        errors: company ? company.getErrors('taxReference') : null,
-    }) }}
-
-    <hr/>
-
-    {{ forms.textField({
         label: "Website"|t('company-management'),
         id: 'website',
         name: 'website',
