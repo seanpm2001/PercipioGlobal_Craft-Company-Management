@@ -81,7 +81,7 @@ class Install extends Migration {
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
                 'siteId' => $this->integer()->notNull()->defaultValue(1),
-                'typeId' => $this->integer(),
+                'typeId' => $this->integer()->notNull(),
                 // Custom columns in the table
                 'info' => $this->string()->notNull()->defaultValue(''),
                 'name' => $this->string()->notNull()->defaultValue(''),
@@ -214,7 +214,7 @@ class Install extends Migration {
     {
         $this->addForeignKey(null, Table::CM_COMPANIES, ['id'], '{{%elements}}', ['id'], 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANIES, ['userId'], \craft\db\Table::USERS, ['id'], null, 'CASCADE');
-        $this->addForeignKey(null, Table::CM_COMPANIES, ['typeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE');
+        $this->addForeignKey(null, Table::CM_COMPANIES, ['typeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE', null);
         $this->addForeignKey(null, Table::CM_USERS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_USERS, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
@@ -279,7 +279,7 @@ class Install extends Migration {
         $schema->refresh();
         $rawTableName = $schema->getRawTableName($tableName);
         $table = $schema->getTableSchema($rawTableName);
-        
+
         return (bool)$table;
     }
 

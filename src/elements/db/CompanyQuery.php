@@ -39,7 +39,7 @@ class CompanyQuery extends ElementQuery
     public $contactBirthday;
 
     /**
-     * @var int|int[]|null The company type ID(s) that the resulting products must have.
+     * @var int|int[]|null The company type ID(s) that the resulting companies must have.
      */
     public $typeId;
 
@@ -322,7 +322,7 @@ class CompanyQuery extends ElementQuery
                     ['element.enabled' => false],
                     ['element_sites.enabled' => false],
                 ];
-                
+
             default: 
                 return false;
         }

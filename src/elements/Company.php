@@ -91,7 +91,7 @@ class Company extends Element
      * @see getAvailableCompanyTypes()
      * @since 3.6.0
      */
-    const EVENT_DEFINE_COMPANY_TYPES = 'defineEntryTypes';
+    const EVENT_DEFINE_COMPANY_TYPES = 'defineCompanyTypes';
 
     // Public Properties
     // =========================================================================
@@ -100,16 +100,26 @@ class Company extends Element
      * @var
      */
     public $postDate;
+
     /**
      * @var
      */
     public $expiryDate;
+
     /**
      * @var
      */
     public $siteId;
-    /**
-     * @var
+
+        /**
+     * @var int|null Type ID
+     * ---
+     * ```php
+     * echo $company->typeId;
+     * ```
+     * ```twig
+     * {{ company.typeId }}
+     * ```
      */
     public $typeId;
 
@@ -176,6 +186,12 @@ class Company extends Element
      * @var
      */
     public $userId;
+
+    public function init()
+    {
+        parent::init();
+        $this->typeId = 1; // TODO: Fetch this dynamically!
+    }
 
     // Static Methods
     // =========================================================================
@@ -491,7 +507,7 @@ class Company extends Element
     public function rules()
     {
         $rules = parent::defineRules();
-
+        $rules[] = [['typeId'], 'number', 'integerOnly' => true];
         $rules[] = [['name'], 'required'];
         $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
 
@@ -713,7 +729,9 @@ class Company extends Element
      */
     public function afterSave(bool $isNew)
     {
+
         if (!$this->propagating) {
+
             $this->_saveRecord($isNew);
         }
 
@@ -768,6 +786,7 @@ class Company extends Element
      */
     private function _saveRecord($isNew)
     {
+
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
 
@@ -796,18 +815,19 @@ class Company extends Element
 
         $record->name = $this->name;
         $record->info = $this->info;
-        $record->typeId = $this->typeId;
+        $record->typeId = (int)$this->typeId;
         $record->slug = CompanyHelper::cleanStringForUrl($this->name);
         $record->address = $this->address;
         $record->town = $this->town;
         $record->postcode = $this->postcode;
         $record->website = $this->website;
-        $record->logo = $this->logo;
         $record->userId = $userId;
 
         $record->save(false);
 
         $this->id = $record->id;
+
+        //\Craft::dd($this->typeId);
 
         // save company id into the companyUser
         CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
