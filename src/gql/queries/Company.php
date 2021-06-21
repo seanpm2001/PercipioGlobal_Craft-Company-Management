@@ -7,6 +7,7 @@ use percipiolondon\companymanagement\gql\interfaces\elements\Company as CompanyI
 use percipiolondon\companymanagement\gql\resolvers\elements\Company as CompanyResolver;
 use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
+use Craft;
 use craft\gql\base\Query;
 use GraphQL\Type\Definition\Type;
 

@@ -22,7 +22,6 @@ class Company extends ElementResolver {
      */
     public static function prepareQuery($source, array $arguments, $fieldName = null)
     {
-
         // If this is the beginning of a resolver chain, start fresh
         if($source === null) {
             $query = CompanyElement::find();
@@ -53,6 +52,8 @@ class Company extends ElementResolver {
         }
 
         $query->andWhere(['in', 'typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
+
+        \Craft::dd($query);
 
         return $query;
 

@@ -46,8 +46,6 @@ class Company extends Element {
             }
         ]));
 
-//        \Craft::dd($type);
-
         CompanyType::generateTypes();
 
         return $type;

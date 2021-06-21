@@ -55,19 +55,40 @@ class CompanyType extends Model
     public $uid;
 
     /**
-     * @var bool Has dimension
-     */
-    public $hasDimensions;
-
-    /**
      * @var string Template
      */
-    public $template;
+    /*public $template;*/
 
     /**
      * @var CompanyTypeSite[]
      */
     private $_siteSettings;
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors(): array
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['fieldLayout'] = [
+            'class' => FieldLayoutBehavior::class,
+            'elementType' => Company::class,
+        ];
+        return $behaviors;
+        
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'handle' => Craft::t('companymanagement', 'Handle'),
+            'name' => Craft::t('companymanagement', 'Name'),
+            'titleFormat' => Craft::t('companymanagement', 'Title Format'),
+        ];
+    }
 
     /**
      * @inheritdoc
@@ -167,7 +188,7 @@ class CompanyType extends Model
     /**
      * @inheritdoc
      */
-    public function behaviors(): array
+    /*public function behaviors(): array
     {
         return [
             'companyFieldLayout' => [
@@ -176,5 +197,5 @@ class CompanyType extends Model
                 'idAttribute' => 'fieldLayoutId'
             ]
         ];
-    }
+    } */
 }

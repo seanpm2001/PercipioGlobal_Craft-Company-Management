@@ -32,7 +32,7 @@ use yii\base\Exception;
 
 class CompanyTypes extends Component
 {
-    const CONFIG_COMPANYTYPES_KEY = 'companymanagement_companytypes.companyTypes';
+    const CONFIG_COMPANYTYPES_KEY = 'companymanagement.companyTypes';
     const EVENT_BEFORE_SAVE_COMPANYTYPE = 'beforeSaveCompanyType';
     const EVENT_AFTER_SAVE_COMPANYTYPE = 'afterSaveCompanyType';
 
@@ -47,11 +47,6 @@ class CompanyTypes extends Component
     private $_allCompanyTypeIds;
 
     /**
-     * @var int[]
-     */
-    private $_editableCompanyTypeIds;
-
-    /**
      * @var CompanyType[]
      */
     private $_companyTypesById;
@@ -62,19 +57,70 @@ class CompanyTypes extends Component
     private $_companyTypesByHandle;
 
     /**
+     * @var int[]
+     */
+    private $_editableCompanyTypeIds;
+
+    /**
      * @var CompanyTypeSite[]
      */
     private $_siteSettingsByCompanyId = [];
 
-    /**
+        /**
      * @var array interim storage for company types being saved via CP
      */
     private $_savingCompanyTypes = [];
 
+    /**
+     * Returns all of the Company type IDs.
+     *
+     * @return array An array of all the company types’ IDs.
+     */
+
+    public function getAllCompanyTypeIds(): array
+    {
+        if(null === $this->_allCompanyTypeIds) {
+            $this->_allCompanyTypeIds = [];
+            $companyTypes = $this->getAllCompanyTypes();
+        }
+
+        foreach ($companyTypes as $companyType) {
+            $this->_allCompanyTypeIds[] = $companyType->id;
+        }
+
+        return $this->_allCompanyTypeIds;
+    }
+
+    /**
+     * Returns all company types
+     *
+     * @return CompanyType[] An array of all company types
+     */
+    public function getAllCompanyTypes(): array
+    {
+        if(!$this->_fetchedAllCompanyTypes) {
+            $results = $this->_createCompanyTypeQuery()->all();
+
+            foreach ($results as $result) {
+                $this->_memoizeCompanyType(new CompanyType($result));
+            }
+
+            $this->_fetchedAllCompanyTypes = true;
+        }
+
+        return $this->_companyTypesById ?: [];
+    }
+
+    /**
+     * Returns a company type by its ID.
+     *
+     * @param int $companyTypeId the company type's ID
+     * @return CompanyType|null either the company type or `null`
+     */
     public function getCompanyTypeById(int $companyTypeId)
     {
-        if(isset($this_companyTypeId[$companyTypeId])) {
-            return $this_companyTypeId[$companyTypeId];
+        if(isset($this->_companyTypeId[$companyTypeId])) {
+            return $this->_companyTypeId[$companyTypeId];
         }
 
         if($this->_fetchedAllCompanyTypes) {
@@ -125,26 +171,6 @@ class CompanyTypes extends Component
     }
 
     /**
-     * Returns all company types
-     *
-     * @return CompanyType[] An array of all company types
-     */
-    public function getAllCompanyTypes(): array
-    {
-        if(!$this->_fetchedAllCompanyTypes) {
-            $results = $this->_createCompanyTypeQuery()->all();
-
-            foreach ($results as $result) {
-                $this->_memoizeCompanyType(new CompanyType($result));
-            }
-
-            $this->_fetchedAllCompanyTypes = true;
-        }
-
-        return $this->_companyTypesById ?: [];
-    }
-
-    /**
      * Returns an array of company type site settings for a company type by its ID.
      *
      * @param int $companyTypeId the company type ID
@@ -176,6 +202,25 @@ class CompanyTypes extends Component
         return $this->_siteSettingsByCompanyId[$companyTypeId];
     }
 
+    /**
+     * Returns a company type by its UID.
+     *
+     * @param string $uid the company type's UID
+     * @return CompanyType|null either the company type or `null`
+     */
+    public function getCompanyTypeByUid(string $uid)
+    {
+        return ArrayHelper::firstWhere($this->getAllComapnyTypes(), 'uid', $uid, true);
+    }
+
+
+    /**
+     * Handle a company type change.
+     *
+     * @param ConfigEvent $event
+     * @return void
+     * @throws Throwable if reasons
+     */
     public function handleChangedCompanyType(ConfigEvent $event)
     {
         $companyTypeUid = $event->tokenMatches[0];
@@ -200,7 +245,6 @@ class CompanyTypes extends Component
             $companyTypeRecord->uid = $companyTypeUid;
             $companyTypeRecord->name = $data['name'];
             $companyTypeRecord->handle = $data['handle'];
-            $companyTypeRecord->hasDimensions = $data['hasDimensions'];
 
             $companyTypeRecord->titleFormat = $data['titleFormat'] ?? '{company.title}';
             $companyTypeRecord->hasTitleField = $data['hasTitleField'];
@@ -237,7 +281,7 @@ class CompanyTypes extends Component
             if (!$isNewCompanyType) {
                 // Get the old product type site settings
                 $allOldSiteSettingsRecords = CompanyTypeSiteRecord::find()
-                    ->where(['productTypeId' => $companyTypeRecord->id])
+                    ->where(['companyTypeId' => $companyTypeRecord->id])
                     ->indexBy('siteId')
                     ->all();
             }
@@ -306,7 +350,7 @@ class CompanyTypes extends Component
 
                 // Are there any sites left?
                 if (!empty($siteData)) {
-                    // Drop the old product URIs for any site settings that don't have URLs
+                    // Drop the old company URIs for any site settings that don't have URLs
                     if (!empty($sitesNowWithoutUrls)) {
                         $db->createCommand()
                             ->update(
@@ -367,10 +411,10 @@ class CompanyTypes extends Component
             $this->_siteSettingsByCompanyId[$companyTypeRecord->id]
         );
 
-        // Fire an 'afterCompayType' event
+        // Fire an 'afterSaveCompanyType' event
         if ($this->hasEventHandlers(self::EVENT_AFTER_SAVE_COMPANYTYPE)) {
             $this->trigger(self::EVENT_AFTER_SAVE_COMPANYTYPE, new CompanyTypeEvent([
-                'productType' => $this->getCompanyTypeById($companyTypeRecord->id),
+                'companyType' => $this->getCompanyTypeById($companyTypeRecord->id),
                 'isNew' => empty($this->_savingProductTypes[$companyTypeUid]),
             ]));
         }
@@ -424,7 +468,6 @@ class CompanyTypes extends Component
             'handle' => $companyType->handle,
             'hasTitleField' => $companyType->hasTitleField,
             'titleFormat' => $companyType->titleFormat,
-            'hasDimensions' => $companyType->hasDimensions,
             'fieldLayoutId' => $companyType->getFieldLayout()->id,
             'uid' => $companyType->uid,
             'siteSettings' => []
@@ -1036,6 +1079,7 @@ class CompanyTypes extends Component
                 'companymanagement_companytypes.name',
                 'companymanagement_companytypes.handle',
                 'companymanagement_companytypes.titleFormat',
+                'companymanagement_companytypes.uid',
             ])
             ->from([Table::CM_COMPANYTYPES]);
     }

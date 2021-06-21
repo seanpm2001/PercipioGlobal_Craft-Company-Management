@@ -301,6 +301,8 @@ class CompanyManagement extends Plugin
                 $label = Craft::t('company-management', 'Companies');
                 $companyPermissions = [];
 
+                
+
                 foreach ($companyTypes as $companyType) {
                     $suffix = 'companyTypes.' . $companyType->uid;
                     $companyPermissions[$suffix . ':read'] = ['label' => Craft::t('company-management', 'View company type - {companyType}', ['companyType' => Craft::t('site', $companyType->name)])];

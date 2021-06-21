@@ -456,7 +456,7 @@ class Company extends Element
 
         // Fetch all company UIDs
         $companyInfo = (new Query())
-            ->from('{{%companymanagement_company}}')
+            ->from('{{%companymanagement_companies}}')
             ->select('*')
             ->all();
 

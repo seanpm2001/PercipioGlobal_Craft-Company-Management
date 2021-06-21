@@ -43,7 +43,6 @@ use yii\db\ActiveQueryInterface;
  * @property int $id
  * @property string $name
  * @property string $titleFormat
- * @property bool $hasDimensions
  * @property bool $hasTitleField
  * @property string $companyTitleFormat
  *
