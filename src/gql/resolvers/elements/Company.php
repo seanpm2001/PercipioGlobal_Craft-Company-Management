@@ -53,7 +53,7 @@ class Company extends ElementResolver {
 
         $query->andWhere(['in', 'typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
 
-        \Craft::dd($query);
+        \Craft::dd($query->getRawSql());
 
         return $query;
 

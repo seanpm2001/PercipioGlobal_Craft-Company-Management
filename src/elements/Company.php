@@ -15,7 +15,6 @@ use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
 use craft\validators\DateTimeValidator;
-use http\Params;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
@@ -24,10 +23,10 @@ use percipiolondon\companymanagement\models\CompanyType;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
-use DateTime;
 use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\actions\SetStatus;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use yii\base\BaseObject;
 use yii\base\Exception;
@@ -83,11 +82,8 @@ class Company extends Element
     /**
      *
      */
-    const STATUS_LIVE = 'live';
-    /**
-     *
-     */
-    const STATUS_EXPIRED = 'expired';
+    const STATUS_ENABLED = 'enabled';
+    const STATUS_DISABLED = 'disabled';
 
     /**
      * @event DefineCompanyTypesEvent The event that is triggered when defining the available company types for the company
@@ -264,6 +260,16 @@ class Company extends Element
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getStatus()
+    {
+        $status = parent::getStatus();
+
+        return $status;
+    }
+
+    /**
      * Returns whether elements of this type have statuses.
      *
      * If this returns `true`, the element index template will show a Status menu
@@ -277,9 +283,8 @@ class Company extends Element
     public static function statuses(): array
     {
         return [
-            self::STATUS_LIVE => Craft::t('company-management', 'Live'),
-            self::STATUS_EXPIRED => Craft::t('company-management', 'Expired'),
-            self::STATUS_DISABLED => Craft::t('app', 'Disabled'),
+            self::STATUS_ENABLED => Craft::t('company-management', 'Enabled'),
+            self::STATUS_DISABLED => Craft::t('company-management', 'Disabled'),
         ];
     }
 
@@ -380,6 +385,8 @@ class Company extends Element
             'confirmationMessage' => Craft::t('company-management', 'Are you sure you want to delete the selected companies?'),
             'successMessage' => Craft::t('company-management', 'Companies deleted.'),
         ]);
+
+        //$actions[] = SetStatus::class;
 
         return $actions;
     }

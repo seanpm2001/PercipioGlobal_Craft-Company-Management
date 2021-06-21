@@ -50,7 +50,9 @@ class CompanyQuery extends ElementQuery
     {
         // Default status
         if (!isset($config['status'])) {
-            $config['status'] = 'live';
+            $config['status'] = [
+                Company::STATUS_ENABLED,
+            ];
         }
 
         parent::__construct($elementType, $config);
@@ -300,6 +302,30 @@ class CompanyQuery extends ElementQuery
         $this->_applyRefParam();
 
         return parent::beforePrepare();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function statusCondition(string $status)
+    {
+        switch ($status) {
+            case Company::STATUS_ENABLED:
+                return [
+                    'elements.enabled' => true,
+                    'elements_sites.enabled' => true,
+                ];
+
+            case Company::STATUS_DISABLED:
+                return [
+                    'or',
+                    ['element.enabled' => false],
+                    ['element_sites.enabled' => false],
+                ];
+                
+            default: 
+                return false;
+        }
     }
 
     /**

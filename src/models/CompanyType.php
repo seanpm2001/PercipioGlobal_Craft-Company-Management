@@ -69,13 +69,13 @@ class CompanyType extends Model
      */
     public function behaviors(): array
     {
-        $behaviors = parent::behaviors();
-        $behaviors['fieldLayout'] = [
-            'class' => FieldLayoutBehavior::class,
-            'elementType' => Company::class,
+        return [
+            'companyFieldLayout' => [
+                'class' => FieldLayoutBehavior::class,
+                'elementType' => Company::class,
+                'idAttribute' => 'fieldLayoutId'
+            ]
         ];
-        return $behaviors;
-        
     }
 
     /**
@@ -185,17 +185,4 @@ class CompanyType extends Model
         return $fieldLayout;
     }
 
-    /**
-     * @inheritdoc
-     */
-    /*public function behaviors(): array
-    {
-        return [
-            'companyFieldLayout' => [
-                'class' => FieldLayoutBehavior::class,
-                'elementType' => Company::class,
-                'idAttribute' => 'fieldLayoutId'
-            ]
-        ];
-    } */
 }
