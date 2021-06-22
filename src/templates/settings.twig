@@ -1,0 +1,32 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Company Management plugin for Craft CMS 3.x
+ *
+ * Company Management Settings.twig
+ *
+ * @author    Percipio
+ * @copyright Copyright (c) 2021 Percipio
+ * @link      http://percipio.london/
+ * @package   CompanyManagement
+ * @since     0.1.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}
+
+{{ forms.textField({
+    label: 'Some Field',
+    instructions: 'Enter some setting here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: settings['someAttribute']})
+}}

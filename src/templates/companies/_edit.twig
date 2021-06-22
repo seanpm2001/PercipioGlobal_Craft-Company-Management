@@ -1,0 +1,125 @@
+{%- extends "_layouts/cp" -%}
+
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{#{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}#}
+
+{%- import "_includes/forms" as forms -%}
+{%- import "company-management/companies/_fields" as companyFields -%}
+
+{%- set selectedSubnavItem = "companies" -%}
+{%- set company = company ?? null -%}
+{%- set fullPageForm = true -%}
+
+{%- set crumbs = [
+    { label: "Companies"|t('company-managament'), url: url('company-management/companies') },
+] -%}
+
+{%- set templateTabs = {} -%}
+{%- if company and company.id -%}
+    {%- set templateTabs = {
+        company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
+        users: {label: 'Users'|t('company-management'), url: '#tabpanel-users'},
+    } -%}
+{%- else -%}
+    {%- set templateTabs = {
+        company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
+        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
+    } -%}
+{%- endif -%}
+{%- set tabs = templateTabs|merge(tabNav) -%}
+{%- set selectedTab = 'company' -%}
+
+{% block header %}
+    <div class="flex flex-nowrap">
+        {{ block('pageTitle') }}
+    </div>
+    <div class="flex">
+        {{ block('actionButton') }}
+    </div>
+{% endblock %}
+
+{% block actionButton %}
+    <div class="buttons">
+        <input type="submit" data-action="company-management/companies/save" class="btn submit" value="{{ 'Save'|t('company-management') }}">
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <input type="hidden" name="action" value="company-management/company/save">
+    {{- redirectInput('company-management/companies') -}}
+
+    {%- if company -%}
+        <input type="hidden" name="companyId" value="{{ company.id }}">
+    {%- endif -%}
+    <input type="hidden" name="typeId" value="{{ typeId }}">
+    <input type="hidden" name="siteId" value="{{ company ? company.siteId : currentSite.id }}">
+
+    <div id="tabpanel-company">
+        {{- companyFields.company(company) -}}
+    </div>
+
+    <div id="tabpanel-contact" class="hidden">
+        {%- if company and company.id -%}
+            {{- companyFields.user(company) -}}
+        {%- else -%}
+            {{- companyFields.contact(company) -}}
+        {%- endif -%}
+    </div>
+
+    {%- if company and company.id -%}
+        <div id="tabpanel-users" class="hidden">
+
+            <div class="flex">
+                <div class="flex flex-nowrap" style="flex-grow: 1;">
+                    <h2>Users</h2>
+                </div>
+                <div class="flex">
+                    {%- set companyUrl = company ? 'users/new?companyId=' ~ company.id : 'users/new' %}
+                    <a href="{{ url(companyUrl) }}" target="_blank" class="btn submit add icon">{{ 'Create a New User'|t('company-management') }}</a>
+                </div>
+            </div>
+
+
+            <table class="data fullwidth collapsible">
+                <thead>
+                    <tr>
+                        <th>{{ 'Name'|t('company-management') }}</th>
+                        <th>{{ 'Email'|t('company-management') }}</th>
+                        <th>{{ 'Date Created'|t('company-management') }}</th>
+                        <th>{{ 'Last Login'|t('company-management') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for companyUser in craft.companyUsers.getUsers(company.id) %}
+                        {% set user = craft.users.id(companyUser.userId).one() %}
+                        {% if user %}
+                            <tr>
+                                <th>{{- user.fullName ?? '-' -}}</th>
+                                <td>{{- user.email ?? '-' -}}</td>
+                                <td>{{- user.dateCreated|date('d/m/Y')}}</td>
+                                <td>{{- user.lastLoginDate ?? '-' -}}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {%- endif -%}
+
+    {{ fieldsHtml|raw }}
+
+{% endblock %}
+
+
+{% if not company.slug %}
+  {% js %}
+      window.slugGenerator = new Craft.SlugGenerator('#name', '#slug');
+  {% endjs %}
+{% endif %}

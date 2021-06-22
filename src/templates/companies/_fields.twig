@@ -1,0 +1,169 @@
+{% macro company(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.textField({
+        first: true,
+        label: "Name"|t('company-management'),
+        instructions: "What's the name of the company"|t('company-management'),
+        id: 'name',
+        name: 'name',
+        value: company ? company.name : '',
+        errors: company ? company.getErrors('name') : null,
+        autofocus: true,
+        required: true,
+    }) }}
+
+    {{- forms.textareaField({
+        label: "Info"|t('company-management'),
+        instructions: "Give a little info about the company"|t('company-management'),
+        id: 'info',
+        name: 'info',
+        value: company ? company.info : '',
+        errors: company ? company.getErrors('info')|merge(company.getErrors('uri')) : null
+    }) -}}
+
+    <hr/>
+
+    {{ forms.textField({
+        label: "Address"|t('company-management'),
+        id: 'address',
+        name: 'address',
+        value: company ? company.address : '',
+        errors: company ? company.getErrors('address') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Town"|t('company-management'),
+        id: 'town',
+        name: 'town',
+        value: company ? company.town : '',
+        errors: company ? company.getErrors('town') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Postcode"|t('company-management'),
+        id: 'postcode',
+        name: 'postcode',
+        value: company ? company.postcode : '',
+        errors: company ? company.getErrors('postcode') : null,
+    }) }}
+
+    <hr/>
+
+    {{ forms.textField({
+        label: "Website"|t('company-management'),
+        id: 'website',
+        name: 'website',
+        value: company ? company.website : '',
+        errors: company ? company.getErrors('website') : null,
+    }) }}
+
+    {%- set asset = company ? company.logo ? [craft.assets.id(company.logo).one()] : [] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Logo"|t('company-management'),
+        id: 'logo',
+        name: 'logo',
+        elementType: 'craft\\elements\\Asset',
+        limit: 1,
+        elements:asset,
+        criteria: {
+            'kind': ['image'],
+        },
+        value: company ? company.logo : '',
+        instructions: "Upload or select a logo"|t('company-management'),
+        errors: company ? company.getErrors('logo') : null,
+    }) }}
+{% endmacro %}
+
+{% macro contact(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    <div class="flex-fields">
+
+        <div class="field width-50">
+
+            {{ forms.textField({
+                first: true,
+                label: "Contact First Name"|t('company-management'),
+                id: 'contactFirstName',
+                name: 'contactFirstName',
+                required: true,
+                value: company ? company.contactFirstName : '',
+                errors: company ? company.getErrors('contactFirstName') : null,
+            }) }}
+
+        </div>
+
+        <div class="field width-50">
+
+            {{ forms.textField({
+                first: true,
+                label: "Contact Last Name"|t('company-management'),
+                id: 'contactLastName',
+                name: 'contactLastName',
+                required: true,
+                value: company ? company.contactLastName : '',
+                errors: company ? company.getErrors('contactLastName') : null,
+            }) }}
+
+        </div>
+
+    </div>
+    <div>&nbsp;</div>
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Email"|t('company-management'),
+        id: 'contactEmail',
+        name: 'contactEmail',
+        required: true,
+        value: company ? company.contactEmail : '',
+        errors: company ? company.getErrors('contactEmail') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Registration Number"|t('company-management'),
+        id: 'contactRegistrationNumber',
+        name: 'contactRegistrationNumber',
+        required: true,
+        value: company ? company.contactRegistrationNumber : '',
+        errors: company ? company.getErrors('contactRegistrationNumber') : null,
+    }) }}
+
+    {{ forms.textField({
+        first: true,
+        label: "Contact Phone"|t('company-management'),
+        id: 'contactPhone',
+        name: 'contactPhone',
+        value: company ? company.contactPhone : '',
+        errors: company ? company.getErrors('contactPhone') : null,
+    }) }}
+
+    {{ forms.dateField({
+        first: true,
+        label: "Contact Birthday"|t('company-management'),
+        id: 'contactBirthday',
+        name: 'contactBirthday',
+        value: company ? company.contactBirthday : '',
+        errors: company ? company.getErrors('contactBirthday') : null,
+    }) }}
+{% endmacro %}
+
+
+{% macro user(company) %}
+    {%- import "_includes/forms" as forms -%}
+
+    {%- set user = company ? company.userId ? [craft.users.id(company.userId).one()] : [] : [] -%}
+    {{ forms.elementSelectField({
+        label: "Contact"|t('company-management'),
+        id: 'userId',
+        name: 'user',
+        elementType: 'craft\\elements\\User',
+        limit: 1,
+        required: true,
+        elements:user,
+        value: company ? company.userId : '',
+        errors: company ? company.getErrors('userId') : null,
+    }) }}
+{% endmacro %}

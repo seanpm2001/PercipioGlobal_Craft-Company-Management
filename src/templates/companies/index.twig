@@ -1,0 +1,19 @@
+{%- extends '_layouts/elementindex' -%}
+
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{#{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}#}
+
+{%- set title = "Companies"|t('company-management') -%}
+{%- set selectedSubnavItem = 'companies' -%}
+
+{%- set elementType = 'percipiolondon\\companymanagement\\elements\\Company' -%}
+
+{% block actionButton %}
+    <a href="{{ url('company-management/companies/new') }}" class="btn submit add icon">Create Company</a>
+    {{ parent() }}
+{% endblock %}
