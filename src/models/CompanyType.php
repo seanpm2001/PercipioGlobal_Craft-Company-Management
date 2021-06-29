@@ -84,15 +84,9 @@ class CompanyType extends Model
     public function attributeLabels()
     {
         return [
-<<<<<<< HEAD
             'handle' => Craft::t('company-management', 'Handle'),
             'name' => Craft::t('company-management', 'Name'),
             'titleFormat' => Craft::t('company-management', 'Title Format'),
-=======
-            'handle' => Craft::t('companymanagement', 'Handle'),
-            'name' => Craft::t('companymanagement', 'Name'),
-            'titleFormat' => Craft::t('companymanagement', 'Title Format'),
->>>>>>> feature/gql
         ];
     }
 
@@ -191,8 +185,4 @@ class CompanyType extends Model
         return $fieldLayout;
     }
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> feature/gql
