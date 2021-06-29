@@ -14,6 +14,7 @@ use craft\elements\actions\Delete;
 use craft\elements\db\ElementQuery;
 use craft\elements\User;
 use craft\models\UserGroup;
+use craft\validators\DateTimeValidator;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
@@ -23,10 +24,10 @@ use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
-use DateTime;
 use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
+use craft\elements\actions\SetStatus;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use yii\base\BaseObject;
@@ -80,38 +81,119 @@ use yii\validators\Validator;
  */
 class Company extends Element
 {
-    const STATUS_LIVE = 'live';
-    const STATUS_EXPIRED = 'expired';
+    /**
+     *
+     */
+    const STATUS_ENABLED = 'enabled';
+    const STATUS_DISABLED = 'disabled';
+
+    /**
+     * @event DefineCompanyTypesEvent The event that is triggered when defining the available company types for the company
+     *
+     * @see getAvailableCompanyTypes()
+     * @since 3.6.0
+     */
+    const EVENT_DEFINE_COMPANY_TYPES = 'defineCompanyTypes';
 
     // Public Properties
     // =========================================================================
 
+    /**
+     * @var
+     */
     public $postDate;
+
+    /**
+     * @var
+     */
     public $expiryDate;
+
+    /**
+     * @var
+     */
     public $siteId;
 
+        /**
+     * @var int|null Type ID
+     * ---
+     * ```php
+     * echo $company->typeId;
+     * ```
+     * ```twig
+     * {{ company.typeId }}
+     * ```
+     */
+    public $typeId;
+
     // Company Info
+    /**
+     * @var
+     */
     public $name;
+    /**
+     * @var
+     */
     public $info;
-    public $shortName;
+    /**
+     * @var
+     */
+    public $slug;
+    /**
+     * @var
+     */
     public $address;
+    /**
+     * @var
+     */
     public $town;
+    /**
+     * @var
+     */
     public $postcode;
-    public $registerNumber;
-    public $payeReference;
-    public $accountsOfficeReference;
-    public $taxReference;
+    /**
+     * @var
+     */
     public $website;
+    /**
+     * @var
+     */
     public $logo;
 
     // Company Manager Info
+    /**
+     * @var
+     */
     public $contactFirstName;
+    /**
+     * @var
+     */
     public $contactLastName;
+    /**
+     * @var
+     */
     public $contactEmail;
+    /**
+     * @var
+     */
     public $contactRegistrationNumber;
+    /**
+     * @var
+     */
     public $contactPhone;
+    /**
+     * @var
+     */
     public $contactBirthday;
+    /**
+     * @var
+     */
     public $userId;
+
+    public function init()
+    {
+        parent::init();
+        $this->typeId = 1; // TODO: Fetch this dynamically!
+    }
 
     // Static Methods
     // =========================================================================
@@ -129,9 +211,33 @@ class Company extends Element
     /**
      * @inheritdoc
      */
+    public static function lowerDisplayName(): string
+    {
+        return Craft::t('company-management', 'company');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public static function pluralDisplayName(): string
     {
         return Craft::t('company-management', 'Companies');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function pluralLowerDisplayName(): string
+    {
+        return Craft::t('company-management', 'companies');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function refHandle()
+    {
+        return 'company';
     }
 
     /**
@@ -142,7 +248,7 @@ class Company extends Element
      */
     public static function hasContent(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -153,6 +259,32 @@ class Company extends Element
     public static function hasTitles(): bool
     {
         return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function hasUris(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function hasStatuses(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getStatus()
+    {
+        $status = parent::getStatus();
+
+        return $status;
     }
 
     /**
@@ -169,11 +301,14 @@ class Company extends Element
     public static function statuses(): array
     {
         return [
-            self::STATUS_LIVE => Craft::t('company-management', 'Live'),
-            self::STATUS_EXPIRED => Craft::t('company-management', 'Expired'),
+            self::STATUS_ENABLED => Craft::t('company-management', 'Enabled'),
+            self::STATUS_DISABLED => Craft::t('company-management', 'Disabled'),
         ];
     }
 
+    /**
+     * @return bool
+     */
     public static function isLocalized(): bool
     {
         return true;
@@ -225,6 +360,7 @@ class Company extends Element
      *
      * @return ElementQueryInterface The newly created [[ElementQueryInterface]] instance.
      */
+
     public static function find(): ElementQueryInterface
     {
         return new CompanyQuery(static::class);
@@ -251,6 +387,10 @@ class Company extends Element
         ];
     }
 
+    /**
+     * @param string|null $srouce
+     * @return array
+     */
     protected static function defineActions(string $srouce = null): array
     {
         $actions = [];
@@ -264,6 +404,8 @@ class Company extends Element
             'successMessage' => Craft::t('company-management', 'Companies deleted.'),
         ]);
 
+        //$actions[] = SetStatus::class;
+
         return $actions;
     }
 
@@ -273,20 +415,19 @@ class Company extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'id' => ['label' => Craft::t('company-management', 'ID')],
-            'name' => ['label' => Craft::t('company-management', 'Name')],
-            'shortName' => ['label' => Craft::t('company-management', 'Short')],
+            'title' => ['label' => Craft::t('company-management', 'Name')],
+            'slug' => ['label' => Craft::t('company-management', 'Slug')],
             'address' => ['label' => Craft::t('company-management', 'Address')],
             'town' => ['label' => Craft::t('company-management', 'Town')],
             'postcode' => ['label' => Craft::t('company-management', 'Postcode')],
-            'registerNumber' => ['label' => Craft::t('company-management', 'Company No.')],
-            'payeReference' => ['label' => Craft::t('company-management', 'PAYE No.')],
-            'accountsOfficeReference' => ['label' => Craft::t('company-management', 'Accounts No.')],
-            'taxReference' => ['label' => Craft::t('company-management', 'VAT No.')],
-            'website' => ['label' => Craft::t('company-management', 'Url')],
+            'dateCreated' => ['label' => Craft::t('company-management', 'Date Created')],
         ];
     }
 
+    /**
+     * @param string $source
+     * @return array
+     */
     protected static function defineDefaultTableAttributes(string $source): array
     {
         $attributes = [];
@@ -304,39 +445,43 @@ class Company extends Element
     {
         return [
             'name' => Craft::t('company-management', 'Name'),
-            'shortName' => Craft::t('company-management', 'Short'),
+            'slug' => Craft::t('company-management', 'Slug'),
             'address' => Craft::t('company-management', 'Address'),
             'town' => Craft::t('company-management', 'Town'),
             'postcode' => Craft::t('company-management', 'Postcode'),
-            'registerNumber' => Craft::t('company-management', 'Company No.'),
-            'payeReference' => Craft::t('company-management', 'PAYE No.'),
-            'accountsOfficeReference' => Craft::t('company-management', 'Accounts No.'),
-            'taxReference' => Craft::t('company-management', 'VAT No.'),
-            'website' => Craft::t('company-management', 'Url'),
+            'dateCreated' => Craft::t('company-management', 'Date Created'),
 
         ];
     }
 
+    /**
+     * @param string $attribute
+     * @return string
+     * @throws InvalidConfigException
+     */
     protected function tableAttributeHtml(string $attribute): string
     {
         switch ($attribute) {
-            case 'shortName':
+            case 'slug':
                 // use this to customise returned values (add links / mailto's etc)
                 // https://docs.craftcms.com/commerce/api/v3/craft-commerce-elements-traits-orderelementtrait.html#protected-methods
-                return $this->shortName;
+                return $this->slug;
         }
 
         return parent::tableAttributeHtml($attribute);
     }
 
-    private static function _getCompanyIds()
+    /**
+     * @return array
+     */
+    private static function _getCompanyIds(): array
     {
 
         $companyIds = [];
 
         // Fetch all company UIDs
         $companyInfo = (new Query())
-            ->from('{{%companymanagement_company}}')
+            ->from('{{%companymanagement_companies}}')
             ->select('*')
             ->all();
 
@@ -344,7 +489,6 @@ class Company extends Element
         foreach ($companyInfo as $company) {
             $companyIds[] = $company['id'];
         }
-        // Craft:dd( $companyIds);
 
         return $companyIds;
     }
@@ -365,8 +509,9 @@ class Company extends Element
     public function rules()
     {
         $rules = parent::defineRules();
-
-        $rules[] = [['name', 'registerNumber'], 'required'];
+        $rules[] = [['typeId'], 'number', 'integerOnly' => true];
+        $rules[] = [['name'], 'required'];
+        $rules[] = [['postDate', 'expiryDate'], DateTimeValidator::class];
 
         // New created form
         if(null === $this->id){
@@ -382,6 +527,7 @@ class Company extends Element
                     $validator->addError($this, $attribute, $error);
                 }
             }];
+
             $rules[] = ['contactRegistrationNumber', function($attribute, $params, Validator $validator){
 
                 $ssn  = strtoupper(str_replace(' ', '', $this->$attribute));
@@ -399,8 +545,23 @@ class Company extends Element
             $rules[] = ['contactEmail', function($attribute, $params, Validator $validator){
                 $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
 
+                // Valid email
                 if (!preg_match($preg, $this->$attribute)) {
                     $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+
+                // Check if user doesn't already exists
+                $user = \craft\elements\User::find()
+                    ->email($this->$attribute)
+                    ->one();
+
+                if($user) {
+                    $error = Craft::t('company-management', 'The user "{value}" already exists.', [
                         'attribute' => $attribute,
                         'value' => $this->$attribute,
                     ]);
@@ -434,15 +595,56 @@ class Company extends Element
      */
     public function getFieldLayout()
     {
-        return parent::getFieldLayout();
-//        $tagGroup = $this->getGroup();
-//
-//        if ($tagGroup) {
-//            return $tagGroup->getFieldLayout();
+        if (($fieldLayout = parent::getFieldLayout()) !== null) {
+            return $fieldLayout;
+        }
+        try {
+            $companyType = $this->getType();
+        } catch (InvalidConfigException $e) {
+            // The company type was probably deleted
+            return null;
+        }
+
+        return $companyType->getFieldLayout();
+    }
+
+    /**
+     * @return mixed
+     */
+
+//    public function getCompany(): Company
+//    {
+//        if ($this->companyId === null) {
+//            throw new InvalidConfigException('Company is missing its company element ID');
 //        }
 //
-//        return null;
+//        return $company;
+//    }
+
+    /**
+     * Return the available company types
+     *
+     * @return CompanyType()
+     * @throws InvalidConfigException
+     * @since 1.0.0
+     */
+    public function getAvailableCompanyTypes(): array
+    {
+        $companyTypes = $this->getCompany()->getCompanyTypes();
+
+        // Fire a 'defineCompanyTypes' event
+        if ($this->hasEventHandlers(self::EVENT_DEFINE_COMPANY_TYPES)) {
+            $event = newDefineCompanyTypesEvents([
+                'companyTypes' => $companyTypes,
+            ]);
+            $this->trigger(self::EVENT_DEFINE_COMPANY_TYPES, $event);
+            $companyTypes = $event->companyTypes;
+        }
+
+        return $companyTypes;
     }
+
+
 
     public function getGroup()
     {
@@ -474,9 +676,35 @@ class Company extends Element
         return $html;
     }
 
+    /**
+     * @return string
+     */
     public function getCpEditUrl()
     {
         return 'company-management/companies/'.$this->id;
+    }
+
+    /**
+     * @return mixed|string|null
+     */
+    public function getUriFormat()
+    {
+        $companyTypeSiteSettings = $this->getType()->getSiteSettings();
+
+        if (!isset($companyTypeSiteSettings[$this->siteId])) {
+            throw new InvalidConfigException('The "' . $this->getType()->name . '" company type is not enabled for the "' . $this->getSite()->name . '" site.');
+        }
+
+        return $companyTypeSiteSettings[$this->siteId]->uriFormat;
+    }
+
+    /**
+     * @return CompanyType
+     */
+    public function getType(): CompanyType
+    {
+        $companyType = CompanyManagement::$plugin->companyTypes->getCompanyTypeByHandle('default');
+        return $companyType;
     }
 
     // Events
@@ -503,7 +731,9 @@ class Company extends Element
      */
     public function afterSave(bool $isNew)
     {
+
         if (!$this->propagating) {
+
             $this->_saveRecord($isNew);
         }
 
@@ -552,8 +782,13 @@ class Company extends Element
     {
     }
 
+    /**
+     * @param $isNew
+     * @throws Exception
+     */
     private function _saveRecord($isNew)
     {
+
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
 
@@ -582,26 +817,32 @@ class Company extends Element
 
         $record->name = $this->name;
         $record->info = $this->info;
-        $record->shortName = CompanyHelper::cleanStringForUrl($this->name);
+        $record->typeId = (int)$this->typeId;
+        $record->slug = CompanyHelper::cleanStringForUrl($this->name);
         $record->address = $this->address;
         $record->town = $this->town;
         $record->postcode = $this->postcode;
-        $record->registerNumber = $this->registerNumber;
-        $record->payeReference = $this->payeReference;
-        $record->accountsOfficeReference = $this->accountsOfficeReference;
-        $record->taxReference = $this->taxReference;
         $record->website = $this->website;
-        $record->logo = $this->logo;
         $record->userId = $userId;
 
         $record->save(false);
 
         $this->id = $record->id;
 
+        //\Craft::dd($this->typeId);
+
         // save company id into the companyUser
         CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
     }
 
+    /**
+     * @param $companyId
+     * @return int|null
+     * @throws Exception
+     * @throws \Throwable
+     * @throws \craft\errors\ElementNotFoundException
+     * @throws \craft\errors\WrongEditionException
+     */
     private function _saveUser($companyId)
     {
         // Make sure this is Craft Pro, since that's required for having multiple user accounts
@@ -641,6 +882,11 @@ class Company extends Element
         return $user->id;
     }
 
+    /**
+     * @param $user
+     * @throws \Throwable
+     * @throws \craft\errors\WrongEditionException
+     */
     private function _saveUserToGroup($user)
     {
         //register a new group
@@ -664,6 +910,10 @@ class Company extends Element
         Craft::$app->getUsers()->assignUserToGroups($user->id, [$group->id]);
     }
 
+    /**
+     * @param $user
+     * @param $companyId
+     */
     private function _updateCompanyUser($user, $companyId)
     {
         $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
@@ -697,8 +947,8 @@ class Company extends Element
         /* @var CompanyType $context */
         return $context->handle . '_Company';
     }
-
-    public static function gqlScopesByContext($context): array
+    
+    public static function gqlScopesByContext($context): array 
     {
         /** @var ProductType $context */
         return ['companyTypes.' . $context->uid];

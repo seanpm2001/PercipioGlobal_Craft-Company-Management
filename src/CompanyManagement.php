@@ -10,6 +10,8 @@
 
 namespace percipiolondon\companymanagement;
 
+use craft\events\PluginEvent;
+use craft\services\Plugins;
 use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
@@ -25,6 +27,9 @@ use percipiolondon\companymanagement\elements\Company as CompanyElement;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
+use percipiolondon\companymanagement\gql\interfaces\elements\Company as GqlCompanyInterface;
+use percipiolondon\companymanagement\gql\queries\Company as GqlCompanyQueries;
+
 use nystudio107\pluginvite\services\VitePluginService;
 
 use Craft;
@@ -32,8 +37,15 @@ use craft\base\Plugin;
 use craft\elements\User;
 use craft\events\ModelEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterGqlQueriesEvent;
+use craft\events\RegisterGqlSchemaComponentsEvent;
+use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\ProjectConfigData;
 use craft\services\Elements;
+use craft\services\Gql;
+use craft\services\GraphQL;
+use craft\services\ProjectConfig;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -51,7 +63,7 @@ use yii\base\Event;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     0.1.0
+ * @since     1.0.0
  *
  * @property  Settings $settings
  * @method    Settings getSettings()
@@ -135,6 +147,7 @@ class CompanyManagement extends Plugin
     public function init()
     {
         parent::init();
+
         self::$plugin = $this;
 
         $this->_registerCpRoutes();
@@ -142,9 +155,25 @@ class CompanyManagement extends Plugin
         $this->_registerVariables();
         $this->_registerServices();
         $this->_registerUserSave();
+        $this->_registerProjectConfigEventListeners();
 //        $this->_registerAfterInstall();
-//        $this->_registerAfterUninstall();
-        $this->_registerTemplateHooks();
+        $this->_registerAfterUninstall();
+
+        // GQL
+        $this->_registerGqlInterfaces();
+        $this->_registerGqlQueries();
+        $this->_registerGqlComponents();
+
+        $request = Craft::$app->getRequest();
+
+        if ($request->getIsConsoleRequest()) {
+
+        } else if ($request->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+            $this->_registerTemplateHooks();
+        }
+
+
 
         Craft::info(
             Craft::t(
@@ -224,10 +253,7 @@ class CompanyManagement extends Plugin
 
     private function _registerElementTypes()
     {
-        Event::on(
-            Elements::class,
-            Elements::EVENT_REGISTER_ELEMENT_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+        Event::on(Elements::class, Elements::EVENT_REGISTER_ELEMENT_TYPES, function (RegisterComponentTypesEvent $event) {
                 $event->types[] = CompanyElement::class;
             }
         );
@@ -298,19 +324,6 @@ class CompanyManagement extends Plugin
 //    {
 //        Event::on(
 //            Plugins::class,
-//            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
-//            function (PluginEvent $event) {
-//                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->uninstallCompanyUserFields();
-//                }
-//            }
-//        );
-//    }
-//
-//    private function _registerAfterUninstall()
-//    {
-//        Event::on(
-//            Plugins::class,
 //            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
 //            function (PluginEvent $event) {
 //                if ($event->plugin === $this) {
@@ -319,6 +332,19 @@ class CompanyManagement extends Plugin
 //            }
 //        );
 //    }
+//
+    private function _registerAfterUninstall()
+    {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_UNINSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin === $this) {
+                    CompanyManagement::$plugin->companyTypes->uninstallFields();
+                }
+            }
+        );
+    }
 
     private function _registerVariables()
     {
