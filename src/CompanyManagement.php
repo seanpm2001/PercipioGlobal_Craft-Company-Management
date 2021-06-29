@@ -15,6 +15,8 @@ use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\services\Benefits as BenefitsService;
+use percipiolondon\companymanagement\services\CompanyTypes;
+use percipiolondon\companymanagement\services\UserPermissions;
 use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
 use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
@@ -231,6 +233,67 @@ class CompanyManagement extends Plugin
         );
     }
 
+    /**
+     * Register the Gql Interfaces
+     */
+
+    private function _registerGqlInterfaces()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_TYPES, function(RegisterGqlTypesEvent $event) {
+            // Add our GQL Types
+            $types = $event->types;
+            $types[] = GqlCompanyInterface::class;
+            $event->types = $types;
+        });
+    }
+
+    /**
+     * Register the Gql Queries
+     */
+    private function _registerGqlQueries()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_QUERIES, function(RegisterGqlQueriesEvent $event) {
+            // Add our GQL Queries
+            $event->queries = array_merge(
+                $event->queries,
+                GqlCompanyQueries::getQueries()
+            );
+        });
+    }
+
+    /**
+     * Register the Gql permissions
+     */
+
+    private function _registerGqlComponents()
+    {
+        Event::on(Gql::class, Gql::EVENT_REGISTER_GQL_SCHEMA_COMPONENTS, function(RegisterGqlSchemaComponentsEvent $event) {
+            $queryComponents = [];
+
+            $companyTypes = CompanyManagement::$plugin->companyTypes->getAllCompanyTypes();
+
+            if (!empty($companyTypes)) {
+                $label = Craft::t('company-management', 'Companies');
+                $companyPermissions = [];
+
+                foreach ($companyTypes as $companyType) {
+                    $suffix = 'companyTypes.' . $companyType->uid;
+                    $companyPermissions[$suffix . ':read'] = ['label' => Craft::t('company-management', 'View company type - {companyType}', ['companyType' => Craft::t('site', $companyType->name)])];
+                }
+
+                $queryComponents[$label] = $companyPermissions;
+
+                $event->queries = array_merge($event->queries, $queryComponents);
+            }
+        });
+    }
+
+    private function _registerProjectConfigEventListeners()
+    {
+        $projectConfigService = Craft::$app->getProjectConfig();
+        $projectConfigService->onAdd(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);
+    }
+
 //    private function _registerAfterInstall()
 //    {
 //        Event::on(
@@ -278,13 +341,17 @@ class CompanyManagement extends Plugin
         $this->setComponents([
             'company' => CompanyService::class,
             'companyUser' => CompanyUserService::class,
+            'companyTypes' => CompanyTypes::class,
+            'userPermissions' => UserPermissions:: class,
         ]);
     }
 
     private function _registerTemplateHooks()
     {
         Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldTab']);
+        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionCustomFieldTab']);
         Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldContent']);
+        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionsCustomFieldContent']);
     }
 
     private function _registerUserSave()
@@ -312,6 +379,9 @@ class CompanyManagement extends Plugin
 
                 $companyUser = CompanyUserHelper::populateCompanyUserFromPost($event->sender->id);
                 CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$event->sender->id);
+
+                $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
+                CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);
 
             }
         );

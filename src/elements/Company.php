@@ -18,6 +18,8 @@ use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
+use percipiolondon\companymanagement\models\CompanyType;
+use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -26,6 +28,7 @@ use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
@@ -235,7 +238,7 @@ class Company extends Element
      * @return array The sources.
      * @see sources()
      */
-   protected static function defineSources(string $context = null): array
+    protected static function defineSources(string $context = null): array
     {
         $ids = self::_getCompanyIds();
         return [
@@ -320,7 +323,7 @@ class Company extends Element
             case 'shortName':
                 // use this to customise returned values (add links / mailto's etc)
                 // https://docs.craftcms.com/commerce/api/v3/craft-commerce-elements-traits-orderelementtrait.html#protected-methods
-                 return $this->shortName;
+                return $this->shortName;
         }
 
         return parent::tableAttributeHtml($attribute);
@@ -630,6 +633,11 @@ class Company extends Element
         // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
         $this->_updateCompanyUser($user, $companyId);
 
+        // Give user access rights as the company admin
+        $permissions = PermissionRecord::find()->asArray()->all();
+        CompanyManagement::$plugin->userPermissions->savePermissions($permissions, $user->id);
+
+
         return $user->id;
     }
 
@@ -670,4 +678,30 @@ class Company extends Element
             }
         }
     }
+
+    /*
+     * GQL instantiation
+     */
+
+    /**
+     * @inheritdoc
+     * @since 1.0.0
+     */
+    public function getGqlTypeName(): string
+    {
+        return static::gqlTypeNameByContext($this->getType());
+    }
+
+    public static function gqlTypeNameByContext($context): string
+    {
+        /* @var CompanyType $context */
+        return $context->handle . '_Company';
+    }
+
+    public static function gqlScopesByContext($context): array
+    {
+        /** @var ProductType $context */
+        return ['companyTypes.' . $context->uid];
+    }
+
 }
