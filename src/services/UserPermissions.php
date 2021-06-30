@@ -16,10 +16,11 @@ use Craft;
 use craft\base\Component;
 use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use percipiolondon\companymanagement\records\UserPermission as UserPermissionRecord;
-use percipiolondon\companymanagement\models\UserPermissions as UserPermissionModel;
+use percipiolondon\companymanagement\models\UserPermission as UserPermissionModel;
+use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 
 /**
- * UserPermissions Service
+ * UserPermission Service
  *
  * All of your plugin’s business logic should go in services, including saving data,
  * retrieving data, etc. They provide APIs that your controllers, template variables,
@@ -44,7 +45,7 @@ class UserPermissions extends Component
      *
      * Save a permission set of a user to the database
      */
-    public function savePermissions($permissions, $userId)
+    public function createPermissions($permissions, $userId)
     {
         foreach ($permissions as $permission) {
 
@@ -68,6 +69,12 @@ class UserPermissions extends Component
         }
     }
 
+    /**
+     * @param $updatedPermissions
+     * @param $userId
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
     public function updatePermissions($updatedPermissions, $userId)
     {
         $permissions = PermissionRecord::find()->asArray()->all();
@@ -101,9 +108,38 @@ class UserPermissions extends Component
             }
         }
 
-        $this->savePermissions($permissionsToSave, $userId);
+        $this->createPermissions($permissionsToSave, $userId);
     }
 
+    /**
+     * @param string $permission
+     * @param int $userId
+     * @param int $companyId
+     * @return bool
+     */
+    public function applyCanParam(string $permission, int $userId, int $companyId): bool
+    {
+        $permission = PermissionRecord::findOne(['name' => $permission]); // fetch if permission exists in the company permissions
+        $userPermission = UserPermissionRecord::findOne(['permissionId' => $permission?->id, 'userId' => $userId]); // fetch if permission is assigned to the user
+        $user = CompanyUserRecord::findOne(['userId' => $userId]); // fetch the company user object
+
+        // if no user permission can be fetched --> no access
+        if( !$userPermission ) {
+            return false;
+        }
+
+        // if the company id parsed in the params isn't the one assigned to the user --> no access
+        if($companyId !== $user->companyId) {
+            return false;
+        }
+
+        // give user access
+        return true;
+    }
+
+    /**
+     * @param array $context
+     */
     public function addEditUserPermissionCustomFieldTab(array &$context)
     {
         $context['tabs']['companyManagementPermissions'] = [
@@ -112,6 +148,14 @@ class UserPermissions extends Component
         ];
     }
 
+    /**
+     * @param array $context
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     * @throws \yii\base\Exception
+     */
     public function addEditUserPermissionsCustomFieldContent(array &$context)
     {
         $user = $context['user'] ?? null;

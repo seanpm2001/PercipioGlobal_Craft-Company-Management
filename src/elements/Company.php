@@ -876,7 +876,7 @@ class Company extends Element
 
         // Give user access rights as the company admin
         $permissions = PermissionRecord::find()->asArray()->all();
-        CompanyManagement::$plugin->userPermissions->savePermissions($permissions, $user->id);
+        CompanyManagement::$plugin->userPermissions->createPermissions($permissions, $user->id);
 
 
         return $user->id;
@@ -947,8 +947,8 @@ class Company extends Element
         /* @var CompanyType $context */
         return $context->handle . '_Company';
     }
-    
-    public static function gqlScopesByContext($context): array 
+
+    public static function gqlScopesByContext($context): array
     {
         /** @var ProductType $context */
         return ['companyTypes.' . $context->uid];
