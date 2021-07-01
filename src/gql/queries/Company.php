@@ -2,6 +2,8 @@
 
 namespace percipiolondon\companymanagement\gql\queries;
 
+use jamesedmonston\graphqlauthentication\GraphqlAuthentication;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\gql\arguments\elements\Company as CompanyArguments;
 use percipiolondon\companymanagement\gql\interfaces\elements\Company as CompanyInterface;
 use percipiolondon\companymanagement\gql\resolvers\elements\Company as CompanyResolver;

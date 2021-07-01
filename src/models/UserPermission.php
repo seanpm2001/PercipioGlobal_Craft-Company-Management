@@ -21,13 +21,13 @@ class UserPermission extends Model
         return $rules;
     }
 
-    public function can(int $companyId): bool
-    {
-        if($this->permissionId && $this->userId && $companyId)
-        {
-            return CompanyManagement::$plugin->userPermissions->applyCanParam($this->permissionId, $this->userId, $companyId);
-        }
-
-        return false;
-    }
+//    public function can(int $companyId): bool
+//    {
+//        if($this->permissionId && $this->userId && $companyId)
+//        {
+//            return CompanyManagement::$plugin->userPermissions->applyCanParam($this->permissionId, $this->userId, $companyId);
+//        }
+//
+//        return false;
+//    }
 }

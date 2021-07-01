@@ -2,8 +2,11 @@
 
 namespace percipiolondon\companymanagement\gql\resolvers\elements;
 
+use jamesedmonston\graphqlauthentication\GraphqlAuthentication;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
+use percipiolondon\companymanagement\gql\arguments\elements\Company as CompanyArguments;
 use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
 use craft\gql\base\ElementResolver;
@@ -51,11 +54,27 @@ class Company extends ElementResolver {
             return [];
         }
 
+        $restrictionService = GraphqlAuthentication::$restrictionService;
+
+        if ($restrictionService->shouldRestrictRequests()) {
+
+            $user = GraphqlAuthentication::$tokenService->getUserFromToken();
+
+//            percipiolondon\companymanagement\gql\interfaces\elements\Company::percipiolondon\companymanagement\gql\interfaces\elements\{closure}(): Argument #1 ($value) must be of type percipiolondon\companymanagement\elements\Company, array given, called in /var/www/project/cms/vendor/webonyx/graphql-php/src/Type/Definition/InterfaceType.php on line 115
+
+            if(!CompanyManagement::$plugin->userPermissions->applyCanParam("access:company", $user->id, $arguments['id'][0]) ) {
+                throw new \yii\web\HttpException(401, 'Unauthorized');
+//                return [];
+            }
+        }
+
         $query->andWhere(['in', 'companymanagement_companies.typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
-
-        //\Craft::dd($query->getRawSql());
-
         return $query;
+
+//        $user = GraphqlAuthentication::$tokenService->getUserFromToken();
+//        if(!CompanyManagement::$plugin->userPermissions->applyCanParam("access:company", $user->id, $arguments['id']) ) {
+//            return [];
+//        }
 
     }
 

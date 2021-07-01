@@ -74,7 +74,6 @@ class Company extends Element {
      */
     public static function getFieldDefinitions(): array
     {
-
         return TypeManager::prepareFieldDefinitions(array_merge(parent::getFieldDefinitions(), [
                 'name' => [
                     'name' => 'name',
