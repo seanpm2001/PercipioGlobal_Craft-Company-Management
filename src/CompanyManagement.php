@@ -16,15 +16,12 @@ use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsse
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
-use percipiolondon\companymanagement\services\Benefits as BenefitsService;
 use percipiolondon\companymanagement\services\CompanyTypes;
 use percipiolondon\companymanagement\services\UserPermissions;
-use percipiolondon\companymanagement\services\Wages as WagesService;
 use percipiolondon\companymanagement\services\Company as CompanyService;
 use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
 use percipiolondon\companymanagement\models\Settings;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
-use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
 use percipiolondon\companymanagement\variables\CompanyUserVariable;
 
 use percipiolondon\companymanagement\gql\interfaces\elements\Company as GqlCompanyInterface;
@@ -45,7 +42,6 @@ use craft\helpers\ProjectConfigData;
 use craft\services\Elements;
 use craft\services\Gql;
 use craft\services\GraphQL;
-use craft\services\ProjectConfig;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -154,9 +150,9 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerVariables();
         $this->_registerServices();
+        $this->_registerControllers();
         $this->_registerUserSave();
         $this->_registerProjectConfigEventListeners();
-//        $this->_registerAfterInstall();
         $this->_registerAfterUninstall();
 
         // GQL
@@ -320,19 +316,6 @@ class CompanyManagement extends Plugin
         $projectConfigService->onAdd(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);
     }
 
-//    private function _registerAfterInstall()
-//    {
-//        Event::on(
-//            Plugins::class,
-//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-//            function (PluginEvent $event) {
-//                if ($event->plugin === $this) {
-//                    CompanyManagement::$plugin->company->installCompanyUserFields();
-//                }
-//            }
-//        );
-//    }
-//
     private function _registerAfterUninstall()
     {
         Event::on(
@@ -370,6 +353,17 @@ class CompanyManagement extends Plugin
             'companyTypes' => CompanyTypes::class,
             'userPermissions' => UserPermissions:: class,
         ]);
+    }
+
+    private function _registerControllers()
+    {
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['getUser'] = 'percipiolondon/companymanagement/user/get-user';
+            }
+        );
     }
 
     private function _registerTemplateHooks()

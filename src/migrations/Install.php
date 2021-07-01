@@ -17,12 +17,7 @@ use craft\records\FieldLayout;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company;
-use craft\records\Site;
-use craft\records\FieldLayout;
 use craft\helpers\Db;
-use percipiolondon\companymanagement\CompanyManagement;
-use percipiolondon\companymanagement\db\Table;
-use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\models\CompanyType as CompanyTypeModel;
 use percipiolondon\companymanagement\models\CompanyTypeSite as CompanyTypeSiteModel;
@@ -58,7 +53,7 @@ class Install extends Migration {
 
         return true;
     }
-    
+
     /**
      * @inheritdoc
      */
