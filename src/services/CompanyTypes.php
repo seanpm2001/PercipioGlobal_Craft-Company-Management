@@ -538,7 +538,7 @@ class CompanyTypes extends Component
         $layout->tabs = [
             [
                 'name' => 'Company Reference',
-                'sortOrder' => 2,
+                'sortOrder' => 1,
                 'elements' => [
                     new CustomField($fields['cmRegNr'], ['required' => true]),
                     new CustomField($fields['cmPaye']),
@@ -548,7 +548,7 @@ class CompanyTypes extends Component
             ],
             [
                 'name' => 'Company Dates',
-                'sortOrder' => 3,
+                'sortOrder' => 2,
                 'elements' => [
                     new CustomField($fields['cmAccYearEndDate']),
                     new CustomField($fields['cmBusinessCat']),
