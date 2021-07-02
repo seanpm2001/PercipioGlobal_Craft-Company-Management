@@ -869,7 +869,7 @@ class Company extends Element
         }
 
         //assign user to group
-        $this->_saveUserToGroup($user);
+//        $this->_saveUserToGroup($user);
 
         // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
         $this->_updateCompanyUser($user, $companyId);

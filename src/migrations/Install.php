@@ -225,7 +225,7 @@ class Install extends Migration {
      */
     public function dropProjectConfig()
     {
-        Craft::$app->projectConfig->remove('companymanagement_companytypes');
+        Craft::$app->projectConfig->remove('companymanagement');
     }
 
     /**
