@@ -152,7 +152,7 @@ class CompanyManagement extends Plugin
         $this->_registerServices();
 //        $this->_registerControllers();
         $this->_registerUserSave();
-        $this->_registerAfterInstall();
+        $this->_registerProjectConfigEventListeners();
         $this->_registerAfterUninstall();
 
         // GQL
@@ -318,25 +318,19 @@ class CompanyManagement extends Plugin
         $projectConfigService->onAdd(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);
     }
 
-    private function _unregisterProjectConfigEventListeners()
-    {
-        $projectConfigService = Craft::$app->getProjectConfig();
-        $projectConfigService->onRemove(CompanyTypes::CONFIG_COMPANYTYPES_KEY . '.{uid}', [CompanyManagement::$plugin->companyTypes, 'handleChangedCompanyType']);
-    }
-
-    private function _registerAfterInstall()
-    {
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    $this->_registerProjectConfigEventListeners();
-                }
-            }
-        );
-
-    }
+//    private function _registerAfterInstall()
+//    {
+//        Event::on(
+//            Plugins::class,
+//            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+//            function (PluginEvent $event) {
+//                if ($event->plugin === $this) {
+//                    $this->_registerProjectConfigEventListeners();
+//                }
+//            }
+//        );
+//
+//    }
 
     private function _registerAfterUninstall()
     {
@@ -346,7 +340,6 @@ class CompanyManagement extends Plugin
             function (PluginEvent $event) {
                 if ($event->plugin === $this) {
                     CompanyManagement::$plugin->companyTypes->uninstallFields();
-                    $this->_unregisterProjectConfigEventListeners();
                 }
             }
         );
