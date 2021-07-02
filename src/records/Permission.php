@@ -38,19 +38,13 @@ use percipiolondon\companymanagement\db\Table;
  * Company record.
  *
  * @property int id
- * @property int userId
- * @property int companyId
- * @property DateTime employeeStartDate
- * @property DateTime employeeEndDate
- * @property DateTime birthday
- * @property string nationalInsuranceNumber
- * @property string grossIncome
+ * @property string name
  *
  *
  * @package Company Management
  *
  */
-class CompanyUser extends ActiveRecord
+class Permission extends ActiveRecord
 {
     // Public Static Methods
     // =========================================================================
@@ -69,6 +63,6 @@ class CompanyUser extends ActiveRecord
      */
     public static function tableName()
     {
-        return Table::CM_USERS;
+        return Table::CM_PERMISSIONS;
     }
 }

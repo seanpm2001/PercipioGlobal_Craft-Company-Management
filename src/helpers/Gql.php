@@ -23,4 +23,15 @@ class Gql extends GqlHelper {
         return isset($allowedEntities['companyTypes']);
     }
 
+    /**
+     * Return true if active schema can query companies.
+     *
+     * @return bool
+     */
+    public static function canQueryCompanyUsers(): bool
+    {
+        $allowedEntities = self::extractAllowedEntitiesFromSchema();
+        return isset($allowedEntities['companyUsers']);
+    }
+
 }

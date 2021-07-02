@@ -1,0 +1,25 @@
+{%- import "_includes/forms" as forms -%}
+
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{#{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}#}
+
+{% set permissions = permissions ?? [] %}
+{% set userPermissions = userPermissions ?? [] %}
+{% set user = user ?? null %}
+
+<div id="companyManagementPermissions" class="hidden">
+
+    {{ forms.checkboxGroupField({
+        label: 'Company Management Permissions'|t('company-management'),
+        name: 'company-permissions',
+        options: permissions,
+        values: userPermissions|map(permission => permission.permissionId),
+    }) }}
+</div>
+
+{#autofocus: loop.first and (autofocus ?? false) and not craft.app.request.isMobileBrowser(true)#}

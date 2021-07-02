@@ -84,9 +84,9 @@ class CompanyType extends Model
     public function attributeLabels()
     {
         return [
-            'handle' => Craft::t('companymanagement', 'Handle'),
-            'name' => Craft::t('companymanagement', 'Name'),
-            'titleFormat' => Craft::t('companymanagement', 'Title Format'),
+            'handle' => Craft::t('company-management', 'Handle'),
+            'name' => Craft::t('company-management', 'Name'),
+            'titleFormat' => Craft::t('company-management', 'Title Format'),
         ];
     }
 

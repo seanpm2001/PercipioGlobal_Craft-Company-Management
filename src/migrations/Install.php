@@ -17,11 +17,14 @@ use craft\records\FieldLayout;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company;
+use craft\helpers\Db;
+use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\models\CompanyType as CompanyTypeModel;
 use percipiolondon\companymanagement\models\CompanyTypeSite as CompanyTypeSiteModel;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 use percipiolondon\companymanagement\records\CompanyType as CompanyTypeRecord;
 use yii\base\NotSupportedException;
+
 /**
  * Installation Migration
  *
@@ -30,6 +33,9 @@ use yii\base\NotSupportedException;
  */
 class Install extends Migration {
 
+    /**
+     * @var
+     */
     public $_companyFieldLayoutId;
 
     /**
@@ -47,7 +53,7 @@ class Install extends Migration {
 
         return true;
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -73,6 +79,8 @@ class Install extends Migration {
         $tableSchemaTypes = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANYTYPES);
         $tableSchemaTypesSites = Craft::$app->db->schema->getTableSchema(Table::CM_COMPANYTYPES_SITES);
         $tableSchemaDocuments = Craft::$app->db->schema->getTableSchema(Table::CM_DOCUMENTS);
+        $tableSchemaPermissions = Craft::$app->db->schema->getTableSchema(Table::CM_PERMISSIONS);
+        $tableSchemaPermissionsUsers = Craft::$app->db->schema->getTableSchema(Table::CM_PERMISSIONS_USERS);
 
         if ($tableSchemaCompany === null) {
             $this->createTable(Table::CM_COMPANIES, [
@@ -155,6 +163,27 @@ class Install extends Migration {
                 'PRIMARY KEY(id)',
             ]);
         }
+
+        if ($tableSchemaPermissions === null) {
+            $this->createTable(Table::CM_PERMISSIONS, [
+                'id' => $this->primaryKey(),
+                'name' => $this->string()->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
+            ]);
+        }
+
+        if ($tableSchemaPermissionsUsers === null) {
+            $this->createTable(Table::CM_PERMISSIONS_USERS, [
+                'id' => $this->primaryKey(),
+                'permissionId' => $this->integer()->notNull(),
+                'userId' => $this->integer()->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
+            ]);
+        }
     }
 
     /**
@@ -167,6 +196,8 @@ class Install extends Migration {
         $this->dropTableIfExists(Table::CM_DOCUMENTS);
         $this->dropTableIfExists(Table::CM_COMPANYTYPES);
         $this->dropTableIfExists(Table::CM_COMPANYTYPES_SITES);
+        $this->dropTableIfExists(Table::CM_PERMISSIONS);
+        $this->dropTableIfExists(Table::CM_PERMISSIONS_USERS);
         return null;
     }
 
@@ -180,7 +211,9 @@ class Install extends Migration {
             Table::CM_USERS,
             Table::CM_DOCUMENTS,
             Table::CM_COMPANYTYPES,
-            Table::CM_COMPANYTYPES_SITES
+            Table::CM_COMPANYTYPES_SITES,
+            Table::CM_PERMISSIONS,
+            Table::CM_PERMISSIONS_USERS,
         ];
         foreach ($tables as $table) {
             $this->_dropForeignKeyToAndFromTable($table);
@@ -222,12 +255,23 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_COMPANYTYPES, ['fieldLayoutId'], '{{%fieldlayouts}}', ['id'], 'SET NULL');
         $this->addForeignKey(null, Table::CM_COMPANYTYPES_SITES, ['siteId'], '{{%sites}}', ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANYTYPES_SITES, ['companyTypeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE');
+        $this->addForeignKey(null, Table::CM_PERMISSIONS_USERS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_PERMISSIONS_USERS, ['permissionId'], Table::CM_PERMISSIONS, ['id'], 'CASCADE', 'CASCADE');
     }
 
     /**
      * Insert the default data
      */
     public function insertDefaultData()
+    {
+        $this->_createCompanyType();
+        $this->_createPermissions();
+    }
+
+    /**
+     * Create a Default Company Type for the Company Element
+     */
+    private function _createCompanyType()
     {
         $this->insert(FieldLayout::tableName(), ['type' => Company::class]);
         $this->_companyFieldLayoutId = $this->db->getLastInsertID(FieldLayout::tableName());
@@ -263,6 +307,23 @@ class Install extends Migration {
         $companyType->setSiteSettings($allSiteSettings);
 
         CompanyManagement::$plugin->companyTypes->saveCompanyType($companyType);
+    }
+    /**
+     * Create the permissions for the Company Users
+     */
+    private function _createPermissions()
+    {
+        $rows = [];
+
+        $rows[] = ['access:company'];
+        $rows[] = ['manage:notifications'];
+        $rows[] = ['manage:employees'];
+        $rows[] = ['manage:companydata'];
+        $rows[] = ['manage:benefits'];
+        $rows[] = ['purchase:groupbenefits'];
+        $rows[] = ['purchase:voluntarybenefits'];
+
+        $this->batchInsert(Table::CM_PERMISSIONS, ['name'], $rows);
     }
 
     /**

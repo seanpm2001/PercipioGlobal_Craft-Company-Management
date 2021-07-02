@@ -2,8 +2,11 @@
 
 namespace percipiolondon\companymanagement\gql\resolvers\elements;
 
+use jamesedmonston\graphqlauthentication\GraphqlAuthentication;
+use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
+use percipiolondon\companymanagement\gql\arguments\elements\Company as CompanyArguments;
 use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
 use craft\gql\base\ElementResolver;
@@ -51,11 +54,21 @@ class Company extends ElementResolver {
             return [];
         }
 
-        $query->andWhere(['in', 'companymanagement_companies.typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
+        $restrictionService = GraphqlAuthentication::$restrictionService;
 
-        //\Craft::dd($query->getRawSql());
+        if ($restrictionService->shouldRestrictRequests()) {
 
-        return $query;
+            $user = GraphqlAuthentication::$tokenService->getUserFromToken();
+
+            if(!CompanyManagement::$plugin->userPermissions->applyCanParam("access:company", $user->id, $arguments['id'][0]) ) {
+                throw new \yii\web\HttpException(401, 'Unauthorized');
+            }
+
+            $query->andWhere(['in', 'companymanagement_companies.typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
+            return $query;
+        }
+
+        return [];
 
     }
 
