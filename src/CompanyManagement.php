@@ -150,7 +150,7 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerVariables();
         $this->_registerServices();
-        $this->_registerControllers();
+//        $this->_registerControllers();
         $this->_registerUserSave();
         $this->_registerProjectConfigEventListeners();
         $this->_registerAfterUninstall();
@@ -303,6 +303,8 @@ class CompanyManagement extends Plugin
                     $companyPermissions[$suffix . ':read'] = ['label' => Craft::t('company-management', 'View company type - {companyType}', ['companyType' => Craft::t('site', $companyType->name)])];
                 }
 
+                $companyPermissions['companyUsers:read'] = ['label' => Craft::t('company-management', 'View company users')];
+
                 $queryComponents[$label] = $companyPermissions;
 
                 $event->queries = array_merge($event->queries, $queryComponents);
@@ -355,16 +357,16 @@ class CompanyManagement extends Plugin
         ]);
     }
 
-    private function _registerControllers()
-    {
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['getUser'] = 'percipiolondon/companymanagement/user/get-user';
-            }
-        );
-    }
+//    private function _registerControllers()
+//    {
+//        Event::on(
+//            UrlManager::class,
+//            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+//            function (RegisterUrlRulesEvent $event) {
+//                $event->rules['get-user/<companyId>'] = 'percipiolondon/companymanagement/user/get-user';
+//            }
+//        );
+//    }
 
     private function _registerTemplateHooks()
     {

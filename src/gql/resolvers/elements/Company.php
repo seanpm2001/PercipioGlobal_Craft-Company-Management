@@ -60,21 +60,15 @@ class Company extends ElementResolver {
 
             $user = GraphqlAuthentication::$tokenService->getUserFromToken();
 
-//            percipiolondon\companymanagement\gql\interfaces\elements\Company::percipiolondon\companymanagement\gql\interfaces\elements\{closure}(): Argument #1 ($value) must be of type percipiolondon\companymanagement\elements\Company, array given, called in /var/www/project/cms/vendor/webonyx/graphql-php/src/Type/Definition/InterfaceType.php on line 115
-
             if(!CompanyManagement::$plugin->userPermissions->applyCanParam("access:company", $user->id, $arguments['id'][0]) ) {
                 throw new \yii\web\HttpException(401, 'Unauthorized');
-//                return [];
             }
+
+            $query->andWhere(['in', 'companymanagement_companies.typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
+            return $query;
         }
 
-        $query->andWhere(['in', 'companymanagement_companies.typeId', array_values(Db::idsByUids(Table::CM_COMPANYTYPES, $pairs['companyTypes']))]);
-        return $query;
-
-//        $user = GraphqlAuthentication::$tokenService->getUserFromToken();
-//        if(!CompanyManagement::$plugin->userPermissions->applyCanParam("access:company", $user->id, $arguments['id']) ) {
-//            return [];
-//        }
+        return [];
 
     }
 
