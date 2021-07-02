@@ -20,6 +20,7 @@ use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
 use percipiolondon\companymanagement\models\CompanyType;
+use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
 
 use Craft;
@@ -28,6 +29,7 @@ use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\actions\SetStatus;
 use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
@@ -872,6 +874,11 @@ class Company extends Element
         // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
         $this->_updateCompanyUser($user, $companyId);
 
+        // Give user access rights as the company admin
+        $permissions = PermissionRecord::find()->asArray()->all();
+        CompanyManagement::$plugin->userPermissions->createPermissions($permissions, $user->id);
+
+
         return $user->id;
     }
 
@@ -940,8 +947,8 @@ class Company extends Element
         /* @var CompanyType $context */
         return $context->handle . '_Company';
     }
-    
-    public static function gqlScopesByContext($context): array 
+
+    public static function gqlScopesByContext($context): array
     {
         /** @var ProductType $context */
         return ['companyTypes.' . $context->uid];

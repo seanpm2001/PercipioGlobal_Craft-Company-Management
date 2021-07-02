@@ -103,8 +103,8 @@
                             <tr>
                                 <th>{{- user.fullName ?? '-' -}}</th>
                                 <td>{{- user.email ?? '-' -}}</td>
-                                <td>{{- user.dateCreated|date('d/m/Y')}}</td>
-                                <td>{{- user.lastLoginDate ?? '-' -}}</td>
+                                <td>{{- user.dateCreated|date('d/m/Y') -}}</td>
+                                <td>{{- user.lastLoginDate|date('d/m/Y') -}}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}
