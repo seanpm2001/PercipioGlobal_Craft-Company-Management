@@ -52,6 +52,11 @@ class CompanyUsers extends Model
     public $grossIncome;
 
     /**
+     * @var string
+     */
+    public $jobRole;
+
+    /**
      * @var array
      */
     public $documents;

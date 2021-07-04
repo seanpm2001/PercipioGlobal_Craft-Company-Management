@@ -45,6 +45,7 @@ use percipiolondon\companymanagement\db\Table;
  * @property DateTime birthday
  * @property string nationalInsuranceNumber
  * @property string grossIncome
+ * @property string jobRole
  *
  *
  * @package Company Management

@@ -22,13 +22,22 @@
         errors: user ? user.getErrors('nationalInsuranceNumber') : null,
     }) }}
 
+    test
+
     {{ forms.dateField({
-        first: true,
         label: "Birthday"|t('company-management'),
         id: 'birthday',
         name: 'birthday',
         value: companyUser ? companyUser.birthday : '',
         errors: companyUser ? companyUser.getErrors('birthday') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Job Role"|t('company-management'),
+        id: 'jobRole',
+        name: 'jobRole',
+        value: companyUser ? companyUser.jobRole : '',
+        errors: companyUser ? companyUser.getErrors('jobRole') : null,
     }) }}
 
     <hr/>

@@ -24,6 +24,7 @@ class CompanyUser
         $companyUser->birthday = $request->getBodyParam('birthday') ?? $request->getBodyParam('contactBirthday') ?? "";
         $companyUser->nationalInsuranceNumber = strtoupper(str_replace(' ', '', $request->getBodyParam('nationalInsuranceNumber') ?? $request->getBodyParam('contactRegistrationNumber') ?? ""));
         $companyUser->grossIncome = $request->getBodyParam('grossIncome');
+        $companyUser->jobRole = $request->getBodyParam('jobRole');
         $companyUser->companyId = $request->getBodyParam('companyId')[0] ?? $companyId;
 
         return $companyUser;
@@ -39,6 +40,7 @@ class CompanyUser
         $companyUser->birthday = $companyUserRecord->birthday;
         $companyUser->nationalInsuranceNumber = strtoupper(str_replace(' ', '', $companyUserRecord->nationalInsuranceNumber));
         $companyUser->grossIncome = $companyUserRecord->grossIncome;
+        $companyUser->jobRole = $companyUserRecord->jobRole;
         $companyUser->companyId = $companyId;
 
         return $companyUser;
