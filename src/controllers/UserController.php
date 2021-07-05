@@ -30,10 +30,10 @@ class UserController extends Controller
         $restrictionService = GraphqlAuthentication::$restrictionService;
         $request = Craft::$app->getRequest();
 
-        $this->response->getHeaders()
-            ->setDefault('Access-Control-Allow-Origin', '*')
-            ->setDefault('Access-Control-Allow-Credentials', 'true')
-            ->setDefault('Access-Control-Allow-Headers', 'X-Craft-Token');
+//        $this->response->getHeaders()
+//            ->setDefault('Access-Control-Allow-Origin', '*')
+//            ->setDefault('Access-Control-Allow-Credentials', 'true')
+//            ->setDefault('Access-Control-Allow-Headers', 'X-Craft-Token');
 
         if ($restrictionService->shouldRestrictRequests()) {
 
