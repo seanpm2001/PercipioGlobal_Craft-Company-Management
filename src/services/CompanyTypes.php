@@ -249,27 +249,29 @@ class CompanyTypes extends Component
             $companyTypeRecord->titleFormat = $data['titleFormat'] ?? '{company.title}';
             $companyTypeRecord->hasTitleField = $data['hasTitleField'];
 
-//            if (!empty($data['companyFieldLayouts']) && !empty($config = reset($data['companyFieldLayouts']))) {
-//                // Save the main field layout
-//                $layout = FieldLayout::createFromConfig($config);
-//                $layout->id = $companyTypeRecord->fieldLayoutId;
-//                $layout->type = \percipiolondon\companymanagement\elements\Company::class;
-//                $layout->uid = key($data['companyFieldLayouts']);
-//                $fieldsService->saveLayout($layout);
-//                $companyTypeRecord->fieldLayoutId = $layout->id;
-//            } else if ($companyTypeRecord->fieldLayoutId) {
-//                // Delete the main field layout
-//                $fieldsService->deleteLayoutById($companyTypeRecord->fieldLayoutId);
-//                $companyTypeRecord->fieldLayoutId = null;
-//            }
+            if (!empty($data['companyFieldLayouts']) && !empty($config = reset($data['companyFieldLayouts']))) {
+                // Save the main field layout
+                $layout = FieldLayout::createFromConfig($config);
+                $layout->id = $companyTypeRecord->fieldLayoutId;
+                $layout->type = \percipiolondon\companymanagement\elements\Company::class;
+                $layout->uid = key($data['companyFieldLayouts']);
+                $fieldsService->saveLayout($layout);
+                $companyTypeRecord->fieldLayoutId = $layout->id;
+            } else if ($companyTypeRecord->fieldLayoutId) {
+                // Delete the main field layout
+                $fieldsService->deleteLayoutById($companyTypeRecord->fieldLayoutId);
+                $companyTypeRecord->fieldLayoutId = null;
+            }
 
-            $companyTypeRecord->fieldLayoutId = $data['fieldLayoutId'];
+//            $companyTypeRecord->fieldLayoutId = $data['fieldLayoutId'];
+
+            $companyTypeRecord->save(false);
 
             // Install default fields for the layout
             // -----------------------------------------------------------------
-            $this->_installCompanyFields($companyTypeRecord->fieldLayoutId);
-
-            $companyTypeRecord->save(false);
+//            if($isNewCompanyType) {
+//                $this->_installCompanyFields($companyTypeRecord->fieldLayoutId);
+//            }
 
             // Update the site settings
             // -----------------------------------------------------------------
@@ -462,15 +464,22 @@ class CompanyTypes extends Component
 
         $this->_savingCompanyTypes[$companyType->uid] = $companyType;
 
+        // Install default fields for the layout
+        // -----------------------------------------------------------------
+        if($isNewCompanyType) {
+            $this->_installCompanyFields($companyType->getFieldLayout()->id);
+        }
+
         $projectConfig = Craft::$app->getProjectConfig();
         $configData = [
             'name' => $companyType->name,
             'handle' => $companyType->handle,
             'hasTitleField' => $companyType->hasTitleField,
             'titleFormat' => $companyType->titleFormat,
-            'fieldLayoutId' => $companyType->getFieldLayout()->id,
+            'companyFieldLayouts' => [],
+//            'fieldLayoutId' => $companyType->getFieldLayout()->id,
             'uid' => $companyType->uid,
-            'siteSettings' => []
+            'siteSettings' => [],
         ];
 
         $generateLayoutConfig = function(FieldLayout $fieldLayout): array {
@@ -489,6 +498,9 @@ class CompanyTypes extends Component
 
             return [];
         };
+
+        $configData['companyFieldLayouts'] = $generateLayoutConfig($companyType->getCompanyFieldLayout());
+
 
         // Get the site settings
         $allSiteSettings = $companyType->getSiteSettings();
@@ -535,6 +547,10 @@ class CompanyTypes extends Component
         $fields = $this->_createFields($fieldGroup);
 
         $layout = Craft::$app->getFields()->getLayoutById($layoutId);
+        if(!$layout){
+            return false;
+        }
+
         $layout->tabs = [
             [
                 'name' => 'Company Reference',
@@ -1092,7 +1108,8 @@ class CompanyTypes extends Component
 
     private function _getCompanyTypeRecord(string $uid): CompanyTypeRecord
     {
-        if ($companyType = CompanyTypeRecord::findOne(['uid' => $uid])) {
+        // @TODO: change to ['uid' => $uid]
+        if ($companyType = CompanyTypeRecord::findOne(['handle' => "default"])) {
             return $companyType;
         }
 
