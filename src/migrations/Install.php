@@ -152,6 +152,7 @@ class Install extends Migration {
                 'birthday' => $this->string(),
                 'nationalInsuranceNumber' => $this->string()->notNull()->defaultValue(''),
                 'grossIncome' => $this->string()->defaultValue(''),
+                'jobRole' => $this->string()->defaultValue(''),
             ]);
         }
 

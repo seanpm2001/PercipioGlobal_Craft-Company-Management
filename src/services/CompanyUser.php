@@ -35,6 +35,7 @@ class CompanyUser extends Component
         $record->employeeEndDate = Db::prepareDateForDb($companyUser->employeeEndDate);
         $record->grossIncome = $companyUser->grossIncome;
         $record->nationalInsuranceNumber = $companyUser->nationalInsuranceNumber;
+        $record->jobRole = $companyUser->jobRole;
         $record->companyId = $companyUser->companyId;
 
         return $record->save(false);
