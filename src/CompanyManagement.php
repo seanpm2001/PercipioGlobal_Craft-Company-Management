@@ -85,7 +85,7 @@ class CompanyManagement extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '0.1.2';
+    public $schemaVersion = '0.1.0';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
