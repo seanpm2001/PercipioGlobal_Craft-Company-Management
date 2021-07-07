@@ -80,7 +80,7 @@ class UserPermissions extends Component
         $permissions = PermissionRecord::find()->asArray()->all();
         $permissionsIds = [];
 
-        $updatedPermissions = '' || null === $updatedPermissions ? [] : $updatedPermissions;
+        $updatedPermissions = '' === $updatedPermissions || null === $updatedPermissions ? [] : $updatedPermissions;
 
         foreach( $permissions as $permission ) {
             $permissionsIds[] = $permission['id'];
