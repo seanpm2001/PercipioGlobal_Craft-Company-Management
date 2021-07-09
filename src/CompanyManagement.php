@@ -397,6 +397,10 @@ class CompanyManagement extends Plugin
             User::EVENT_BEFORE_SAVE,
             function (ModelEvent $event) {
 
+                if("live" !== $event->sender->getScenario()) {
+                    return true;
+                }
+
                 $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
                 $validateCompanyUser = $companyUser->validate();
 
@@ -412,6 +416,10 @@ class CompanyManagement extends Plugin
             User::class,
             User::EVENT_AFTER_SAVE,
             function (ModelEvent $event) {
+
+                if("live" !== $event->sender->getScenario()) {
+                    return true;
+                }
 
                 $companyUser = CompanyUserHelper::populateCompanyUserFromPost($event->sender->id);
                 CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$event->sender->id);
