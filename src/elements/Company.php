@@ -731,7 +731,6 @@ class Company extends Element
      */
     public function afterSave(bool $isNew)
     {
-
         if (!$this->propagating) {
 
             $this->_saveRecord($isNew);
@@ -791,13 +790,22 @@ class Company extends Element
 
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
+            $companyUser = CompanyUserRecord::findOne(['userId' => $this->userId]);
+            $user = \craft\records\User::findOne($this->userId);
 
-            $this->contactFirstName = $record->contactFirstName;
-            $this->contactLastName = $record->contactLastName;
-            $this->contactEmail = $record->contactEmail;
-            $this->contactRegistrationNumber = $record->contactRegistrationNumber;
-            $this->contactPhone = $record->contactPhone;
-            $this->contactBirthday = $record->contactBirthday;
+            // Remove the company out of the previous company admin
+            if($record->userId !== $this->userId) {
+                $prevUser = CompanyUserRecord::findOne(['userId' => $record->userId]);
+                $prevUser->companyId = null;
+                $prevUser->save();
+            }
+
+            // save the new values from the company admin
+            $this->contactFirstName = $user->firstName;
+            $this->contactLastName = $user->lastName;
+            $this->contactEmail = $user->email;
+            $this->contactRegistrationNumber = $companyUser->nationalInsuranceNumber ?? '';
+            $this->contactBirthday = $companyUser->birthday ?? '';
 
             if (!$record) {
                 throw new Exception('Invalid company ID: ' . $this->id);
@@ -805,16 +813,12 @@ class Company extends Element
         } else {
             $record = new CompanyRecord();
             $record->id = $this->id;
-            $record->contactFirstName = $this->contactFirstName;
-            $record->contactLastName = $this->contactLastName;
-            $record->contactEmail = $this->contactEmail;
-            $record->contactRegistrationNumber = $this->contactRegistrationNumber;
-            $record->contactPhone = $this->contactPhone;
-            $record->contactBirthday = $this->contactBirthday;
         }
 
-        $userId = $this->_saveUser($record->id);
+        // update / save user
+        $user = $this->_saveUser($record->id);
 
+        // provide company values
         $record->name = $this->name;
         $record->info = $this->info;
         $record->typeId = (int)$this->typeId;
@@ -823,16 +827,22 @@ class Company extends Element
         $record->town = $this->town;
         $record->postcode = $this->postcode;
         $record->website = $this->website;
-        $record->userId = $userId;
+        $record->userId = $user->id;
+        $record->contactFirstName = $this->contactFirstName;
+        $record->contactLastName = $this->contactLastName;
+        $record->contactEmail = $this->contactEmail;
+        $record->contactRegistrationNumber = $this->contactRegistrationNumber;
+        $record->contactPhone = $this->contactPhone;
+        $record->contactBirthday = $this->contactBirthday;
 
+        // save company
         $record->save(false);
 
+        // store the company id
         $this->id = $record->id;
 
-        //\Craft::dd($this->typeId);
-
         // save company id into the companyUser
-        CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($record->userId, $record->id);
+        CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($user->id, $record->id);
     }
 
     /**
@@ -872,14 +882,14 @@ class Company extends Element
 //        $this->_saveUserToGroup($user);
 
         // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
-        $this->_updateCompanyUser($user, $companyId);
+        $this->_updateCompanyUser($user);
 
         // Give user access rights as the company admin
         $permissions = PermissionRecord::find()->asArray()->all();
         CompanyManagement::$plugin->userPermissions->createPermissions($permissions, $user->id);
 
 
-        return $user->id;
+        return $user;
     }
 
     /**
@@ -914,12 +924,12 @@ class Company extends Element
      * @param $user
      * @param $companyId
      */
-    private function _updateCompanyUser($user, $companyId)
+    private function _updateCompanyUser($user)
     {
         $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
 
         if(!$companyUser) {
-            $companyUser = CompanyUserHelper::populateCompanyUserFromPost($user->id, $companyId);
+            $companyUser = CompanyUserHelper::populateCompanyUserFromPost($user->id, null);
 
             $validateCompanyUser = $companyUser->validate();
 

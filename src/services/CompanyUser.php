@@ -64,6 +64,7 @@ class CompanyUser extends Component
 
     public function saveCompanyIdInCompanyUser(int $userId, int $companyId)
     {
+
         $companyUser = CompanyUserRecord::findOne(['userId' => $userId]);
         $companyUser->companyId = $companyId;
 
