@@ -798,6 +798,8 @@ class Company extends Element
                 $prevUser = CompanyUserRecord::findOne(['userId' => $record->userId]);
                 $prevUser->companyId = null;
                 $prevUser->save();
+
+                CompanyManagement::$plugin->userPermissions->updatePermissions([], $prevUser->id);
             }
 
             // save the new values from the company admin
