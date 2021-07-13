@@ -64,6 +64,6 @@ class UserPermission extends ActiveRecord
      */
     public static function tableName()
     {
-        return Table::CM_PERMISSIONS_USERS;
+        return Table::CM_PERMISSIONS_EMPLOYEES;
     }
 }
