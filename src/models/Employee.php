@@ -6,7 +6,7 @@ use craft\base\Model;
 use yii\validators\Validator;
 use Craft;
 
-class CompanyUsers extends Model
+class Employee extends Model
 {
     // Public Properties
     // =========================================================================

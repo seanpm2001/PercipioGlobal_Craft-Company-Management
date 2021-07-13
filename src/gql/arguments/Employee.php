@@ -6,7 +6,7 @@ use craft\gql\base\ElementArguments;
 use craft\gql\types\DateTime;
 use GraphQL\Type\Definition\Type;
 
-class CompanyUser extends ElementArguments
+class Employee extends ElementArguments
 {
     /**pm
      * @inheritdoc

@@ -8,7 +8,7 @@
 
 {#{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}#}
 
-{% set companyUser = companyUser ?? null %}
+{% set employee = employee ?? null %}
 {% set user = user ?? null %}
 
 <div id="companyManagement" class="hidden">
@@ -18,7 +18,7 @@
         id: 'nationalInsuranceNumber',
         name: 'nationalInsuranceNumber',
         required: true,
-        value: companyUser ? companyUser.nationalInsuranceNumber : '',
+        value: employee ? employee.nationalInsuranceNumber : '',
         errors: user ? user.getErrors('nationalInsuranceNumber') : null,
     }) }}
 
@@ -26,16 +26,16 @@
         label: "Birthday"|t('company-management'),
         id: 'birthday',
         name: 'birthday',
-        value: companyUser ? companyUser.birthday : '',
-        errors: companyUser ? companyUser.getErrors('birthday') : null,
+        value: employee ? employee.birthday : '',
+        errors: employee ? employee.getErrors('birthday') : null,
     }) }}
 
     {{ forms.textField({
         label: "Job Role"|t('company-management'),
         id: 'jobRole',
         name: 'jobRole',
-        value: companyUser ? companyUser.jobRole : '',
-        errors: companyUser ? companyUser.getErrors('jobRole') : null,
+        value: employee ? employee.jobRole : '',
+        errors: employee ? employee.getErrors('jobRole') : null,
     }) }}
 
     <hr/>
@@ -44,7 +44,7 @@
         label: "Employee Start Date"|t('company-management'),
         id: 'employeeStartDate',
         name: 'employeeStartDate',
-        value: companyUser ? companyUser.employeeStartDate : '',
+        value: employee ? employee.employeeStartDate : '',
         errors: user ? user.getErrors('employeeStartDate') : null,
     }) }}
 
@@ -52,7 +52,7 @@
         label: "Employee End Date"|t('company-management'),
         id: 'employeeEndDate',
         name: 'employeeEndDate',
-        value: companyUser ? companyUser.employeeEndDate : '',
+        value: employee ? employee.employeeEndDate : '',
         errors: user ? user.getErrors('employeeEndDate') : null,
     }) }}
 
@@ -64,8 +64,8 @@
         label: "Gross Income"|t('company-management'),
         id: 'grossIncome',
         name: 'grossIncome',
-        value: companyUser ? companyUser.grossIncome : '',
-        errors: companyUser ? companyUser.getErrors('grossIncome') : null,
+        value: employee ? employee.grossIncome : '',
+        errors: employee ? employee.getErrors('grossIncome') : null,
     }) }}
 
     <hr/>
@@ -79,7 +79,7 @@
         elements:assets,
         value: documents ?? '',
         instructions: "Upload or select documents"|t('company-management'),
-        errors: companyUser ? companyUser.getErrors('documents') : null,
+        errors: employee ? employee.getErrors('documents') : null,
     }) }}
 
     <hr/>
@@ -93,6 +93,6 @@
         elements: comp,
         value: company ?? '',
         instructions: "Select a company"|t('company-management'),
-        errors: companyUser ? companyUser.getErrors('companies') : null,
+        errors: employee ? employee.getErrors('companies') : null,
     }) }}
 </div>

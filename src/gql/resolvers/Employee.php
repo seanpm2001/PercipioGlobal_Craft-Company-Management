@@ -4,16 +4,16 @@ namespace percipiolondon\companymanagement\gql\resolvers;
 
 use craft\gql\base\ElementResolver;
 use jamesedmonston\graphqlauthentication\GraphqlAuthentication;
-use percipiolondon\companymanagement\elements\db\CompanyUserQuery;
+use percipiolondon\companymanagement\elements\db\EmployeeQuery;
 use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
-class CompanyUser extends ElementResolver
+class Employee extends ElementResolver
 {
     public static function prepareQuery($source, array $arguments, $fieldName = null)
     {
         // If this is the beginning of a resolver chain, start fresh
         if($source === null) {
-            $query = new CompanyUserQuery(static::class);
+            $query = new EmployeeQuery(static::class);
         } else {
             $query = $source->$fieldName;
         }
@@ -34,7 +34,7 @@ class CompanyUser extends ElementResolver
             }
         }
 
-        if (!GqlHelper::canQueryCompanyUsers()) {
+        if (!GqlHelper::canQueryEmployees()) {
             return [];
         }
 

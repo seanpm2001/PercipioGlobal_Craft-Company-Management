@@ -18,7 +18,7 @@ use craft\validators\DateTimeValidator;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\db\CompanyQuery;
 use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
-use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
+use percipiolondon\companymanagement\helpers\Employee as EmployeeHelper;
 use percipiolondon\companymanagement\models\CompanyType;
 use percipiolondon\companymanagement\models\Permissions;
 use percipiolondon\companymanagement\records\Company as CompanyRecord;
@@ -28,7 +28,7 @@ use craft\base\Element;
 use craft\db\Query;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\actions\SetStatus;
-use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
 use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use yii\base\BaseObject;
 use yii\base\Exception;
@@ -790,12 +790,12 @@ class Company extends Element
 
         if (!$isNew) {
             $record = CompanyRecord::findOne($this->id);
-            $companyUser = CompanyUserRecord::findOne(['userId' => $this->userId]);
+            $employee = EmployeeRecord::findOne(['userId' => $this->userId]);
             $user = \craft\records\User::findOne($this->userId);
 
             // Remove the company out of the previous company admin
             if($record->userId !== $this->userId) {
-                $prevUser = CompanyUserRecord::findOne(['userId' => $record->userId]);
+                $prevUser = EmployeeRecord::findOne(['userId' => $record->userId]);
                 $prevUser->companyId = null;
                 $prevUser->save();
 
@@ -806,8 +806,8 @@ class Company extends Element
             $this->contactFirstName = $user->firstName;
             $this->contactLastName = $user->lastName;
             $this->contactEmail = $user->email;
-            $this->contactRegistrationNumber = $companyUser->nationalInsuranceNumber ?? '';
-            $this->contactBirthday = $companyUser->birthday ?? '';
+            $this->contactRegistrationNumber = $employee->nationalInsuranceNumber ?? '';
+            $this->contactBirthday = $employee->birthday ?? '';
 
             if (!$record) {
                 throw new Exception('Invalid company ID: ' . $this->id);
@@ -843,8 +843,8 @@ class Company extends Element
         // store the company id
         $this->id = $record->id;
 
-        // save company id into the companyUser
-        CompanyManagement::$plugin->companyUser->saveCompanyIdInCompanyUser($user->id, $record->id);
+        // save company id into the employee
+        CompanyManagement::$plugin->employee->saveCompanyIdInEmployee($user->id, $record->id);
     }
 
     /**
@@ -884,7 +884,7 @@ class Company extends Element
 //        $this->_saveUserToGroup($user);
 
         // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
-        $this->_updateCompanyUser($user);
+        $this->_updateEmployee($user);
 
         // Give user access rights as the company admin
         $permissions = PermissionRecord::find()->asArray()->all();
@@ -926,17 +926,17 @@ class Company extends Element
      * @param $user
      * @param $companyId
      */
-    private function _updateCompanyUser($user)
+    private function _updateEmployee($user)
     {
-        $companyUser = CompanyUserRecord::findOne(['userId' => $user->id]);
+        $employee = EmployeeRecord::findOne(['userId' => $user->id]);
 
-        if(!$companyUser) {
-            $companyUser = CompanyUserHelper::populateCompanyUserFromPost($user->id, null);
+        if(!$employee) {
+            $employee = EmployeeHelper::populateEmployeeFromPost($user->id, null);
 
-            $validateCompanyUser = $companyUser->validate();
+            $validateEmployee = $employee->validate();
 
-            if($validateCompanyUser) {
-                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$user->id);
+            if($validateEmployee) {
+                CompanyManagement::$plugin->employee->saveEmployee($employee,$user->id);
             }
         }
     }

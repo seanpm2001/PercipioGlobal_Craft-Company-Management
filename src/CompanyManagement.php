@@ -15,15 +15,14 @@ use craft\services\Plugins;
 use percipiolondon\companymanagement\assetbundles\companymanagement\TimeloopAsset;
 use percipiolondon\companymanagement\behaviors\CraftVariableBehavior;
 use percipiolondon\companymanagement\elements\Company;
-use percipiolondon\companymanagement\helpers\CompanyUser as CompanyUserHelper;
+use percipiolondon\companymanagement\helpers\Employee as EmployeeHelper;
 use percipiolondon\companymanagement\services\CompanyTypes;
 use percipiolondon\companymanagement\services\UserPermissions;
 use percipiolondon\companymanagement\services\Company as CompanyService;
-use percipiolondon\companymanagement\services\CompanyUser as CompanyUserService;
+use percipiolondon\companymanagement\services\Employee as EmployeeService;
 use percipiolondon\companymanagement\models\Settings;
 use percipiolondon\companymanagement\elements\Company as CompanyElement;
-use percipiolondon\companymanagement\variables\CompanyUserVariable;
-
+use percipiolondon\companymanagement\variables\EmployeeVariable;
 use percipiolondon\companymanagement\gql\interfaces\elements\Company as GqlCompanyInterface;
 use percipiolondon\companymanagement\gql\queries\Company as GqlCompanyQueries;
 
@@ -38,10 +37,8 @@ use craft\events\RegisterGqlQueriesEvent;
 use craft\events\RegisterGqlSchemaComponentsEvent;
 use craft\events\RegisterGqlTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
-use craft\helpers\ProjectConfigData;
 use craft\services\Elements;
 use craft\services\Gql;
-use craft\services\GraphQL;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
@@ -148,8 +145,8 @@ class CompanyManagement extends Plugin
 
         $this->_registerCpRoutes();
         $this->_registerElementTypes();
-        $this->_registerVariables();
         $this->_registerServices();
+        $this->_registerVariables();
 //        $this->_registerControllers();
         $this->_registerUserSave();
         $this->_registerProjectConfigEventListeners();
@@ -303,7 +300,7 @@ class CompanyManagement extends Plugin
                     $companyPermissions[$suffix . ':read'] = ['label' => Craft::t('company-management', 'View company type - {companyType}', ['companyType' => Craft::t('site', $companyType->name)])];
                 }
 
-                $companyPermissions['companyUsers:read'] = ['label' => Craft::t('company-management', 'View company users')];
+                $companyPermissions['employee:read'] = ['label' => Craft::t('company-management', 'View company users')];
 
                 $queryComponents[$label] = $companyPermissions;
 
@@ -345,6 +342,7 @@ class CompanyManagement extends Plugin
         );
     }
 
+
     private function _registerVariables()
     {
         Event::on(
@@ -354,8 +352,8 @@ class CompanyManagement extends Plugin
                 $variable = $event->sender;
                 $variable->attachBehavior('companies', CraftVariableBehavior::class);
 
-                $variable->set('companyUsers', [
-                    'class' => CompanyUserVariable::class,
+                $variable->set('employees', [
+                    'class' => EmployeeVariable::class,
                 ]);
             }
         );
@@ -365,7 +363,7 @@ class CompanyManagement extends Plugin
     {
         $this->setComponents([
             'company' => CompanyService::class,
-            'companyUser' => CompanyUserService::class,
+            'employee' => EmployeeService::class,
             'companyTypes' => CompanyTypes::class,
             'userPermissions' => UserPermissions:: class,
         ]);
@@ -384,9 +382,9 @@ class CompanyManagement extends Plugin
 
     private function _registerTemplateHooks()
     {
-        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldTab']);
+        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldTab']);
         Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionCustomFieldTab']);
-        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->companyUser, 'addEditUserCustomFieldContent']);
+        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldContent']);
         Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionsCustomFieldContent']);
     }
 
@@ -401,14 +399,14 @@ class CompanyManagement extends Plugin
                     return true;
                 }
 
-                $companyUser = CompanyUserHelper::populateCompanyUserFromPost();
-                $validateCompanyUser = $companyUser->validate();
+                $employee = EmployeeHelper::populateEmployeeFromPost();
+                $validateEmployee = $employee->validate();
 
                 $event->sender->addErrors(
-                    $companyUser->getErrors()
+                    $employee->getErrors()
                 );
 
-                $event->isValid = $validateCompanyUser;
+                $event->isValid = $validateEmployee;
             }
         );
 
@@ -421,8 +419,8 @@ class CompanyManagement extends Plugin
                     return true;
                 }
 
-                $companyUser = CompanyUserHelper::populateCompanyUserFromPost($event->sender->id);
-                CompanyManagement::$plugin->companyUser->saveCompanyUser($companyUser,$event->sender->id);
+                $employee = EmployeeHelper::populateEmployeeFromPost($event->sender->id);
+                CompanyManagement::$plugin->employee->saveEmployee($employee,$event->sender->id);
 
                 $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
                 CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);

@@ -7,9 +7,9 @@ use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\gql\arguments\elements\Company as CompanyArguments;
 use percipiolondon\companymanagement\gql\interfaces\elements\Company as CompanyInterface;
 use percipiolondon\companymanagement\gql\resolvers\elements\Company as CompanyResolver;
-use percipiolondon\companymanagement\gql\arguments\CompanyUser as CompanyUserArguments;
-use percipiolondon\companymanagement\gql\interfaces\CompanyUser as CompanyUserInterface;
-use percipiolondon\companymanagement\gql\resolvers\CompanyUser as CompanyUserResolver;
+use percipiolondon\companymanagement\gql\arguments\Employee as EmployeeArguments;
+use percipiolondon\companymanagement\gql\interfaces\Employee as EmployeeInterface;
+use percipiolondon\companymanagement\gql\resolvers\Employee as EmployeeResolver;
 use percipiolondon\companymanagement\helpers\Gql as GqlHelper;
 
 use Craft;
@@ -47,10 +47,10 @@ class Company extends Query {
                 'resolve' => CompanyResolver::class . '::resolveOne',
                 'description' => 'This query is used to query for a company.'
             ],
-            'companyUser' => [
-                'type' => CompanyUserInterface::getType(),
-                'args' => CompanyUserArguments::getArguments(),
-                'resolve' => CompanyUserResolver::class . '::resolveOne',
+            'employee' => [
+                'type' => EmployeeInterface::getType(),
+                'args' => EmployeeArguments::getArguments(),
+                'resolve' => EmployeeResolver::class . '::resolveOne',
                 'description' => 'This query is used to query for a company user.'
             ],
         ];

@@ -4,7 +4,7 @@ namespace percipiolondon\companymanagement\elements\db;
 
 use craft\elements\db\ElementQuery;
 
-class CompanyUserQuery extends ElementQuery
+class EmployeeQuery extends ElementQuery
 {
     public $companyId;
     public $userId;
@@ -60,7 +60,7 @@ class CompanyUserQuery extends ElementQuery
     {
         $this->_normalizeTypeId();
 
-        $this->joinElementTable('companymanagement_users');
+        $this->joinElementTable('companymanagement_employees');
 
         $this->query->select([
             'companymanagement_companies.companyId',

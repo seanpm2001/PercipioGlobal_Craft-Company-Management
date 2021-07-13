@@ -17,7 +17,7 @@ use craft\base\Component;
 use percipiolondon\companymanagement\records\Permission as PermissionRecord;
 use percipiolondon\companymanagement\records\UserPermission as UserPermissionRecord;
 use percipiolondon\companymanagement\models\UserPermission as UserPermissionModel;
-use percipiolondon\companymanagement\records\CompanyUser as CompanyUserRecord;
+use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
 
 /**
  * UserPermission Service
@@ -125,7 +125,7 @@ class UserPermissions extends Component
 
         $permission = PermissionRecord::findOne(['name' => $permission]); // fetch if permission exists in the company permissions
         $userPermission = UserPermissionRecord::findOne(['permissionId' => $permission?->id, 'userId' => $userId]); // fetch if permission is assigned to the user
-        $user = CompanyUserRecord::findOne(['userId' => $userId]); // fetch the company user object
+        $user = EmployeeRecord::findOne(['userId' => $userId]); // fetch the company user object
 
         // if no user permission can be fetched --> no access
         if( !$userPermission ) {

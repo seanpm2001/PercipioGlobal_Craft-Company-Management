@@ -84,7 +84,7 @@
 
             {{ forms.textField({
                 first: true,
-                label: "Contact First Name"|t('company-management'),
+                label: "Company Admin First Name"|t('company-management'),
                 id: 'contactFirstName',
                 name: 'contactFirstName',
                 required: true,
@@ -98,7 +98,7 @@
 
             {{ forms.textField({
                 first: true,
-                label: "Contact Last Name"|t('company-management'),
+                label: "Company Admin Last Name"|t('company-management'),
                 id: 'contactLastName',
                 name: 'contactLastName',
                 required: true,
@@ -113,7 +113,7 @@
 
     {{ forms.textField({
         first: true,
-        label: "Contact Email"|t('company-management'),
+        label: "Company Admin Email"|t('company-management'),
         id: 'contactEmail',
         name: 'contactEmail',
         required: true,
@@ -123,7 +123,7 @@
 
     {{ forms.textField({
         first: true,
-        label: "Contact Registration Number"|t('company-management'),
+        label: "Company Admin Registration Number"|t('company-management'),
         id: 'contactRegistrationNumber',
         name: 'contactRegistrationNumber',
         required: true,
@@ -133,7 +133,7 @@
 
     {{ forms.textField({
         first: true,
-        label: "Contact Phone"|t('company-management'),
+        label: "Company Admin Phone"|t('company-management'),
         id: 'contactPhone',
         name: 'contactPhone',
         value: company ? company.contactPhone : '',
@@ -142,7 +142,7 @@
 
     {{ forms.dateField({
         first: true,
-        label: "Contact Birthday"|t('company-management'),
+        label: "Company Admin Birthday"|t('company-management'),
         id: 'contactBirthday',
         name: 'contactBirthday',
         value: company ? company.contactBirthday : '',
@@ -156,7 +156,7 @@
 
     {%- set user = company ? company.userId ? [craft.users.id(company.userId).one()] : [] : [] -%}
     {{ forms.elementSelectField({
-        label: "Contact"|t('company-management'),
+        label: "Company Admin"|t('company-management'),
         id: 'userId',
         name: 'user',
         elementType: 'craft\\elements\\User',

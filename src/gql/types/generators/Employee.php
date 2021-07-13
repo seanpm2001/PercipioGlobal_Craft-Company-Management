@@ -7,7 +7,7 @@ use craft\gql\GqlEntityRegistry;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 
-class CompanyUserType implements GeneratorInterface
+class Employee implements GeneratorInterface
 {
     public static function generateTypes($context = null): array
     {

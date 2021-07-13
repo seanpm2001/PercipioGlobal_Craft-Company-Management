@@ -23,8 +23,8 @@
 {%- if company and company.id -%}
     {%- set templateTabs = {
         company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
-        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
-        users: {label: 'Users'|t('company-management'), url: '#tabpanel-users'},
+        admin: {label: 'Company Admin'|t('company-management'), url: '#tabpanel-admin'},
+        employees: {label: 'Employees'|t('company-management'), url: '#tabpanel-employees'},
     } -%}
 {%- else -%}
     {%- set templateTabs = {
@@ -65,7 +65,7 @@
         {{- companyFields.company(company) -}}
     </div>
 
-    <div id="tabpanel-contact" class="hidden">
+    <div id="tabpanel-admin" class="hidden">
         {%- if company and company.id -%}
             {{- companyFields.user(company) -}}
         {%- else -%}
@@ -74,15 +74,15 @@
     </div>
 
     {%- if company and company.id -%}
-        <div id="tabpanel-users" class="hidden">
+        <div id="tabpanel-employees" class="hidden">
 
             <div class="flex">
                 <div class="flex flex-nowrap" style="flex-grow: 1;">
-                    <h2>Users</h2>
+                    <h2>{{ 'Employees'|t('company-management') }}</h2>
                 </div>
                 <div class="flex">
                     {%- set companyUrl = company ? 'users/new?companyId=' ~ company.id : 'users/new' %}
-                    <a href="{{ url(companyUrl) }}" target="_blank" class="btn submit add icon">{{ 'Create a New User'|t('company-management') }}</a>
+                    <a href="{{ url(companyUrl) }}" target="_blank" class="btn submit add icon">{{ 'Create a New Employee'|t('company-management') }}</a>
                 </div>
             </div>
 
@@ -98,8 +98,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for companyUser in craft.companyUsers.getUsers(company.id) %}
-                        {% set user = craft.users.id(companyUser.userId).one() %}
+                    {% for employee in craft.employees.getEmployees(company.id) %}
+                        {% set user = craft.users.id(employee.userId).one() %}
                         {% if user %}
                             <tr>
                                 <th>{{- user.fullName ?? '-' -}}</th>

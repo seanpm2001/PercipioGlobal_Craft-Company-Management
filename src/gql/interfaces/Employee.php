@@ -7,13 +7,13 @@ use craft\gql\TypeManager;
 use craft\gql\interfaces\Element;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\Type;
-use percipiolondon\companymanagement\gql\types\generators\CompanyUserType;
+use percipiolondon\companymanagement\gql\types\generators\Employee as EmployeeType;
 
-class CompanyUser extends Element
+class Employee extends Element
 {
     public static function getTypeGenerator(): string
     {
-        return CompanyUserType::class;
+        return Employee::class;
     }
 
     public static function getType($fields = null): Type
@@ -28,7 +28,7 @@ class CompanyUser extends Element
             'description' => 'This is the interface implemented by the user.',
         ]));
 
-        CompanyUserType::generateTypes();
+        EmployeeType::generateTypes();
 
         return $type;
     }

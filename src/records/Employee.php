@@ -51,7 +51,7 @@ use percipiolondon\companymanagement\db\Table;
  * @package Company Management
  *
  */
-class CompanyUser extends ActiveRecord
+class Employee extends ActiveRecord
 {
     // Public Static Methods
     // =========================================================================
@@ -70,6 +70,6 @@ class CompanyUser extends ActiveRecord
      */
     public static function tableName()
     {
-        return Table::CM_USERS;
+        return Table::CM_EMPLOYEES;
     }
 }

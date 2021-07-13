@@ -28,10 +28,10 @@ class Gql extends GqlHelper {
      *
      * @return bool
      */
-    public static function canQueryCompanyUsers(): bool
+    public static function canQueryEmployees(): bool
     {
         $allowedEntities = self::extractAllowedEntitiesFromSchema();
-        return isset($allowedEntities['companyUsers']);
+        return isset($allowedEntities['employee']);
     }
 
 }
