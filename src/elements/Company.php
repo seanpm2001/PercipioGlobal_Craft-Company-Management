@@ -388,10 +388,10 @@ class Company extends Element
     }
 
     /**
-     * @param string|null $srouce
+     * @param string|null $source
      * @return array
      */
-    protected static function defineActions(string $srouce = null): array
+    protected static function defineActions(string $source = null): array
     {
         $actions = [];
 
@@ -480,13 +480,12 @@ class Company extends Element
         $companyIds = [];
 
         // Fetch all company UIDs
-        $companyInfo = (new Query())
+        $companies = (new Query())
             ->from('{{%companymanagement_companies}}')
             ->select('*')
             ->all();
 
-        // Craft:dd( $companyInfo);
-        foreach ($companyInfo as $company) {
+        foreach ($companies as $company) {
             $companyIds[] = $company['id'];
         }
 
@@ -569,7 +568,7 @@ class Company extends Element
                     $validator->addError($this, $attribute, $error);
                 }
             }];
-        }else{
+        } else {
             $rules[] = [['userId'], 'required'];
         }
 
@@ -747,38 +746,6 @@ class Company extends Element
     public function beforeDelete(): bool
     {
         return true;
-    }
-
-    /**
-     * Performs actions after an element is deleted.
-     *
-     * @return void
-     */
-    public function afterDelete()
-    {
-    }
-
-    /**
-     * Performs actions before an element is moved within a structure.
-     *
-     * @param int $structureId The structure ID
-     *
-     * @return bool Whether the element should be moved within the structure
-     */
-    public function beforeMoveInStructure(int $structureId): bool
-    {
-        return true;
-    }
-
-    /**
-     * Performs actions after an element is moved within a structure.
-     *
-     * @param int $structureId The structure ID
-     *
-     * @return void
-     */
-    public function afterMoveInStructure(int $structureId)
-    {
     }
 
     /**
