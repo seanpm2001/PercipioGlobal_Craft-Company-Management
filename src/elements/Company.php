@@ -929,7 +929,7 @@ class Company extends Element
 
     public static function gqlScopesByContext($context): array
     {
-        /** @var ProductType $context */
+        /** @var CompanyType $context */
         return ['companyTypes.' . $context->uid];
     }
 

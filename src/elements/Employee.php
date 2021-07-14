@@ -5,8 +5,13 @@ namespace percipiolondon\companymanagement\elements;
 
 
 use craft\base\Element;
+use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\db\UserQuery;
+use yii\db\Query;
+use Craft;
+use DateTime;
+use ArrayObject;
 
 class Employee extends Element
 {
@@ -341,6 +346,53 @@ class Employee extends Element
                 'criteria' => ['id' => $ids],
             ]
         ];
+    }
+
+    /**
+     * @param string|null $source
+     * @return array
+     */
+    protected static function defineActions(string $source = null): array
+    {
+        $actions = [];
+
+        $elementsService = Craft::$app->getElements();
+
+        // Delete
+        $actions[] = $elementsService->createAction([
+            'type' => Delete::class,
+            'confirmationMessage' => Craft::t('company-management', 'Are you sure you want to delete the selected employees?'),
+            'successMessage' => Craft::t('company-management', 'employees deleted.'),
+        ]);
+
+        //$actions[] = SetStatus::class;
+
+        return $actions;
+    }
+
+    /**
+     * @return array
+     */
+    protected static function defineTableAttributes(): array
+    {
+        return [
+            'title' => ['label' => Craft::t('company-management', 'Name')],
+            'dateCreated' => ['label' => Craft::t('company-management', 'Date Created')],
+        ];
+    }
+
+    /**
+     * @param string $source
+     * @return array
+     */
+    protected static function defineDefaultTableAttributes(string $source): array
+    {
+        $attributes = [];
+        $attributes[] = 'name';
+        $attributes[] = 'dateCreated';
+        $attributes[] = 'dateUpdated';
+
+        return $attributes;
     }
 
     /**

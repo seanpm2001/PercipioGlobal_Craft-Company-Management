@@ -18,6 +18,7 @@ use percipiolondon\companymanagement\helpers\Company as CompanyHelper;
 use Craft;
 use craft\web\Controller;
 use percipiolondon\companymanagement\elements\Company;
+use yii\db\Exception;
 
 /**
  * Company Controller
@@ -95,10 +96,10 @@ class CompanyController extends Controller
         $variables['fieldsHtml'] = str_replace('class="flex-fields"', 'class="flex-fields hidden"', $form->render());
         $variables['typeId'] = $companyType->id;
 
-        if ($company === null) {
+        if ($company->title === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new company');
         } else {
-            $variables['title'] = $company->name;
+            $variables['title'] = $company->title;
         }
 
         return $this->renderTemplate('company-management/companies/_edit', $variables);

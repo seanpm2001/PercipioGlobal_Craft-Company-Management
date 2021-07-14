@@ -197,6 +197,11 @@ class CompanyManagement extends Plugin
                 'label' => Craft::t('company-management', 'Companies'),
                 'url' => 'company-management/companies'
             ];
+
+            $nav['subnav']['employees'] = [
+                'label' => Craft::t('company-management', 'Employees'),
+                'url' => 'company-management/employees'
+            ];
         }
 
         return $nav;
@@ -240,6 +245,9 @@ class CompanyManagement extends Plugin
                 $event->rules['company-management/companies'] = 'company-management/company/index';
                 $event->rules['company-management/companies/new'] = 'company-management/company/edit';
                 $event->rules['company-management/companies/<companyId:\d+>'] = 'company-management/company/edit';
+                $event->rules['company-management/employees'] = 'company-management/employee/index';
+                $event->rules['company-management/employees/new'] = 'company-management/employee/edit';
+                $event->rules['company-management/employees/<employeeId:\d+>'] = 'company-management/employee/edit';
             }
         );
     }
