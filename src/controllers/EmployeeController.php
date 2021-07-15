@@ -13,6 +13,7 @@ namespace percipiolondon\companymanagement\controllers;
 use craft\web\Controller;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\Employee;
+use percipiolondon\companymanagement\helpers\Employee as EmployeeHelper;
 use yii\db\Exception;
 use Craft;
 
@@ -69,5 +70,33 @@ class EmployeeController extends Controller
         }
 
         return $this->renderTemplate('company-management/employees/_edit', $variables);
+    }
+
+    /**
+     * @return mixed
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function actionSave()
+    {
+        $this->requirePostRequest();
+
+        $elementsService = Craft::$app->getElements();
+        $employee = EmployeeHelper::populateEmployeeFromPost();
+
+        $success = $elementsService->saveElement($employee);
+
+        if(!$success) {
+            Craft::$app->getSession()->setError(Craft::t('company-management', 'Couldn’t save employee.'));
+
+            Craft::$app->getUrlManager()->setRouteParams([
+                'employee' => $employee,
+                'errors' => $employee->getErrors(),
+            ]);
+
+            return null;
+        }
+
+        $this->setSuccessFlash(Craft::t('company-management', 'Employee saved.'));
+        return $this->renderTemplate('company-management/employees');
     }
 }

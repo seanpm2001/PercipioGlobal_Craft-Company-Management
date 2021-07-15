@@ -1,5 +1,4 @@
 {%- extends "_layouts/cp" -%}
-{%- import "_includes/forms" as forms -%}
 
 {% set scriptTagOptions = {
     'depends': [
@@ -7,10 +6,25 @@
     ],
 } %}
 
+{%- import "_includes/forms" as forms -%}
+{%- import "company-management/employees/_fields" as employeeFields -%}
+
 {%- set selectedSubnavItem = "employees" -%}
+{%- set fullPageForm = true -%}
 
 {#{{ craft.timeloop.register('/src/js/companymanagement.ts', false, scriptTagOptions) }}#}
 
+{% set crumbs = [
+    { label: "Employees"|t('company-managament'), url: url('company-management/employees') },
+] %}
+
+{% set tabs = {
+    personal: {label: 'Personal'|t('company-management'), url: '#tabpanel-personal'},
+    company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
+    contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
+} %}
+
+{% set employee = employee ?? null %}
 
 {% block header %}
     <div class="flex flex-nowrap">
@@ -23,11 +37,24 @@
 
 {% block actionButton %}
     <div class="buttons">
-        <input type="submit" data-action="company-management/employee/save" class="btn submit" value="{{ 'Save'|t('company-management') }}">
+        <input type="submit" data-action="company-management/employees/save" class="btn submit" value="{{ 'Save'|t('company-management') }}">
     </div>
 {% endblock %}
 
 {% block content %}
+
     <input type="hidden" name="action" value="company-management/employee/save">
     {{- redirectInput('company-management/employees') -}}
+
+    <div id="tabpanel-personal">
+        {{ employeeFields.personal(employee) }}
+    </div>
+
+    <div id="tabpanel-company" class="hidden">
+        {{ employeeFields.company(employee) }}
+    </div>
+
+    <div id="tabpanel-contact" class="hidden">
+        {{ employeeFields.contact(employee) }}
+    </div>
 {% endblock %}

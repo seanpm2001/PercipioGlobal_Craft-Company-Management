@@ -35,17 +35,39 @@ use percipiolondon\companymanagement\db\Table;
  */
 
 /**
- * Company record.
+ * Employee record.
  *
  * @property int id
  * @property int userId
  * @property int companyId
- * @property DateTime employeeStartDate
- * @property DateTime employeeEndDate
- * @property DateTime birthday
+ * @property DateTime joinDate
+ * @property DateTime endDate
+ * @property DateTime probationPeriod
+ * @property DateTime dateOfBirth
+ * @property string slug
+ * @property string title
+ * @property string noticePeriod
+ * @property string firstName
+ * @property string middleName
+ * @property string lastName
+ * @property string knownAs
+ * @property string reference
+ * @property string gender
+ * @property string nationality
+ * @property string nameTitle
+ * @property string ethnicity
+ * @property string maritalStatus
  * @property string nationalInsuranceNumber
- * @property string grossIncome
- * @property string jobRole
+ * @property string drivingLicense
+ * @property string personalEmail
+ * @property string personalMobile
+ * @property string personalPhone
+ * @property string address
+ * @property string department
+ * @property string contractType
+ * @property string directDialingIn
+ * @property string workMobile
+ * @property string jobTitle
  *
  *
  * @package Company Management

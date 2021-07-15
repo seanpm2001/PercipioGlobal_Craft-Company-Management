@@ -5,6 +5,7 @@ namespace percipiolondon\companymanagement\models;
 use craft\base\Model;
 use yii\validators\Validator;
 use Craft;
+use DateTime;
 
 class Employee extends Model
 {
@@ -29,17 +30,17 @@ class Employee extends Model
     /**
      * @var DateTime
      */
-    public $employeeStartDate;
+    public $joinDate;
 
     /**
      * @var DateTime
      */
-    public $employeeEndDate;
+    public $endDate;
 
     /**
      * @var DateTime
      */
-    public $birthday;
+    public $dateOfBirth;
 
     /**
      * @var string
@@ -49,12 +50,112 @@ class Employee extends Model
     /**
      * @var string
      */
-    public $grossIncome;
+    public $firstName;
 
     /**
      * @var string
      */
-    public $jobRole;
+    public $lastName;
+
+    /**
+     * @var string
+     */
+    public $middleName;
+
+    /**
+     * @var string
+     */
+    public $knownAs;
+
+    /**
+     * @var string
+     */
+    public $nameTitle;
+
+    /**
+     * @var string
+     */
+    public $ethnicity;
+
+    /**
+     * @var string
+     */
+    public $maritalStatus;
+
+    /**
+     * @var string
+     */
+    public $drivingLicense;
+
+    /**
+     * @var string
+     */
+    public $address;
+
+    /**
+     * @var string
+     */
+    public $gender;
+
+    /**
+     * @var string
+     */
+    public $nationality;
+
+    /**
+     * @var string
+     */
+    public $probationPeriod;
+
+    /**
+     * @var string
+     */
+    public $noticePeriod;
+
+    /**
+     * @var string
+     */
+    public $reference;
+
+    /**
+     * @var string
+     */
+    public $department;
+
+    /**
+     * @var string
+     */
+    public $jobTitle;
+
+    /**
+     * @var string
+     */
+    public $contractType;
+
+    /**
+     * @var string
+     */
+    public $personalEmail;
+
+    /**
+     * @var string
+     */
+    public $personalMobile;
+
+    /**
+     * @var string
+     */
+    public $personalPhone;
+
+    /**
+     * @var string
+     */
+    public $directDialingIn;
+
+    /**
+     * @var string
+     */
+    public $workMobile;
 
     /**
      * @var array
@@ -68,7 +169,7 @@ class Employee extends Model
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['nationalInsuranceNumber'], 'required'];
+        $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber'], 'required'];
 
         $rules[] = ['nationalInsuranceNumber', function($attribute, $params, Validator $validator){
 

@@ -1,0 +1,308 @@
+{% macro personal(employee) %}
+
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.selectField({
+        label: 'Name Title'|t('company-management'),
+        instructions: "What's the employee naming title"|t('company-management'),
+        name: 'nameTitle',
+        id: 'nameTitle',
+        options: {
+            1: 'Mr',
+            2: 'Mrs',
+            3: 'Miss',
+            4: 'Ms',
+            5: 'Mx',
+            6: 'Dr',
+        },
+        value:employee ? employee.nameTitle : null,
+        errors: employee ? employee.getErrors('nameTitle') : null,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "First Name"|t('company-management'),
+        instructions: "What's the employee first name"|t('company-management'),
+        id: 'firstName',
+        name: 'firstName',
+        value: employee ? employee.firstName : '',
+        errors: employee ? employee.getErrors('firstName') : null,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "Middle Name"|t('company-management'),
+        instructions: "What's the employee middle name"|t('company-management'),
+        id: 'middleName',
+        name: 'middleName',
+        value: employee ? employee.middleName : '',
+        errors: employee ? employee.getErrors('middleName') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Last Name"|t('company-management'),
+        instructions: "What's the employee last name"|t('company-management'),
+        id: 'lastName',
+        name: 'lastName',
+        value: employee ? employee.lastName : '',
+        errors: employee ? employee.getErrors('lastName') : null,
+        required: true,
+    }) }}
+
+    {{ forms.textField({
+        label: "Kown as"|t('company-management'),
+        instructions: "How does the employee want to be called"|t('company-management'),
+        id: 'knownAs',
+        name: 'knownAs',
+        value: employee ? employee.knownAs : '',
+        errors: employee ? employee.getErrors('knownAs') : null,
+    }) }}
+
+    <hr/>
+
+    {{ forms.radioGroupField({
+        label: "Gender"|t('company-management'),
+        instructions: "What's the employee's gender"|t('company-management'),
+        id:'gender',
+        name: 'gender',
+        options: {
+            1: 'M',
+            2: 'W',
+            3: 'X',
+        },
+        value:employee ? employee.gender : null,
+        errors: employee ? employee.getErrors('gender') : null,
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Marital Status'|t('company-management'),
+        instructions: "What's the employee's marital status"|t('company-management'),
+        id:'maritalStatus',
+        name: 'maritalStatus',
+        options: {
+            1: 'Married',
+            2: 'Widowed',
+            3: 'Separated',
+            4: 'Divorced',
+            5: 'Single',
+        },
+        value:employee ? employee.maritalStatus : null,
+        errors: employee ? employee.getErrors('maritalStatus') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Ethnicity"|t('company-management'),
+        instructions: "What's the social / cultural identity of the employee "|t('company-management'),
+        id: 'ethnicity',
+        name: 'ethnicity',
+        value: employee ? employee.ethnicity : '',
+        errors: employee ? employee.getErrors('ethnicity') : null,
+    }) }}
+
+    {{ forms.selectField({
+        label: 'Driving License'|t('company-management'),
+        instructions: "What's the employee's driving license"|t('company-management'),
+        name: '',
+        options: {
+            1: 'None',
+            2: 'Category AM',
+            3: 'Category P',
+            4: 'Category Q',
+            5: 'Category A1',
+            6: 'Category A2',
+            7: 'Category A',
+            8: 'Category B1',
+            9: 'Category B',
+            10: 'Category BE',
+            11: 'Category C1',
+            12: 'Category C1E',
+            13: 'Category C',
+            14: 'Category CE',
+            15: 'Category D1',
+            16: 'Category D1E',
+            17: 'Category D',
+            18: 'Category DE',
+        },
+        value:employee ? employee.drivingLicense : null,
+        errors: employee ? employee.getErrors('drivingLicense') : null,
+    }) }}
+
+    <hr/>
+
+    {{ forms.textareaField({
+        label: 'Address'|t('company-management'),
+        instructions: "What's the employee's address"|t('company-management'),
+        name: 'address',
+        id: 'address',
+        value:employee ? employee.address : null,
+        errors: employee ? employee.getErrors('address') : null,
+        rows: 3,
+    }) }}
+
+    <hr/>
+
+    {{ forms.textField({
+        label: "Nationality"|t('company-management'),
+        instructions: "What's nationality of the employee "|t('company-management'),
+        id: 'nationality',
+        name: 'nationality',
+        value: employee ? employee.nationality : '',
+        errors: employee ? employee.getErrors('nationality') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "National Insurance Number"|t('company-management'),
+        instructions: "What's national insurance number of the employee "|t('company-management'),
+        id: 'nationalInsuranceNumber',
+        name: 'nationalInsuranceNumber',
+        required: true,
+        value: employee ? employee.nationalInsuranceNumber : '',
+        errors: employee ? employee.getErrors('nationalInsuranceNumber') : null,
+    }) }}
+
+    {{ forms.dateField({
+        label: "Date of Birth"|t('company-management'),
+        instructions: "What's the date of birth of the employee "|t('company-management'),
+        id: 'dateOfBirth',
+        name: 'dateOfBirth',
+        required: true,
+        value: employee ? employee.dateOfBirth : '',
+        errors: employee ? employee.getErrors('dateOfBirth') : null,
+    }) }}
+
+{% endmacro %}
+
+{% macro company(employee) %}
+
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.dateField({
+        label: "Join Date"|t('company-management'),
+        instructions: "What's the date when the employee joined the company "|t('company-management'),
+        id: 'joinDate',
+        name: 'joinDate',
+        value: employee ? employee.joinDate : '',
+        errors: employee ? employee.getErrors('joinDate') : null,
+    }) }}
+
+    {{ forms.dateField({
+        label: "End Date"|t('company-management'),
+        instructions: "Whend is the end date of the employee "|t('company-management'),
+        id: 'endDate',
+        name: 'endDate',
+        value: employee ? employee.endDate : '',
+        errors: employee ? employee.getErrors('endDate') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Probation period"|t('company-management'),
+        instructions: "What's he employee's probation period "|t('company-management'),
+        id: 'probationPeriod',
+        name: 'probationPeriod',
+        value: employee ? employee.probationPeriod : '',
+        errors: employee ? employee.getErrors('probationPeriod') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Notice period"|t('company-management'),
+        instructions: "What's he employee's notice period "|t('company-management'),
+        id: 'noticePeriod',
+        name: 'noticePeriod',
+        value: employee ? employee.noticePeriod : '',
+        errors: employee ? employee.getErrors('noticePeriod') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Reference"|t('company-management'),
+        instructions: "What's he employee's reference "|t('company-management'),
+        id: 'reference',
+        name: 'reference',
+        value: employee ? employee.reference : '',
+        errors: employee ? employee.getErrors('reference') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Department"|t('company-management'),
+        instructions: "What's he employee's department "|t('company-management'),
+        id: 'department',
+        name: 'department',
+        value: employee ? employee.department : '',
+        errors: employee ? employee.getErrors('department') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Job Title"|t('company-management'),
+        instructions: "What's he employee's job title "|t('company-management'),
+        id: 'jobTitle',
+        name: 'jobTitle',
+        value: employee ? employee.jobTitle : '',
+        errors: employee ? employee.getErrors('jobTitle') : null,
+    }) }}
+
+{% endmacro %}
+
+{% macro contact(employee) %}
+
+    {%- import "_includes/forms" as forms -%}
+
+    {{ forms.selectField({
+        label: 'Marital Status'|t('company-management'),
+        instructions: "What's the employee's marital status"|t('company-management'),
+        id:'contractType',
+        name: 'contractType',
+        options: {
+            1: 'Full Time',
+            2: 'Part time',
+            3: 'Casual ( zero hour contracts )',
+            4: 'Consultancy Agreement ( contractor )',
+        },
+        value:employee ? employee.contractType : null,
+        errors: employee ? employee.getErrors('contractType') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Personal Email Address"|t('company-management'),
+        instructions: "What's he employee's personal email address "|t('company-management'),
+        id: 'personalEmail',
+        name: 'personalEmail',
+        value: employee ? employee.personalEmail : '',
+        errors: employee ? employee.getErrors('personalEmail') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Personal Mobile"|t('company-management'),
+        instructions: "What's he employee's personal mobile "|t('company-management'),
+        id: 'personalMobile',
+        name: 'personalMobile',
+        value: employee ? employee.personalMobile : '',
+        errors: employee ? employee.getErrors('personalMobile') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Personal Phone"|t('company-management'),
+        instructions: "What's he employee's personal phone "|t('company-management'),
+        id: 'personalPhone',
+        name: 'personalPhone',
+        value: employee ? employee.personalPhone : '',
+        errors: employee ? employee.getErrors('personalPhone') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Work mobile"|t('company-management'),
+        instructions: "What's he employee's work mobile "|t('company-management'),
+        id: 'workMobile',
+        name: 'workMobile',
+        value: employee ? employee.workMobile : '',
+        errors: employee ? employee.getErrors('workMobile') : null,
+    }) }}
+
+    {{ forms.textField({
+        label: "Direct Dialing In"|t('company-management'),
+        instructions: "What's he employee's direct dialing in "|t('company-management'),
+        id: 'directDialingIn',
+        name: 'directDialingIn',
+        value: employee ? employee.directDialingIn : '',
+        errors: employee ? employee.getErrors('directDialingIn') : null,
+    }) }}
+
+{% endmacro %}

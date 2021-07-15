@@ -3,15 +3,18 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
 
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\db\UserQuery;
+use yii\db\Exception;
 use yii\db\Query;
 use Craft;
 use DateTime;
 use ArrayObject;
+use yii\validators\Validator;
 
 class Employee extends Element
 {
@@ -43,6 +46,11 @@ class Employee extends Element
      */
 
     public $companyId;
+
+    /**
+     * @var String
+     */
+    public $slug;
 
     /**
      * @var DateTime
@@ -241,6 +249,16 @@ class Employee extends Element
     }
 
     /**
+     * Returns whether elements of this type have traditional titles.
+     *
+     * @return bool Whether elements of this type have traditional titles.
+     */
+    public static function hasTitles(): bool
+    {
+        return true;
+    }
+
+    /**
      * @inheritdoc
      */
     public static function hasUris(): bool
@@ -435,6 +453,20 @@ class Employee extends Element
         $rules = parent::defineRules();
         $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber'], 'required'];
 
+        $rules[] = ['personalEmail', function($attribute, $params, Validator $validator){
+            $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+
+            // Valid email
+            if (!preg_match($preg, $this->$attribute)) {
+                $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                    'attribute' => $attribute,
+                    'value' => $this->$attribute,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
+
         return $rules;
     }
 
@@ -507,11 +539,40 @@ class Employee extends Element
             $record->id = (int)$this->id;
         }
 
+        // Personal
+//        $record->title = $this->firstName . ' ' . $this->lastName;
         $record->firstName = $this->firstName;
         $record->lastName = $this->lastName;
+        $record->middleName = $this->middleName;
+        $record->knownAs = $this->knownAs;
         $record->nameTitle = $this->nameTitle;
+        $record->ethnicity = $this->ethnicity;
+        $record->maritalStatus = $this->maritalStatus;
+        $record->drivingLicense = $this->drivingLicense;
+        $record->address = $this->address;
+        $record->gender = $this->gender;
+        $record->nationality = $this->nationality;
         $record->nationalInsuranceNumber = $this->nationalInsuranceNumber;
         $record->dateOfBirth = $this->dateOfBirth;
+
+        // Employee related info inside of the company
+        $record->joinDate = $this->joinDate;
+        $record->endDate = $this->endDate;
+        $record->probationPeriod = $this->probationPeriod;
+        $record->noticePeriod = $this->noticePeriod;
+        $record->reference = $this->reference;
+        $record->department = $this->department;
+        $record->jobTitle = $this->jobTitle;
+
+        // Contacts
+        $record->contractType = $this->contractType;
+        $record->personalEmail = $this->personalEmail;
+        $record->personalMobile = $this->personalMobile;
+        $record->personalPhone = $this->personalPhone;
+        $record->directDialingIn = $this->directDialingIn;
+        $record->workMobile = $this->workMobile;
+
+        $record->save(false);
     }
 
 }
