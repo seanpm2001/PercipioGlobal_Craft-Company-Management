@@ -10,9 +10,11 @@
 
 namespace percipiolondon\companymanagement\records;
 
+use craft\base\Element;
 use DateTime;
 use craft\db\ActiveRecord;
 use percipiolondon\companymanagement\db\Table;
+use yii\db\ActiveQueryInterface;
 
 /**
  * Company Record

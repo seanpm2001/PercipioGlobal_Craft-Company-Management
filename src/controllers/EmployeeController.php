@@ -88,8 +88,6 @@ class EmployeeController extends Controller
         if(!$success) {
             Craft::$app->getSession()->setError(Craft::t('company-management', 'Couldn’t save employee.'));
 
-            Craft::dd($employee->getErrors());
-
             Craft::$app->getUrlManager()->setRouteParams([
                 'employee' => $employee,
                 'errors' => $employee->getErrors(),

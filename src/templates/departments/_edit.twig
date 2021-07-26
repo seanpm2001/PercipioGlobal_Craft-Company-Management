@@ -1,0 +1,79 @@
+{%- extends "_layouts/cp" -%}
+
+{% set scriptTagOptions = {
+    'depends': [
+        'percipiolondon\\companymanagement\\assetbundles\\companymanagement\\CompanyManagementAsset'
+    ],
+} %}
+
+{%- import "_includes/forms" as forms -%}
+
+{%- set selectedSubnavItem = "departments" -%}
+{%- set company = company ?? null -%}
+{%- set fullPageForm = true -%}
+
+{%- set crumbs = [
+    { label: "Departments"|t('company-managament'), url: url('company-management/departments') },
+] -%}
+
+{% block header %}
+    <div class="flex flex-nowrap">
+        {{ block('pageTitle') }}
+    </div>
+    <div class="flex">
+        {{ block('actionButton') }}
+    </div>
+{% endblock %}
+
+{% block actionButton %}
+    <div class="buttons">
+        <input type="submit" data-action="company-management/companies/save" class="btn submit" value="{{ 'Save'|t('company-management') }}">
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <input type="hidden" name="action" value="company-management/department/save">
+    {{- redirectInput('company-management/companies') -}}
+
+    {%- if department -%}
+        <input type="hidden" name="companyId" value="{{ department.id }}">
+    {%- endif -%}
+    <input type="hidden" name="siteId" value="{{ department ? department.siteId : currentSite.id }}">
+
+    <div id="tabpanel-department">
+
+        {{ forms.textField({
+            first: true,
+            label: "Title"|t('company-management'),
+            instructions: "What's the name of the department"|t('company-management'),
+            id: 'title',
+            name: 'title',
+            value: department ? department.title : '',
+            errors: department ? department.getErrors('title') : null,
+            autofocus: true,
+            required: true,
+        }) }}
+
+        {%- set comp = department and department.companyId ? [craft.companies.id(department.companyId).one()] : [] -%}
+        {{ forms.elementSelectField({
+            label: "Company"|t('company-management'),
+            id: 'companyId',
+            name: 'companyId',
+            elementType: 'percipiolondon\\companymanagement\\elements\\Company',
+            elements: comp,
+            value: department.companyId ?? '',
+            instructions: "Select a company"|t('company-management'),
+            errors: department ? department.getErrors('companyId') : null,
+        }) }}
+
+    </div>
+
+{% endblock %}
+
+
+{% if not department.slug %}
+    {% js %}
+        window.slugGenerator = new Craft.SlugGenerator('#title', '#slug');
+    {% endjs %}
+{% endif %}
