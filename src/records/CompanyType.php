@@ -77,7 +77,7 @@ class CompanyType extends ActiveRecord
      *
      * @return ActiveQueryInterface The relational query object.
      */
-    public function getCompany(): ActiveQueryInterface
+    public function getElement(): ActiveQueryInterface
     {
         return $this->hasOne(Company::class, ['id' => 'companyId']);
     }

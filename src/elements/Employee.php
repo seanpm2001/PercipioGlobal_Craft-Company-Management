@@ -571,6 +571,7 @@ class Employee extends Element
         $record->personalPhone = $this->personalPhone;
         $record->directDialingIn = $this->directDialingIn;
         $record->workMobile = $this->workMobile;
+        $record->workExtension = $this->workExtension;
 
         $record->save(false);
     }

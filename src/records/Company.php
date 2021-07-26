@@ -10,10 +10,6 @@
 
 namespace percipiolondon\companymanagement\records;
 
-use percipiolondon\companymanagement\CompanyManagement;
-
-use Craft;
-use DateTime;
 use craft\db\ActiveRecord;
 use percipiolondon\companymanagement\db\Table;
 
@@ -37,23 +33,24 @@ use percipiolondon\companymanagement\db\Table;
 /**
  * Company record.
  *
- * @property int id
- * @property string name
- * @property string info
- * @property string slug
- * @property int typeId
- * @property string address
- * @property string town
- * @property string postcode
- * @property string website
- * @property string logo
- * @property string contactFirstName
- * @property string contactLastName
- * @property string contactEmail
- * @property string contactRegistrationNumber
- * @property string contactPhone
- * @property string contactBirthday
- * @property int userId
+ * @property int $id
+ * @property string $name
+ * @property string $info
+ * @property string $slug
+ * @property int $typeId
+ * @property string $address
+ * @property string $town
+ * @property string $postcode
+ * @property string $website
+ * @property string $logo
+ * TODO - REWORK TO MATCH WITH EMPLOYEE ELEMENT
+ * @property string $contactFirstName
+ * @property string $contactLastName
+ * @property string $contactEmail
+ * @property string $contactRegistrationNumber
+ * @property string $contactPhone
+ * @property string $contactBirthday
+ * @property int $userId
  *
  *
  * @package Company Management
@@ -79,5 +76,25 @@ class Company extends ActiveRecord
     public static function tableName()
     {
         return Table::CM_COMPANIES;
+    }
+
+    /**
+     * Returns the company’s element.
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getElement(): ActiveQueryInterface
+    {
+        return $this->hasOne(Element::class, ['id' => 'id']);
+    }
+
+    /**
+     * Returns the company’s type.
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getType(): ActiveQueryInterface
+    {
+        return $this->hasOne(CompanyType::class, ['id' => 'typeId']);
     }
 }

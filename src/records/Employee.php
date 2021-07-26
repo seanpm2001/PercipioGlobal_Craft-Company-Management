@@ -10,9 +10,6 @@
 
 namespace percipiolondon\companymanagement\records;
 
-use percipiolondon\companymanagement\CompanyManagement;
-
-use Craft;
 use DateTime;
 use craft\db\ActiveRecord;
 use percipiolondon\companymanagement\db\Table;
@@ -31,43 +28,44 @@ use percipiolondon\companymanagement\db\Table;
  *
  * @author    Percipio
  * @package   CompanyManagement
- * @since     0.1.0
+ * @since     1.0.0
  */
 
 /**
  * Employee record.
  *
- * @property int id
- * @property int userId
- * @property int companyId
- * @property DateTime joinDate
- * @property DateTime endDate
- * @property DateTime probationPeriod
- * @property DateTime dateOfBirth
- * @property string slug
- * @property string title
- * @property string noticePeriod
- * @property string firstName
- * @property string middleName
- * @property string lastName
- * @property string knownAs
- * @property string reference
- * @property string gender
- * @property string nationality
- * @property string nameTitle
- * @property string ethnicity
- * @property string maritalStatus
- * @property string nationalInsuranceNumber
- * @property string drivingLicense
- * @property string personalEmail
- * @property string personalMobile
- * @property string personalPhone
- * @property string address
- * @property string department
- * @property string contractType
- * @property string directDialingIn
- * @property string workMobile
- * @property string jobTitle
+ * @property int $id
+ * @property int $userId
+ * @property int $companyId
+ * @property \DateTime $joinDate
+ * @property \DateTime $endDate
+ * @property \DateTime $probationPeriod
+ * @property \DateTime $dateOfBirth
+ * @property string $slug
+ * @property string $title
+ * @property string $noticePeriod
+ * @property string $firstName
+ * @property string $middleName
+ * @property string $lastName
+ * @property string $knownAs
+ * @property string $reference
+ * @property string $gender
+ * @property string $nationality
+ * @property string $nameTitle
+ * @property string $ethnicity
+ * @property string $maritalStatus
+ * @property string $nationalInsuranceNumber
+ * @property string $drivingLicense
+ * @property string $personalEmail
+ * @property string $personalMobile
+ * @property string $personalPhone
+ * @property string $address
+ * @property string $department
+ * @property string $contractType
+ * @property string $directDialingIn
+ * @property string $workExtension
+ * @property string $workMobile
+ * @property string $jobTitle
  *
  *
  * @package Company Management
@@ -93,5 +91,15 @@ class Employee extends ActiveRecord
     public static function tableName()
     {
         return Table::CM_EMPLOYEES;
+    }
+
+    /**
+     * Returns the employee’s element.
+     *
+     * @return ActiveQueryInterface The relational query object.
+     */
+    public function getElement(): ActiveQueryInterface
+    {
+        return $this->hasOne(Element::class, ['id' => 'id']);
     }
 }
