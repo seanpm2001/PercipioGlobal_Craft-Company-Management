@@ -837,7 +837,7 @@ class Company extends Element
             $user = new User();
             $user->firstName = $this->contactFirstName;
             $user->lastName = $this->contactLastName;
-//            $user->username = $this->contactEmail;
+            $user->username = $this->contactEmail;
             $user->email = $this->contactEmail;
 
             $success = Craft::$app->elements->saveElement($user, true);
@@ -898,15 +898,15 @@ class Company extends Element
     {
         $employee = EmployeeRecord::findOne(['userId' => $user->id]);
 
-        if(!$employee) {
-            $employee = EmployeeHelper::populateEmployeeFromPost($user->id, null);
-
-            $validateEmployee = $employee->validate();
-
-            if($validateEmployee) {
-                CompanyManagement::$plugin->employee->saveEmployee($employee,$user->id);
-            }
-        }
+//        if(!$employee) {
+//            $employee = EmployeeHelper::populateEmployeeFromPost($user->id, null);
+//
+//            $validateEmployee = $employee->validate();
+//
+//            if($validateEmployee) {
+//                CompanyManagement::$plugin->employee->saveEmployee($employee,$user->id);
+//            }
+//        }
     }
 
     /*

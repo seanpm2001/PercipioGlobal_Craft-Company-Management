@@ -43,8 +43,11 @@ class Department
         }
 
         $department->title = $request->getBodyParam('title');
-        $department->slug = str_replace(" ", "_", strtolower($request->getBodyParam('title')).'-'.strtolower($request->getBodyParam('companyId')));
-        $department->companyId = $request->getBodyParam('companyId');
+
+        $companyId = count($request->getBodyParam('companyId')) > 0 ? $request->getBodyParam('companyId')[0] : null;
+
+        $department->slug = str_replace(" ", "_", strtolower($request->getBodyParam('title')).'-'.$companyId);
+        $department->companyId = $companyId;
 
         return $department;
     }

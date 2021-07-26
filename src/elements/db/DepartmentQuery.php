@@ -44,7 +44,9 @@ class DepartmentQuery extends ElementQuery
         $this->joinElementTable('companymanagement_departments');
 
         $this->query->select([
-            'companymanagement_employees.companyId',
+            'companymanagement_departments.companyId',
+            'companymanagement_departments.slug',
+            'companymanagement_departments.title',
         ]);
 
         return parent::beforePrepare();

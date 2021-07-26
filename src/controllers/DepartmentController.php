@@ -61,10 +61,10 @@ class DepartmentController extends Controller
             }
         }
 
-        if ($department === null) {
+        if ($variables['department'] === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new department');
         } else {
-            $variables['title'] = $department->title;
+            $variables['title'] = $variables['department']->title;
         }
 
         return $this->renderTemplate('company-management/departments/_edit', $variables);

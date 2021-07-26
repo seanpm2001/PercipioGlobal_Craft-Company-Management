@@ -254,7 +254,7 @@ class CompanyManagement extends Plugin
                 $event->rules['company-management/employees/new'] = 'company-management/employee/edit';
                 $event->rules['company-management/departments'] = 'company-management/department/index';
                 $event->rules['company-management/departments/new'] = 'company-management/department/edit';
-                $event->rules['company-management/departments/<employeeId:\d+>'] = 'company-management/department/edit';
+                $event->rules['company-management/departments/<departmentId:\d+>'] = 'company-management/department/edit';
             }
         );
     }
@@ -394,42 +394,42 @@ class CompanyManagement extends Plugin
 
     private function _registerUserSave()
     {
-        Event::on(
-            User::class,
-            User::EVENT_BEFORE_SAVE,
-            function (ModelEvent $event) {
-
-                if("live" !== $event->sender->getScenario()) {
-                    return true;
-                }
-
-                $employee = EmployeeHelper::populateEmployeeFromPost();
-                $validateEmployee = $employee->validate();
-
-                $event->sender->addErrors(
-                    $employee->getErrors()
-                );
-
-                $event->isValid = $validateEmployee;
-            }
-        );
-
-        Event::on(
-            User::class,
-            User::EVENT_AFTER_SAVE,
-            function (ModelEvent $event) {
-
-                if("live" !== $event->sender->getScenario()) {
-                    return true;
-                }
-
-                $employee = EmployeeHelper::populateEmployeeFromPost($event->sender->id);
-                CompanyManagement::$plugin->employee->saveEmployee($employee,$event->sender->id);
-
-                $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
-                CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);
-
-            }
-        );
+//        Event::on(
+//            User::class,
+//            User::EVENT_BEFORE_SAVE,
+//            function (ModelEvent $event) {
+//
+//                if("live" !== $event->sender->getScenario()) {
+//                    return true;
+//                }
+//
+//                $employee = EmployeeHelper::populateEmployeeFromPost();
+//                $validateEmployee = $employee->validate();
+//
+//                $event->sender->addErrors(
+//                    $employee->getErrors()
+//                );
+//
+//                $event->isValid = $validateEmployee;
+//            }
+//        );
+//
+//        Event::on(
+//            User::class,
+//            User::EVENT_AFTER_SAVE,
+//            function (ModelEvent $event) {
+//
+//                if("live" !== $event->sender->getScenario()) {
+//                    return true;
+//                }
+//
+//                $employee = EmployeeHelper::populateEmployeeFromPost($event->sender->id);
+//                CompanyManagement::$plugin->employee->saveEmployee($employee,$event->sender->id);
+//
+//                $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
+//                CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);
+//
+//            }
+//        );
     }
 }

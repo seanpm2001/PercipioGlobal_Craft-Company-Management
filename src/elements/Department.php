@@ -98,7 +98,6 @@ class Department extends Element
             [
                 'key' => '*',
                 'label' => 'All Departments',
-                'defaultSort' => ['title', 'desc'],
                 'criteria' => ['id' => $ids],
             ]
         ];
@@ -126,14 +125,12 @@ class Department extends Element
     {
         return [
             'title' => ['label' => Craft::t('company-management', 'Title')],
-            'slug' => ['label' => Craft::t('company-management', 'Slug')],
         ];
     }
 
     protected static function defineDefaultTableAttributes(string $source): array
     {
         $attributes = [];
-        $attributes[] = 'title';
         $attributes[] = 'dateCreated';
         $attributes[] = 'dateUpdated';
 
@@ -143,8 +140,6 @@ class Department extends Element
     protected static function defineSortOptions(): array
     {
         return [
-            'title' => Craft::t('company-management', 'Title'),
-            'slug' => Craft::t('company-management', 'Slug'),
             'dateCreated' => Craft::t('company-management', 'Date Created'),
         ];
     }
