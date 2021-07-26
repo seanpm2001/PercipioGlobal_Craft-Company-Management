@@ -3,6 +3,7 @@
 namespace percipiolondon\companymanagement\elements\db;
 
 use craft\elements\db\ElementQuery;
+use percipiolondon\companymanagement\elements\Employee;
 
 class EmployeeQuery extends ElementQuery
 {
@@ -57,12 +58,12 @@ class EmployeeQuery extends ElementQuery
     public function __construct($elementType, array $config = [])
     {
         // Default status
-        if(!isset($config['status']))
-        {
-            $config['status'] = [
-                Employee::STATUS_ACTIVE,
-            ];
-        }
+//        if(!isset($config['status']))
+//        {
+//            $config['status'] = [
+//                Employee::STATUS_ACTIVE,
+//            ];
+//        }
 
         parent::__construct($elementType, $config);
     }
@@ -376,38 +377,35 @@ class EmployeeQuery extends ElementQuery
          */
 
         $this->query->select([
-            'companymanagement_companies.companyId',
-            'companymanagement_companies.userId',
-            'companymanagement_companies.nameTitle',
-            'companymanagement_companies.firstName',
-            'companymanagement_companies.middleName',
-            'companymanagement_companies.lastName',
-            'companymanagement_companies.knownAs',
-            'companymanagement_companies.reference',
-            'companymanagement_companies.gender',
-            'companymanagement_companies.nationality',
-            'companymanagement_companies.nationalInsuranceNumber',
-            'companymanagement_companies.drivingLicense',
-            'companymanagement_companies.address',
-            'companymanagement_companies.dateOfBirth',
-            'companymanagement_companies.ethnicity',
-            'companymanagement_companies.maritalStatus',
-            'companymanagement_companies.personalEmail',
-            'companymanagement_companies.personalMobile',
-            'companymanagement_companies.personalPhone',
-            'companymanagement_companies.department',
-            'companymanagement_companies.jobTitle',
-            'companymanagement_companies.directDialingIn',
-            'companymanagement_companies.workExtension',
-            'companymanagement_companies.workMobile',
-            'companymanagement_companies.contractType',
-            'companymanagement_companies.joinDate',
-            'companymanagement_companies.endDate',
-            'companymanagement_companies.probationPeriod',
-            'companymanagement_companies.noticePeriod',
+            'companymanagement_employees.companyId',
+            'companymanagement_employees.userId',
+            'companymanagement_employees.firstName',
+            'companymanagement_employees.middleName',
+            'companymanagement_employees.lastName',
+            'companymanagement_employees.knownAs',
+            'companymanagement_employees.reference',
+            'companymanagement_employees.gender',
+            'companymanagement_employees.nationality',
+            'companymanagement_employees.nationalInsuranceNumber',
+            'companymanagement_employees.drivingLicense',
+            'companymanagement_employees.address',
+            'companymanagement_employees.dateOfBirth',
+            'companymanagement_employees.ethnicity',
+            'companymanagement_employees.maritalStatus',
+            'companymanagement_employees.personalEmail',
+            'companymanagement_employees.personalMobile',
+            'companymanagement_employees.personalPhone',
+            'companymanagement_employees.department',
+            'companymanagement_employees.jobTitle',
+            'companymanagement_employees.directDialingIn',
+            'companymanagement_employees.workExtension',
+            'companymanagement_employees.workMobile',
+            'companymanagement_employees.contractType',
+            'companymanagement_employees.joinDate',
+            'companymanagement_employees.endDate',
+            'companymanagement_employees.probationPeriod',
+            'companymanagement_employees.noticePeriod',
         ]);
-
-        $this->_applyRefParam();
 
         return parent::beforePrepare();
     }

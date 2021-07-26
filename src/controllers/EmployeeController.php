@@ -12,6 +12,7 @@ namespace percipiolondon\companymanagement\controllers;
 
 use craft\web\Controller;
 use percipiolondon\companymanagement\CompanyManagement;
+use percipiolondon\companymanagement\elements\Company;
 use percipiolondon\companymanagement\elements\Employee;
 use percipiolondon\companymanagement\helpers\Employee as EmployeeHelper;
 use yii\db\Exception;
@@ -53,8 +54,7 @@ class EmployeeController extends Controller
 
         if (empty($variables['employee'])) {
             if (!empty($variables['employeeId'])) {
-                $variables['employee'] = CompanyManagement::$plugin->employee->getEmployeeId($variables['employeeId'], 1);
-
+                $variables['employee'] = Employee::findOne($variables['employeeId']);
                 if (!$variables['employee']) {
                     throw new Exception('Missing company data.');
                 }
@@ -87,6 +87,8 @@ class EmployeeController extends Controller
 
         if(!$success) {
             Craft::$app->getSession()->setError(Craft::t('company-management', 'Couldn’t save employee.'));
+
+            Craft::dd($employee->getErrors());
 
             Craft::$app->getUrlManager()->setRouteParams([
                 'employee' => $employee,

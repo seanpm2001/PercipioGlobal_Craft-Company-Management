@@ -3,12 +3,16 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use craft\helpers\DateTimeHelper;
+use percipiolondon\companymanagement\db\Table;
+use percipiolondon\companymanagement\elements\db\EmployeeQuery;
 use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
 
 use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\db\UserQuery;
+use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\Query;
 use Craft;
@@ -218,7 +222,7 @@ class Employee extends Element
      */
     public static function pluralDisplayName(): string
     {
-        return Craft::t('company-management', 'Employee');
+        return Craft::t('company-management', 'Employees');
     }
 
     /**
@@ -245,7 +249,7 @@ class Employee extends Element
      */
     public static function hasContent(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -342,7 +346,7 @@ class Employee extends Element
 
     public static function find(): ElementQueryInterface
     {
-        return new UserQuery(static::class);
+        return new EmployeeQuery(static::class);
     }
 
     /**
@@ -356,11 +360,12 @@ class Employee extends Element
     protected static function defineSources(string $context = null): array
     {
         $ids = self::_getEmployeeIds();
+
         return [
             [
                 'key' => '*',
                 'label' => 'All Employees',
-                'defaultSort' => ['firstName', 'desc'],
+                'defaultSort' => ['lastName', 'desc'],
                 'criteria' => ['id' => $ids],
             ]
         ];
@@ -394,7 +399,7 @@ class Employee extends Element
     protected static function defineTableAttributes(): array
     {
         return [
-            'title' => ['label' => Craft::t('company-management', 'Name')],
+            'lastName' => ['label' => Craft::t('company-management', 'Name')],
             'dateCreated' => ['label' => Craft::t('company-management', 'Date Created')],
         ];
     }
@@ -406,7 +411,7 @@ class Employee extends Element
     protected static function defineDefaultTableAttributes(string $source): array
     {
         $attributes = [];
-        $attributes[] = 'name';
+        $attributes[] = 'lastName';
         $attributes[] = 'dateCreated';
         $attributes[] = 'dateUpdated';
 
@@ -432,6 +437,23 @@ class Employee extends Element
         }
 
         return $employeeIds;
+    }
+
+    /**
+     * @param string $attribute
+     * @return string
+     * @throws InvalidConfigException
+     */
+    protected function tableAttributeHtml(string $attribute): string
+    {
+        switch ($attribute) {
+            case 'title':
+                // use this to customise returned values (add links / mailto's etc)
+                // https://docs.craftcms.com/commerce/api/v3/craft-commerce-elements-traits-orderelementtrait.html#protected-methods
+                return $this->title;
+        }
+
+        return parent::tableAttributeHtml($attribute);
     }
 
     // Public Methods
@@ -478,6 +500,14 @@ class Employee extends Element
     public function getIsEditable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCpEditUrl()
+    {
+        return 'company-management/employees/'.$this->id;
     }
 
     // Events
@@ -540,7 +570,7 @@ class Employee extends Element
         }
 
         // Personal
-//        $record->title = $this->firstName . ' ' . $this->lastName;
+        $record->title = $this->firstName . ' ' . $this->lastName;
         $record->firstName = $this->firstName;
         $record->lastName = $this->lastName;
         $record->middleName = $this->middleName;
@@ -553,11 +583,11 @@ class Employee extends Element
         $record->gender = $this->gender;
         $record->nationality = $this->nationality;
         $record->nationalInsuranceNumber = $this->nationalInsuranceNumber;
-        $record->dateOfBirth = $this->dateOfBirth;
+        $record->dateOfBirth = $this->dateOfBirth ? DateTimeHelper::toDateTime($this->dateOfBirth) : false;
 
         // Employee related info inside of the company
-        $record->joinDate = $this->joinDate;
-        $record->endDate = $this->endDate;
+        $record->joinDate = $this->joinDate ? DateTimeHelper::toDateTime($this->joinDate) : false;
+        $record->endDate = $this->endDate ? DateTimeHelper::toDateTime($this->endDate) : false;
         $record->probationPeriod = $this->probationPeriod;
         $record->noticePeriod = $this->noticePeriod;
         $record->reference = $this->reference;

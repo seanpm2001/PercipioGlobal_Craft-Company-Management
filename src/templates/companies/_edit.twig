@@ -29,7 +29,7 @@
 {%- else -%}
     {%- set templateTabs = {
         company: {label: 'Company'|t('company-management'), url: '#tabpanel-company'},
-        contact: {label: 'Contact'|t('company-management'), url: '#tabpanel-contact'},
+        admin: {label: 'Company Admin'|t('company-management'), url: '#tabpanel-admin'},
     } -%}
 {%- endif -%}
 {%- set tabs = templateTabs|merge(tabNav) -%}

@@ -66,10 +66,13 @@ class Employee extends Component
     {
 
         $employee = EmployeeRecord::findOne(['userId' => $userId]);
-        $employee->companyId = $companyId;
 
-        $employee = EmployeeHelper::populateEmployeeFromRecord($employee, $userId, $companyId);
+        if($employee) {
+            $employee->companyId = $companyId;
 
-        static::saveEmployee($employee,$userId);
+            $employee = EmployeeHelper::populateEmployeeFromRecord($employee, $userId, $companyId);
+
+            static::saveEmployee($employee, $userId);
+        }
     }
 }

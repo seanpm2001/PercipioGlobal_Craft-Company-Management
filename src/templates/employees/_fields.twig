@@ -305,4 +305,13 @@
         errors: employee ? employee.getErrors('directDialingIn') : null,
     }) }}
 
+    {{ forms.textField({
+        label: "Work Extension"|t('company-management'),
+        instructions: "What's he employee's work extension "|t('company-management'),
+        id: 'workExtension',
+        name: 'workExtension',
+        value: employee ? employee.workExtension : '',
+        errors: employee ? employee.getErrors('workExtension') : null,
+    }) }}
+
 {% endmacro %}

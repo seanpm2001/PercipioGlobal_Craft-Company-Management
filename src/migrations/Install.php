@@ -147,6 +147,7 @@ class Install extends Migration {
                 // Custom columns in the table
                 'companyId' => $this->integer(),
                 'userId' => $this->integer(),
+                'title' => $this->string()->notNull()->defaultValue(''),
                 'firstName' => $this->string()->notNull()->defaultValue(''),
                 'lastName' => $this->string()->notNull()->defaultValue(''),
                 'middleName' => $this->string()->defaultValue(''),
@@ -173,6 +174,7 @@ class Install extends Migration {
                 'personalPhone' => $this->string()->defaultValue(''),
                 'directDialingIn' => $this->string()->defaultValue(''),
                 'workMobile' => $this->string()->defaultValue(''),
+                'workExtension' => $this->string()->defaultValue(''),
             ]);
         }
 

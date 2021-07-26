@@ -14,6 +14,7 @@
 {%- set elementType = 'percipiolondon\\companymanagement\\elements\\Employee' -%}
 
 {% block actionButton %}
+    {% set test = craft.employees %}
     <a href="{{ url('company-management/employees/new') }}" class="btn submit add icon">Create Employee</a>
     {{ parent() }}
 {% endblock %}

@@ -4,6 +4,7 @@ namespace percipiolondon\companymanagement\helpers;
 
 use craft\helpers\DateTimeHelper;
 use percipiolondon\companymanagement\CompanyManagement;
+use percipiolondon\companymanagement\elements\Company as CompanyModel;
 use percipiolondon\companymanagement\elements\Employee as EmployeeModel;
 use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
 use yii\web\NotFoundHttpException;
@@ -12,15 +13,40 @@ use Craft;
 
 class Employee
 {
-    public static function populateEmployeeFromPost(int $userId = null, int $companyId = null): EmployeeModel
+    public static function employeeFromPost(Request $request = null): EmployeeModel
     {
-        $request = Craft::$app->getRequest();
+        if ($request === null) {
+            $request = Craft::$app->getRequest();
+        }
 
-        $employee = new EmployeeModel();
+        $employeeId = $request->getBodyParam('employeeId');
+
+        if($employeeId) {
+            $employee = EmployeeModel::findOne($employeeId);
+
+            if (!$employee) {
+                throw new NotFoundHttpException(Craft::t('company-management', 'No employee with the ID “{id}”', ['id' => $employeeId]));
+            }
+        }else {
+            $employee = new EmployeeModel();
+        }
+
+        return $employee;
+    }
+
+    public static function populateEmployeeFromPost(EmployeeModel $employee = null, Request $request = null): EmployeeModel
+    {
+        if ($request === null) {
+            $request = Craft::$app->getRequest();
+        }
+
+        if ($employee === null) {
+            $employee = static::employeeFromPost($request);
+        }
 
 //        $employee->userId = $request->getBodyParam('userId') ?? $userId;
 //        $employee->companyId = $request->getBodyParam('companyId') ?? $companyId;
-        $employee->title = $request->getBodyParam('firstName').'-'.$request->getBodyParam('middleName').'-'.$request->getBodyParam('lastName');
+        $employee->title = $request->getBodyParam('firstName'). ' ' .$request->getBodyParam('middleName').' '.$request->getBodyParam('lastName');
         $employee->slug = str_replace(" ", "_", strtolower($request->getBodyParam('firstName')).'-'.strtolower($request->getBodyParam('middleName')).'-'.strtolower($request->getBodyParam('lastName')));
         $employee->firstName = $request->getBodyParam('firstName');
         $employee->lastName = $request->getBodyParam('lastName');
@@ -48,6 +74,7 @@ class Employee
         $employee->personalPhone = $request->getBodyParam('personalPhone');
         $employee->directDialingIn = $request->getBodyParam('directDialingIn');
         $employee->workMobile = $request->getBodyParam('workMobile');
+        $employee->workExtension = $request->getBodyParam('workExtension');
 
         return $employee;
     }
@@ -86,6 +113,7 @@ class Employee
         $employee->personalPhone = $employeeRecord->personalPhone;
         $employee->directDialingIn = $employeeRecord->directDialingIn;
         $employee->workMobile = $employeeRecord->workMobile;
+        $employee->workExtension = $employeeRecord->workExtension;
 
         return $employee;
     }

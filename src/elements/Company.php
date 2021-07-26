@@ -377,6 +377,7 @@ class Company extends Element
     protected static function defineSources(string $context = null): array
     {
         $ids = self::_getCompanyIds();
+
         return [
             [
                 'key' => '*',
@@ -836,7 +837,7 @@ class Company extends Element
             $user = new User();
             $user->firstName = $this->contactFirstName;
             $user->lastName = $this->contactLastName;
-            $user->username = $this->contactEmail;
+//            $user->username = $this->contactEmail;
             $user->email = $this->contactEmail;
 
             $success = Craft::$app->elements->saveElement($user, true);
