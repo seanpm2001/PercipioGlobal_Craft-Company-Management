@@ -11,4 +11,5 @@ abstract class Table
     const CM_COMPANYTYPES_SITES = "{{%companymanagement_companytypes_sites}}";
     const CM_PERMISSIONS = "{{%companymanagement_permissions}}";
     const CM_PERMISSIONS_EMPLOYEES = "{{%companymanagement_permissions_employees}}";
+    const CM_DEPARTMENTS = "{{%companymanagement_departments}}";
 }

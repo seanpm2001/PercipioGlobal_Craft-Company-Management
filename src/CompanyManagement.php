@@ -42,6 +42,7 @@ use craft\services\Gql;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 
+use percipiolondon\timeloop\Timeloop;
 use yii\base\Event;
 
 /**
@@ -110,7 +111,7 @@ class CompanyManagement extends Plugin
             'timeloop' => Timeloop::class,
             'vite' => [
                 'class' => VitePluginService::class,
-                'assetClass' => TimeloopAsset::class,
+                'assetClass' => \percipiolondon\timeloop\assetbundles\timeloop\TimeloopAsset::class,
                 'useDevServer' => true,
                 'devServerPublic' => 'http://localhost:3001',
                 'serverPublic' => 'http://localhost:8000',
@@ -147,7 +148,6 @@ class CompanyManagement extends Plugin
         $this->_registerElementTypes();
         $this->_registerServices();
         $this->_registerVariables();
-//        $this->_registerControllers();
         $this->_registerUserSave();
         $this->_registerProjectConfigEventListeners();
         $this->_registerAfterUninstall();
@@ -202,6 +202,11 @@ class CompanyManagement extends Plugin
                 'label' => Craft::t('company-management', 'Employees'),
                 'url' => 'company-management/employees'
             ];
+
+            $nav['subnav']['departments'] = [
+                'label' => Craft::t('company-management', 'Departments'),
+                'url' => 'company-management/departments'
+            ];
         }
 
         return $nav;
@@ -247,7 +252,9 @@ class CompanyManagement extends Plugin
                 $event->rules['company-management/companies/<companyId:\d+>'] = 'company-management/company/edit';
                 $event->rules['company-management/employees'] = 'company-management/employee/index';
                 $event->rules['company-management/employees/new'] = 'company-management/employee/edit';
-                $event->rules['company-management/employees/<employeeId:\d+>'] = 'company-management/employee/edit';
+                $event->rules['company-management/departments'] = 'company-management/department/index';
+                $event->rules['company-management/departments/new'] = 'company-management/department/edit';
+                $event->rules['company-management/departments/<departmentId:\d+>'] = 'company-management/department/edit';
             }
         );
     }
@@ -377,17 +384,6 @@ class CompanyManagement extends Plugin
         ]);
     }
 
-//    private function _registerControllers()
-//    {
-//        Event::on(
-//            UrlManager::class,
-//            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-//            function (RegisterUrlRulesEvent $event) {
-//                $event->rules['get-user/<companyId>'] = 'percipiolondon/companymanagement/user/get-user';
-//            }
-//        );
-//    }
-
     private function _registerTemplateHooks()
     {
         Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldTab']);
@@ -398,42 +394,42 @@ class CompanyManagement extends Plugin
 
     private function _registerUserSave()
     {
-        Event::on(
-            User::class,
-            User::EVENT_BEFORE_SAVE,
-            function (ModelEvent $event) {
-
-                if("live" !== $event->sender->getScenario()) {
-                    return true;
-                }
-
-                $employee = EmployeeHelper::populateEmployeeFromPost();
-                $validateEmployee = $employee->validate();
-
-                $event->sender->addErrors(
-                    $employee->getErrors()
-                );
-
-                $event->isValid = $validateEmployee;
-            }
-        );
-
-        Event::on(
-            User::class,
-            User::EVENT_AFTER_SAVE,
-            function (ModelEvent $event) {
-
-                if("live" !== $event->sender->getScenario()) {
-                    return true;
-                }
-
-                $employee = EmployeeHelper::populateEmployeeFromPost($event->sender->id);
-                CompanyManagement::$plugin->employee->saveEmployee($employee,$event->sender->id);
-
-                $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
-                CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);
-
-            }
-        );
+//        Event::on(
+//            User::class,
+//            User::EVENT_BEFORE_SAVE,
+//            function (ModelEvent $event) {
+//
+//                if("live" !== $event->sender->getScenario()) {
+//                    return true;
+//                }
+//
+//                $employee = EmployeeHelper::populateEmployeeFromPost();
+//                $validateEmployee = $employee->validate();
+//
+//                $event->sender->addErrors(
+//                    $employee->getErrors()
+//                );
+//
+//                $event->isValid = $validateEmployee;
+//            }
+//        );
+//
+//        Event::on(
+//            User::class,
+//            User::EVENT_AFTER_SAVE,
+//            function (ModelEvent $event) {
+//
+//                if("live" !== $event->sender->getScenario()) {
+//                    return true;
+//                }
+//
+//                $employee = EmployeeHelper::populateEmployeeFromPost($event->sender->id);
+//                CompanyManagement::$plugin->employee->saveEmployee($employee,$event->sender->id);
+//
+//                $permissions = Craft::$app->getRequest()->getBodyParam('company-permissions');
+//                CompanyManagement::$plugin->userPermissions->updatePermissions($permissions, $event->sender->id);
+//
+//            }
+//        );
     }
 }
