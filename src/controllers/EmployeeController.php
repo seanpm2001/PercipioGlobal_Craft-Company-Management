@@ -10,6 +10,7 @@
 
 namespace percipiolondon\companymanagement\controllers;
 
+use craft\helpers\DateTimeHelper;
 use craft\web\Controller;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\Company;
@@ -51,13 +52,22 @@ class EmployeeController extends Controller
     public function actionEdit(int $employeeId = null, Employee $employee = null)
     {
         $variables = compact('employeeId', 'employee');
+        $employee = null;
 
         if (empty($variables['employee'])) {
             if (!empty($variables['employeeId'])) {
-                $variables['employee'] = Employee::findOne($variables['employeeId']);
-                if (!$variables['employee']) {
+                $employee = Employee::findOne($variables['employeeId']);
+
+                if (!$employee) {
                     throw new Exception('Missing company data.');
                 }
+
+                $employee->dateOfBirth = DateTimeHelper::toDateTime($employee->dateOfBirth);
+                $employee->joinDate = DateTimeHelper::toDateTime($employee->joinDate);
+                $employee->endDate = DateTimeHelper::toDateTime($employee->endDate);
+
+                $variables['employee'] = $employee;
+
             } else {
                 $variables['employee'] = new Employee();
             }

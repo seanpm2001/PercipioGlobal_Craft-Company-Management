@@ -68,6 +68,7 @@ class Employee
         $employee->reference = $request->getBodyParam('reference');
         $employee->department = $request->getBodyParam('department');
         $employee->jobTitle = $request->getBodyParam('jobTitle');
+        $employee->companyEmail = $request->getBodyParam('companyEmail');
         $employee->contractType = $request->getBodyParam('contractType');
         $employee->personalEmail = $request->getBodyParam('personalEmail');
         $employee->personalMobile = $request->getBodyParam('personalMobile');
@@ -107,6 +108,7 @@ class Employee
         $employee->reference = $employeeRecord->reference;
         $employee->department = $employeeRecord->department;
         $employee->jobTitle = $employeeRecord->jobTitle;
+        $employee->companyEmail = $employeeRecord->companyEmail;
         $employee->contractType = $employeeRecord->contractType;
         $employee->personalEmail = $employeeRecord->personalEmail;
         $employee->personalMobile = $employeeRecord->personalMobile;

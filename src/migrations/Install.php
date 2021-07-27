@@ -169,6 +169,7 @@ class Install extends Migration {
                 'reference' => $this->string()->defaultValue(''),
                 'department' => $this->string()->defaultValue(''),
                 'jobTitle' => $this->string()->defaultValue(''),
+                'companyEmail' => $this->string()->defaultValue(''),
                 'contractType' => $this->string()->defaultValue(''),
                 'personalEmail' => $this->string()->defaultValue(''),
                 'personalMobile' => $this->string()->defaultValue(''),

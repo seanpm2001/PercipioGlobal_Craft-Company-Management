@@ -166,9 +166,10 @@
         id: 'dateOfBirth',
         name: 'dateOfBirth',
         required: true,
-        value: employee ? employee.dateOfBirth : '',
+        value: employee ? employee.dateOfBirth : null,
         errors: employee ? employee.getErrors('dateOfBirth') : null,
     }) }}
+{#    value: employee and employee.dateOfBirth ? employee.dateOfBirth.date != '' ? employee.dateOfBirth : null : null,#}
 
 {% endmacro %}
 
@@ -245,9 +246,19 @@
 
     {%- import "_includes/forms" as forms -%}
 
+    {{ forms.textField({
+        label: "Company Email"|t('company-management'),
+        instructions: "What's the employee work email. This email will be used for login "|t('company-management'),
+        id: 'companyEmail',
+        name: 'companyEmail',
+        value: employee ? employee.companyEmail : '',
+        errors: employee ? employee.getErrors('companyEmail') : null,
+        required: true,
+    }) }}
+
     {{ forms.selectField({
-        label: 'Marital Status'|t('company-management'),
-        instructions: "What's the employee's marital status"|t('company-management'),
+        label: 'Contract Type'|t('company-management'),
+        instructions: "What's the employee's contract type"|t('company-management'),
         id:'contractType',
         name: 'contractType',
         options: {

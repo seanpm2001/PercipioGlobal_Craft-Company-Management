@@ -4,6 +4,7 @@
 namespace percipiolondon\companymanagement\elements;
 
 use craft\helpers\DateTimeHelper;
+use craft\helpers\Db;
 use percipiolondon\companymanagement\db\Table;
 use percipiolondon\companymanagement\elements\db\EmployeeQuery;
 use percipiolondon\companymanagement\records\Employee as EmployeeRecord;
@@ -18,6 +19,7 @@ use yii\db\Query;
 use Craft;
 use DateTime;
 use ArrayObject;
+use yii\validators\DateValidator;
 use yii\validators\Validator;
 
 class Employee extends Element
@@ -165,6 +167,11 @@ class Employee extends Element
      * @var String
      */
     public $jobTitle;
+
+    /**
+     * @var String
+     */
+    public $companyEmail;
 
     /**
      * @var String
@@ -473,9 +480,23 @@ class Employee extends Element
     {
         // @TODO: Create additional rules
         $rules = parent::defineRules();
-        $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber'], 'required'];
+        $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber', 'companyEmail'], 'required'];
 
         $rules[] = ['personalEmail', function($attribute, $params, Validator $validator){
+            $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
+
+            // Valid email
+            if (!preg_match($preg, $this->$attribute)) {
+                $error = Craft::t('company-management', '"{value}" is not a valid email address.', [
+                    'attribute' => $attribute,
+                    'value' => $this->$attribute,
+                ]);
+
+                $validator->addError($this, $attribute, $error);
+            }
+        }];
+
+        $rules[] = ['companyEmail', function($attribute, $params, Validator $validator){
             $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
 
             // Valid email
@@ -583,16 +604,17 @@ class Employee extends Element
         $record->gender = $this->gender;
         $record->nationality = $this->nationality;
         $record->nationalInsuranceNumber = $this->nationalInsuranceNumber;
-        $record->dateOfBirth = $this->dateOfBirth ? DateTimeHelper::toDateTime($this->dateOfBirth) : false;
+        $record->dateOfBirth = $this->dateOfBirth ? Db::prepareDateForDb($this->dateOfBirth) : false;
 
         // Employee related info inside of the company
-        $record->joinDate = $this->joinDate ? DateTimeHelper::toDateTime($this->joinDate) : false;
-        $record->endDate = $this->endDate ? DateTimeHelper::toDateTime($this->endDate) : false;
+        $record->joinDate = $this->joinDate ? Db::prepareDateForDb($this->joinDate) : false;
+        $record->endDate = $this->endDate ? Db::prepareDateForDb($this->endDate) : false;
         $record->probationPeriod = $this->probationPeriod;
         $record->noticePeriod = $this->noticePeriod;
         $record->reference = $this->reference;
         $record->department = $this->department;
         $record->jobTitle = $this->jobTitle;
+        $record->companyEmail = $this->companyEmail;
 
         // Contacts
         $record->contractType = $this->contractType;

@@ -68,6 +68,7 @@ use yii\db\ActiveQueryInterface;
  * @property string $workExtension
  * @property string $workMobile
  * @property string $jobTitle
+ * @property string $companyEmail
  *
  *
  * @package Company Management

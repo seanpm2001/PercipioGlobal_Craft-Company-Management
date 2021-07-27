@@ -252,6 +252,7 @@ class CompanyManagement extends Plugin
                 $event->rules['company-management/companies/<companyId:\d+>'] = 'company-management/company/edit';
                 $event->rules['company-management/employees'] = 'company-management/employee/index';
                 $event->rules['company-management/employees/new'] = 'company-management/employee/edit';
+                $event->rules['company-management/employees/<employeeId:\d+>'] = 'company-management/employee/edit';
                 $event->rules['company-management/departments'] = 'company-management/department/index';
                 $event->rules['company-management/departments/new'] = 'company-management/department/edit';
                 $event->rules['company-management/departments/<departmentId:\d+>'] = 'company-management/department/edit';
