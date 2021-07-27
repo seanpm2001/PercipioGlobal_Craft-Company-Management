@@ -67,6 +67,8 @@ class DepartmentController extends Controller
             $variables['title'] = $variables['department']->title;
         }
 
+        $variables['errors'] = $variables['department']->getErrors();
+
         return $this->renderTemplate('company-management/departments/_edit', $variables);
     }
 

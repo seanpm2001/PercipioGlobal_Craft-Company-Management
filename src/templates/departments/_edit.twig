@@ -37,7 +37,7 @@
     {{- redirectInput('company-management/companies') -}}
 
     {%- if department -%}
-        <input type="hidden" name="companyId" value="{{ department.id }}">
+        <input type="hidden" name="departmentId" value="{{ department.id }}">
     {%- endif -%}
     <input type="hidden" name="siteId" value="{{ department ? department.siteId : currentSite.id }}">
 
@@ -54,6 +54,14 @@
             autofocus: true,
             required: true,
         }) }}
+
+        {% if errors %}
+            <ul class="errors" style="margin-top:-15px">
+                {% for error in  department.getErrors('slug') %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
         {%- set comp = department and department.companyId ? [craft.companies.id(department.companyId).one()] : [] -%}
         {{ forms.elementSelectField({

@@ -17,7 +17,7 @@ class Department
             $request = Craft::$app->getRequest();
         }
 
-        $departmentId = $request->getBodyParam('employeeId');
+        $departmentId = $request->getBodyParam('departmentId');
 
         if($departmentId) {
             $department = DepartmentModel::findOne($departmentId);
@@ -44,7 +44,7 @@ class Department
 
         $department->title = $request->getBodyParam('title');
 
-        $companyId = count($request->getBodyParam('companyId')) > 0 ? $request->getBodyParam('companyId')[0] : null;
+        $companyId = gettype($request->getBodyParam('companyId')) !== "string" ? $request->getBodyParam('companyId')[0] : null;
 
         $department->slug = str_replace(" ", "_", strtolower($request->getBodyParam('title')).'-'.$companyId);
         $department->companyId = $companyId;

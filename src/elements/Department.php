@@ -11,6 +11,7 @@ use percipiolondon\companymanagement\elements\db\DepartmentQuery;
 use percipiolondon\companymanagement\records\Department as DepartmentRecord;
 use yii\db\Exception;
 use yii\db\Query;
+use yii\validators\Validator;
 
 class Department extends Element
 {
@@ -161,7 +162,6 @@ class Department extends Element
     // =========================================================================
     private static function _getDepartmentIds(): array
     {
-
         $departmentIds = [];
 
         // Fetch all company UIDs
@@ -204,6 +204,21 @@ class Department extends Element
     {
         $rules = parent::defineRules();
         $rules[] = [['title', 'companyId'], 'required'];
+
+        if(null === $this->id) {
+            $rules[] = ['slug', function($attribute, $params, Validator $validator){
+                $department = Department::findOne(['slug' => $this->attributes['slug']]);
+
+                if($department) {
+                    $error = Craft::t('company-management', 'A department "{value}" already exists.', [
+                        'attribute' => $attribute,
+                        'value' => $this->$attribute,
+                    ]);
+
+                    $validator->addError($this, $attribute, $error);
+                }
+            }];
+        }
 
         return $rules;
     }
