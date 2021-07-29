@@ -163,7 +163,7 @@ class CompanyManagement extends Plugin
 
         } else if ($request->getIsCpRequest()) {
             $this->_registerCpRoutes();
-            $this->_registerTemplateHooks();
+//            $this->_registerTemplateHooks();
         }
 
 
@@ -387,10 +387,10 @@ class CompanyManagement extends Plugin
 
     private function _registerTemplateHooks()
     {
-        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldTab']);
-        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionCustomFieldTab']);
-        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldContent']);
-        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionsCustomFieldContent']);
+//        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldTab']);
+//        Craft::$app->getView()->hook('cp.users.edit', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionCustomFieldTab']);
+//        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->employee, 'addEditUserCustomFieldContent']);
+//        Craft::$app->getView()->hook('cp.users.edit.content', [CompanyManagement::$plugin->userPermissions, 'addEditUserPermissionsCustomFieldContent']);
     }
 
     private function _registerUserSave()

@@ -3,6 +3,7 @@
 
 namespace percipiolondon\companymanagement\elements;
 
+use craft\elements\User;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use percipiolondon\companymanagement\db\Table;
@@ -13,6 +14,7 @@ use craft\base\Element;
 use craft\elements\actions\Delete;
 use craft\elements\db\ElementQueryInterface;
 use craft\elements\db\UserQuery;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\Query;
@@ -174,9 +176,9 @@ class Employee extends Element
     public $companyEmail;
 
     /**
-     * @var String
+     * @var Int
      */
-    public $department;
+    public $departmentId;
 
     /**
      * @var String
@@ -478,9 +480,8 @@ class Employee extends Element
      */
     public function rules()
     {
-        // @TODO: Create additional rules
         $rules = parent::defineRules();
-        $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber', 'companyEmail'], 'required'];
+        $rules[] = [['nameTitle', 'firstName', 'lastName', 'dateOfBirth', 'nationalInsuranceNumber', 'companyEmail', 'departmentId'], 'required'];
 
         $rules[] = ['personalEmail', function($attribute, $params, Validator $validator){
             $preg = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
@@ -509,6 +510,24 @@ class Employee extends Element
                 $validator->addError($this, $attribute, $error);
             }
         }];
+
+        if(null === $this->id) {
+            $rules[] = [
+                'companyEmail', function($attribute, $params, Validator $validator) {
+                    $user = User::findOne(['email' => $this->companyEmail]);;
+
+                    // Valid email
+                    if (null !== $user) {
+                        $error = Craft::t('company-management', '"{value}" already exists as a user.', [
+                            'attribute' => $attribute,
+                            'value' => $this->$attribute,
+                        ]);
+
+                        $validator->addError($this, $attribute, $error);
+                    }
+                }
+            ];
+        }
 
         return $rules;
     }
@@ -586,8 +605,15 @@ class Employee extends Element
                 throw new Exception('Invalid employee ID: ' . $this->id);
             }
         } else {
-            $record = new EmployeeRecord();
-            $record->id = (int)$this->id;
+            $user = User::findOne(['email' => $this->companyEmail]);
+
+            if(!$user) {
+                $record = new EmployeeRecord();
+                $record->id = (int)$this->id;
+                $record->userId = $this->_saveUser();
+            }else{
+                throw new Exception("The employee couldn't be created because this email already exists");
+            }
         }
 
         // Personal
@@ -612,7 +638,7 @@ class Employee extends Element
         $record->probationPeriod = $this->probationPeriod;
         $record->noticePeriod = $this->noticePeriod;
         $record->reference = $this->reference;
-        $record->department = $this->department;
+        $record->departmentId = $this->departmentId;
         $record->jobTitle = $this->jobTitle;
         $record->companyEmail = $this->companyEmail;
 
@@ -626,6 +652,26 @@ class Employee extends Element
         $record->workExtension = $this->workExtension;
 
         $record->save(false);
+    }
+
+    private function _saveUser()
+    {
+        Craft::$app->requireEdition(Craft::Pro);
+
+        // Create a new user
+        $user = new User();
+        $user->firstName = $this->firstName;
+        $user->lastName = $this->lastName;
+        $user->username = $this->companyEmail;
+        $user->email = $this->companyEmail;
+
+        $success = Craft::$app->elements->saveElement($user, true);
+
+        if(!$success){
+            throw new Exception("The user couldn't be created");
+        }
+
+        return $user->id;
     }
 
 }

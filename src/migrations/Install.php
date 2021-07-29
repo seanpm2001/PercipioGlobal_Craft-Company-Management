@@ -167,7 +167,7 @@ class Install extends Migration {
                 'probationPeriod' => $this->string()->defaultValue(''),
                 'noticePeriod' => $this->string()->defaultValue(''),
                 'reference' => $this->string()->defaultValue(''),
-                'department' => $this->string()->defaultValue(''),
+                'departmentId' => $this->integer(),
                 'jobTitle' => $this->string()->defaultValue(''),
                 'companyEmail' => $this->string()->defaultValue(''),
                 'contractType' => $this->string()->defaultValue(''),
@@ -289,6 +289,7 @@ class Install extends Migration {
         $this->addForeignKey(null, Table::CM_COMPANIES, ['typeId'], Table::CM_COMPANYTYPES, ['id'], 'CASCADE', null);
         $this->addForeignKey(null, Table::CM_EMPLOYEES, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_EMPLOYEES, ['companyId'], Table::CM_COMPANIES, ['id'], 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, Table::CM_EMPLOYEES, ['departmentId'], Table::CM_DEPARTMENTS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['assetId'], \craft\db\Table::ASSETS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_DOCUMENTS, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', 'CASCADE');
         $this->addForeignKey(null, Table::CM_COMPANYTYPES, ['fieldLayoutId'], '{{%fieldlayouts}}', ['id'], 'SET NULL');

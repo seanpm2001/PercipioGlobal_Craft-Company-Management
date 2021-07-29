@@ -3,6 +3,7 @@
 namespace percipiolondon\companymanagement\helpers;
 
 use craft\helpers\DateTimeHelper;
+use craft\helpers\Db;
 use percipiolondon\companymanagement\CompanyManagement;
 use percipiolondon\companymanagement\elements\Company as CompanyModel;
 use percipiolondon\companymanagement\elements\Employee as EmployeeModel;
@@ -60,13 +61,13 @@ class Employee
         $employee->address = $request->getBodyParam('address');
         $employee->gender = $request->getBodyParam('gender');
         $employee->nationality = $request->getBodyParam('nationality');
-        $employee->dateOfBirth = $request->getBodyParam('dateOfBirth');
-        $employee->joinDate = $request->getBodyParam('joinDate');
-        $employee->endDate = $request->getBodyParam('endDate');
+        $employee->dateOfBirth = $request->getBodyParam('dateOfBirth') ? Db::prepareDateForDb($request->getBodyParam('dateOfBirth')) : false;
+        $employee->joinDate = $request->getBodyParam('joinDate') ? Db::prepareDateForDb($request->getBodyParam('joinDate')) : false;
+        $employee->endDate = $request->getBodyParam('endDate') ? Db::prepareDateForDb($request->getBodyParam('endDate')) : false;
         $employee->probationPeriod = $request->getBodyParam('probationPeriod');
         $employee->noticePeriod = $request->getBodyParam('noticePeriod');
         $employee->reference = $request->getBodyParam('reference');
-        $employee->department = $request->getBodyParam('department');
+        $employee->departmentId = $request->getBodyParam('departmentId');
         $employee->jobTitle = $request->getBodyParam('jobTitle');
         $employee->companyEmail = $request->getBodyParam('companyEmail');
         $employee->contractType = $request->getBodyParam('contractType');
@@ -84,8 +85,8 @@ class Employee
     {
         $employee = new EmployeeModel();
 
-//        $employee->userId =  $userId;
-//        $employee->companyId = $companyId;
+//        $employee->userId = $employeeRecord->userId;
+        $employee->companyId = $employeeRecord->companyId;
         $employee->title = $employeeRecord->title;
         $employee->slug = $employeeRecord->slug;
         $employee->firstName = $employeeRecord->firstName;
@@ -106,7 +107,7 @@ class Employee
         $employee->probationPeriod = $employeeRecord->probationPeriod;
         $employee->noticePeriod = $employeeRecord->noticePeriod;
         $employee->reference = $employeeRecord->reference;
-        $employee->department = $employeeRecord->department;
+        $employee->departmentId = $employeeRecord->departmentId;
         $employee->jobTitle = $employeeRecord->jobTitle;
         $employee->companyEmail = $employeeRecord->companyEmail;
         $employee->contractType = $employeeRecord->contractType;

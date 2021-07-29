@@ -166,10 +166,9 @@
         id: 'dateOfBirth',
         name: 'dateOfBirth',
         required: true,
-        value: employee ? employee.dateOfBirth : null,
+        value: employee and employee.dateOfBirth ? employee.dateOfBirth : null,
         errors: employee ? employee.getErrors('dateOfBirth') : null,
     }) }}
-{#    value: employee and employee.dateOfBirth ? employee.dateOfBirth.date != '' ? employee.dateOfBirth : null : null,#}
 
 {% endmacro %}
 
@@ -182,7 +181,7 @@
         instructions: "What's the date when the employee joined the company "|t('company-management'),
         id: 'joinDate',
         name: 'joinDate',
-        value: employee ? employee.joinDate : '',
+        value: employee and employee.joinDate ? employee.joinDate : null,
         errors: employee ? employee.getErrors('joinDate') : null,
     }) }}
 
@@ -191,7 +190,7 @@
         instructions: "Whend is the end date of the employee "|t('company-management'),
         id: 'endDate',
         name: 'endDate',
-        value: employee ? employee.endDate : '',
+        value: employee and employee.endDate ? employee.endDate : null,
         errors: employee ? employee.getErrors('endDate') : null,
     }) }}
 
@@ -222,13 +221,26 @@
         errors: employee ? employee.getErrors('reference') : null,
     }) }}
 
-    {{ forms.textField({
+{#    {{ forms.textField({#}
+{#        label: "Department"|t('company-management'),#}
+{#        instructions: "What's he employee's department "|t('company-management'),#}
+{#        id: 'department',#}
+{#        name: 'department',#}
+{#        value: employee ? employee.department : '',#}
+{#        errors: employee ? employee.getErrors('department') : null,#}
+{#    }) }}#}
+
+    {%- set department = employee ? employee.departmentId ? [craft.departments.id(employee.departmentId).one()] : [] : [] -%}
+    {{ forms.elementSelectField({
         label: "Department"|t('company-management'),
-        instructions: "What's he employee's department "|t('company-management'),
-        id: 'department',
-        name: 'department',
-        value: employee ? employee.department : '',
-        errors: employee ? employee.getErrors('department') : null,
+        id: 'departmentId',
+        name: 'departmentId',
+        elementType: 'percipiolondon\\companymanagement\\elements\\Department',
+        limit: 1,
+        required: true,
+        elements:department,
+        value: employee ? employee.departmentId : '',
+        errors: employee ? employee.getErrors('departmentId') : null,
     }) }}
 
     {{ forms.textField({

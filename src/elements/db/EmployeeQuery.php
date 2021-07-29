@@ -33,7 +33,7 @@ class EmployeeQuery extends ElementQuery
     public $personalPhone;
 
     // Company Information
-    public $department;
+    public $departmentId;
     public $jobTitle;
     public $companyEmail;
     public $directDialingIn;
@@ -234,8 +234,8 @@ class EmployeeQuery extends ElementQuery
      * @param $value
      * @return static self reference
      */
-    public function department($value) {
-        $this->department = $value;
+    public function departmentId($value) {
+        $this->departmentId = $value;
         return $this;
     }
 
@@ -369,7 +369,7 @@ class EmployeeQuery extends ElementQuery
         public $personalPhone;
 
         // Company Information
-        public $department;
+        public departmentId;
         public $jobTitle;
         public $directDialingIn;
         public $workExtension;
@@ -405,7 +405,7 @@ class EmployeeQuery extends ElementQuery
             'companymanagement_employees.personalEmail',
             'companymanagement_employees.personalMobile',
             'companymanagement_employees.personalPhone',
-            'companymanagement_employees.department',
+            'companymanagement_employees.departmentId',
             'companymanagement_employees.jobTitle',
             'companymanagement_employees.companyEmail',
             'companymanagement_employees.directDialingIn',

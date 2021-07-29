@@ -52,8 +52,9 @@ class DepartmentController extends Controller
 
         if (empty($variables['department'])) {
             if (!empty($variables['departmentId'])) {
-                $variables['department'] = Department::findOne($variables['departmentId']);
-                if (!$variables['department']) {
+                $department = Department::findOne($variables['departmentId']);
+                $variables['department'] = $department;
+                if (!$department) {
                     throw new Exception('Missing department data.');
                 }
             } else {
@@ -61,7 +62,7 @@ class DepartmentController extends Controller
             }
         }
 
-        if ($variables['department'] === null) {
+        if ($department === null) {
             $variables['title'] = Craft::t('company-management', 'Create a new department');
         } else {
             $variables['title'] = $variables['department']->title;

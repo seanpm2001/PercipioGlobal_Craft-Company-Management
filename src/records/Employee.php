@@ -62,7 +62,7 @@ use yii\db\ActiveQueryInterface;
  * @property string $personalMobile
  * @property string $personalPhone
  * @property string $address
- * @property string $department
+ * @property int $departmentId
  * @property string $contractType
  * @property string $directDialingIn
  * @property string $workExtension

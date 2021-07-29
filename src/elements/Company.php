@@ -786,7 +786,7 @@ class Company extends Element
         }
 
         // update / save user
-        $user = $this->_saveUser($record->id);
+//        $user = $this->_saveUser($record->id);
 
         // provide company values
         $record->name = $this->name;
@@ -825,41 +825,41 @@ class Company extends Element
      */
     private function _saveUser($companyId)
     {
-        // Make sure this is Craft Pro, since that's required for having multiple user accounts
-        Craft::$app->requireEdition(Craft::Pro);
-
-//        $companyUser = CompanyUserRecord::findOne(['nationalInsuranceNumber' => $this->contactRegistrationNumber]);
-        $user = User::findOne(['email' => $this->contactEmail]);
-
-        if(!$user) {
-
-            // Create a new user
-            $user = new User();
-            $user->firstName = $this->contactFirstName;
-            $user->lastName = $this->contactLastName;
-            $user->username = $this->contactEmail;
-            $user->email = $this->contactEmail;
-
-            $success = Craft::$app->elements->saveElement($user, true);
-
-            if(!$success){
-                throw new Exception("The user couldn't be created");
-            }
-
-        }
-
-        //assign user to group
-//        $this->_saveUserToGroup($user);
-
-        // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
-        $this->_updateEmployee($user);
-
-        // Give user access rights as the company admin
-        $permissions = PermissionRecord::find()->asArray()->all();
-        CompanyManagement::$plugin->userPermissions->createPermissions($permissions, $user->id);
-
-
-        return $user;
+//        // Make sure this is Craft Pro, since that's required for having multiple user accounts
+//        Craft::$app->requireEdition(Craft::Pro);
+//
+////        $companyUser = CompanyUserRecord::findOne(['nationalInsuranceNumber' => $this->contactRegistrationNumber]);
+//        $user = User::findOne(['email' => $this->contactEmail]);
+//
+//        if(!$user) {
+//
+//            // Create a new user
+//            $user = new User();
+//            $user->firstName = $this->contactFirstName;
+//            $user->lastName = $this->contactLastName;
+//            $user->username = $this->contactEmail;
+//            $user->email = $this->contactEmail;
+//
+//            $success = Craft::$app->elements->saveElement($user, true);
+//
+//            if(!$success){
+//                throw new Exception("The user couldn't be created");
+//            }
+//
+//        }
+//
+//        //assign user to group
+////        $this->_saveUserToGroup($user);
+//
+//        // Check if the user exists in the company user table, if not, create the entry (this is for existing users)
+//        $this->_updateEmployee($user);
+//
+//        // Give user access rights as the company admin
+//        $permissions = PermissionRecord::find()->asArray()->all();
+//        CompanyManagement::$plugin->userPermissions->createPermissions($permissions, $user->id);
+//
+//
+//        return $user;
     }
 
     /**

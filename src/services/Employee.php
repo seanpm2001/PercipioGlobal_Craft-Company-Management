@@ -41,6 +41,11 @@ class Employee extends Component
         return $record->save(false);
     }
 
+    public function createEmployee()
+    {
+        $employee =
+    }
+
     public function addEditUserCustomFieldTab(array &$context)
     {
         $context['tabs']['companyManagement'] = [
